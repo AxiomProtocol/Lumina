@@ -530,6 +530,72 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* Treasury & Rewards Section */}
+        <section className="py-24 bg-gradient-to-b from-transparent via-primary/5 to-transparent">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="text-center mb-16">
+              <Badge variant="outline" className="mb-6 border-primary/30 text-primary">
+                Treasury & Rewards
+              </Badge>
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+                Real Value, Real
+                <span className="text-primary"> Rewards</span>
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Our treasury holds over 1 million AXM tokens dedicated to rewarding creators 
+                who contribute positively to the community.
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-6 mb-12">
+              <Card className="hover-elevate bg-gradient-to-br from-primary/10 to-transparent border-primary/20">
+                <CardContent className="p-6 text-center">
+                  <div className="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto mb-4">
+                    <Wallet className="h-7 w-7 text-primary" />
+                  </div>
+                  <div className="text-3xl font-bold text-primary mb-2" data-testid="text-treasury-preview">
+                    1,000,000+
+                  </div>
+                  <div className="text-sm text-muted-foreground">AXM in Rewards Pool</div>
+                </CardContent>
+              </Card>
+              
+              <Card className="hover-elevate bg-gradient-to-br from-emerald-500/10 to-transparent border-emerald-500/20">
+                <CardContent className="p-6 text-center">
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
+                    <TrendingUp className="h-7 w-7 text-emerald-500" />
+                  </div>
+                  <div className="text-3xl font-bold text-emerald-500 mb-2">
+                    Live
+                  </div>
+                  <div className="text-sm text-muted-foreground">On Arbitrum One</div>
+                </CardContent>
+              </Card>
+              
+              <Card className="hover-elevate bg-gradient-to-br from-amber-500/10 to-transparent border-amber-500/20">
+                <CardContent className="p-6 text-center">
+                  <div className="w-14 h-14 rounded-2xl bg-amber-500/20 flex items-center justify-center mx-auto mb-4">
+                    <Award className="h-7 w-7 text-amber-500" />
+                  </div>
+                  <div className="text-3xl font-bold text-amber-500 mb-2">
+                    100%
+                  </div>
+                  <div className="text-sm text-muted-foreground">Tips Go to Creators</div>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <div className="text-center">
+              <Link href="/treasury">
+                <Button variant="outline" size="lg" className="gap-2 border-primary/30" data-testid="button-view-treasury">
+                  View Full Treasury Dashboard
+                  <ChevronRight className="h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* CTA Section */}
         <section className="py-24">
           <div className="max-w-7xl mx-auto px-4">
