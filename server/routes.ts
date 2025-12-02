@@ -803,6 +803,92 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  app.get("/api/price/axm", async (req, res) => {
+    try {
+      const response = await fetch(
+        'https://api.coingecko.com/api/v3/simple/price?ids=axiom-2&vs_currencies=usd&include_24hr_change=true&include_market_cap=true'
+      );
+      
+      if (!response.ok) {
+        return res.json({ 
+          price: 0.001,
+          change24h: 0,
+          marketCap: 0,
+          source: 'fallback',
+          message: 'Using estimated price - token not yet listed'
+        });
+      }
+      
+      const data = await response.json();
+      
+      if (data['axiom-2']) {
+        res.json({
+          price: data['axiom-2'].usd || 0.001,
+          change24h: data['axiom-2'].usd_24h_change || 0,
+          marketCap: data['axiom-2'].usd_market_cap || 0,
+          source: 'coingecko'
+        });
+      } else {
+        res.json({ 
+          price: 0.001,
+          change24h: 0,
+          marketCap: 0,
+          source: 'fallback',
+          message: 'Using estimated price - token not yet listed'
+        });
+      }
+    } catch (error) {
+      console.error("Price fetch error:", error);
+      res.json({ 
+        price: 0.001,
+        change24h: 0,
+        marketCap: 0,
+        source: 'fallback',
+        message: 'Using estimated price'
+      });
+    }
+  });
+
+  app.get("/api/price/eth", async (req, res) => {
+    try {
+      const response = await fetch(
+        'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd&include_24hr_change=true'
+      );
+      
+      if (!response.ok) {
+        return res.json({ price: 2000, change24h: 0, source: 'fallback' });
+      }
+      
+      const data = await response.json();
+      res.json({
+        price: data.ethereum?.usd || 2000,
+        change24h: data.ethereum?.usd_24h_change || 0,
+        source: 'coingecko'
+      });
+    } catch (error) {
+      console.error("ETH price fetch error:", error);
+      res.json({ price: 2000, change24h: 0, source: 'fallback' });
+    }
+  });
+
+  app.get("/api/treasury/stats", async (req, res) => {
+    try {
+      const stats = {
+        rewardsPoolAllocation: 1000000,
+        treasuryVaultAddress: '0x2bB2c2A7a1d82097488bf0b9c2a59c1910CD8D5d',
+        rewardsPoolAddress: '0x2bB2c2A7a1d82097488bf0b9c2a59c1910CD8D5d',
+        tokenAddress: '0x864F9c6f50dC5Bd244F5002F1B0873Cd80e2539D',
+        chainId: 42161,
+        network: 'Arbitrum One',
+        tokenSymbol: 'AXM',
+        tokenDecimals: 18
+      };
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get treasury stats" });
+    }
+  });
+
   app.get("/api/rewards", requireAuth, async (req, res) => {
     try {
       const snapshot = await storage.getRewardSnapshot(req.session.userId!);
