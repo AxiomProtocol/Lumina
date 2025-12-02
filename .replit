@@ -72,3 +72,5 @@ integrations = ["javascript_object_storage:1.0.0", "javascript_database:1.0.0", 
 [userenv]
 
 [userenv.shared]
+TESTING_VITE_STRIPE_PUBLIC_KEY = "pk_test_51MBRQRL7nVuSbK4H8j7659XQ0YAbZr9gClsHXWAAKaTQd5d5aL9X0qNNLuBgvGQMD4r4mYV8D557JcpTnLWCuRG700FMwdY1Pc"
+TESTING_STRIPE_SECRET_KEY = "sk_test_51MBRQRL7nVuSbK4H6qZQU7dBPQ8VY0o8FjmIksRrDhqzyEQ0NAuCd8R4m4EpnjzV3XgXIZNeH3XXDOZTc9TfPJCA00iCls0cHS"
