@@ -24,7 +24,16 @@ import {
   Video,
   Monitor,
   Settings,
+  Check,
+  X,
+  Zap,
+  Clock,
+  Gamepad2,
+  Camera,
+  HelpCircle,
 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "wouter";
@@ -237,84 +246,299 @@ export default function Live() {
                 />
               </div>
               
-              <div className="space-y-2">
-                <Label>How do you want to stream?</Label>
-                <RadioGroup
-                  value={streamingMethod}
-                  onValueChange={(value) => setStreamingMethod(value as "rtmp" | "browser")}
-                  className="grid gap-3"
-                >
-                  <div 
-                    className={cn(
-                      "flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors",
-                      streamingMethod === "rtmp" 
-                        ? "border-primary bg-primary/5" 
-                        : "border-muted hover:border-muted-foreground/30"
-                    )}
-                    onClick={() => setStreamingMethod("rtmp")}
+              <Tabs defaultValue="choose" className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="choose">Choose Method</TabsTrigger>
+                  <TabsTrigger value="compare">Compare</TabsTrigger>
+                  <TabsTrigger value="help">Instructions</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="choose" className="space-y-3 mt-4">
+                  <RadioGroup
+                    value={streamingMethod}
+                    onValueChange={(value) => setStreamingMethod(value as "rtmp" | "browser")}
+                    className="grid gap-3"
                   >
-                    <RadioGroupItem value="rtmp" id="rtmp" className="mt-1" />
-                    <div className="flex-1">
-                      <Label htmlFor="rtmp" className="font-medium cursor-pointer flex items-center gap-2">
-                        <Settings className="h-4 w-4 text-primary" />
-                        OBS / Streamlabs (Professional)
-                      </Label>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Best quality. Use OBS Studio, Streamlabs, or any RTMP software.
-                        Perfect for gaming and professional streams.
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div 
-                    className={cn(
-                      "flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors",
-                      streamingMethod === "browser" 
-                        ? "border-primary bg-primary/5" 
-                        : "border-muted hover:border-muted-foreground/30",
-                      !providers?.methods.browser && "opacity-50 pointer-events-none"
-                    )}
-                    onClick={() => providers?.methods.browser && setStreamingMethod("browser")}
-                  >
-                    <RadioGroupItem value="browser" id="browser" className="mt-1" disabled={!providers?.methods.browser} />
-                    <div className="flex-1">
-                      <Label htmlFor="browser" className="font-medium cursor-pointer flex items-center gap-2">
-                        <Monitor className="h-4 w-4 text-primary" />
-                        Browser (Quick Start)
-                      </Label>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Go live instantly from your browser. No software needed.
-                        Uses your webcam and microphone directly.
-                      </p>
-                      {!providers?.methods.browser && (
-                        <p className="text-xs text-amber-600 mt-1">
-                          Browser streaming is not available. Cloudflare Stream credentials required.
-                        </p>
+                    <div 
+                      className={cn(
+                        "flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-colors",
+                        streamingMethod === "rtmp" 
+                          ? "border-primary bg-primary/5" 
+                          : "border-muted hover:border-muted-foreground/30"
                       )}
+                      onClick={() => setStreamingMethod("rtmp")}
+                    >
+                      <RadioGroupItem value="rtmp" id="rtmp" className="mt-1" />
+                      <div className="flex-1">
+                        <Label htmlFor="rtmp" className="font-medium cursor-pointer flex items-center gap-2">
+                          <Settings className="h-4 w-4 text-primary" />
+                          OBS / Streamlabs (Professional)
+                        </Label>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Best quality for gaming, tutorials, and professional content.
+                        </p>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          <span className="inline-flex items-center gap-1 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">
+                            <Gamepad2 className="h-3 w-3" /> Best for Gaming
+                          </span>
+                          <span className="inline-flex items-center gap-1 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">
+                            <Zap className="h-3 w-3" /> Best Quality
+                          </span>
+                        </div>
+                      </div>
                     </div>
+                    
+                    <div 
+                      className={cn(
+                        "flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-colors",
+                        streamingMethod === "browser" 
+                          ? "border-primary bg-primary/5" 
+                          : "border-muted hover:border-muted-foreground/30",
+                        !providers?.methods.browser && "opacity-50 pointer-events-none"
+                      )}
+                      onClick={() => providers?.methods.browser && setStreamingMethod("browser")}
+                    >
+                      <RadioGroupItem value="browser" id="browser" className="mt-1" disabled={!providers?.methods.browser} />
+                      <div className="flex-1">
+                        <Label htmlFor="browser" className="font-medium cursor-pointer flex items-center gap-2">
+                          <Monitor className="h-4 w-4 text-primary" />
+                          Browser (Quick Start)
+                        </Label>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Go live instantly. Perfect for casual streams and Q&A sessions.
+                        </p>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          <span className="inline-flex items-center gap-1 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">
+                            <Clock className="h-3 w-3" /> Instant Start
+                          </span>
+                          <span className="inline-flex items-center gap-1 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">
+                            <Camera className="h-3 w-3" /> Webcam Ready
+                          </span>
+                        </div>
+                        {!providers?.methods.browser && (
+                          <p className="text-xs text-amber-600 mt-2">
+                            Browser streaming is currently unavailable.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </RadioGroup>
+                </TabsContent>
+                
+                <TabsContent value="compare" className="mt-4">
+                  <div className="rounded-lg border overflow-hidden">
+                    <table className="w-full text-sm">
+                      <thead className="bg-muted/50">
+                        <tr>
+                          <th className="text-left p-3 font-medium">Feature</th>
+                          <th className="text-center p-3 font-medium">
+                            <div className="flex items-center justify-center gap-1">
+                              <Settings className="h-3 w-3" /> OBS
+                            </div>
+                          </th>
+                          <th className="text-center p-3 font-medium">
+                            <div className="flex items-center justify-center gap-1">
+                              <Monitor className="h-3 w-3" /> Browser
+                            </div>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y">
+                        <tr>
+                          <td className="p-3 text-muted-foreground">Video Quality</td>
+                          <td className="p-3 text-center">
+                            <span className="text-primary font-medium">Excellent</span>
+                          </td>
+                          <td className="p-3 text-center">Good</td>
+                        </tr>
+                        <tr>
+                          <td className="p-3 text-muted-foreground">Setup Time</td>
+                          <td className="p-3 text-center">5-10 min first time</td>
+                          <td className="p-3 text-center">
+                            <span className="text-primary font-medium">Instant</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="p-3 text-muted-foreground">Software Required</td>
+                          <td className="p-3 text-center">
+                            <X className="h-4 w-4 text-amber-500 mx-auto" />
+                          </td>
+                          <td className="p-3 text-center">
+                            <Check className="h-4 w-4 text-primary mx-auto" />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="p-3 text-muted-foreground">Game Capture</td>
+                          <td className="p-3 text-center">
+                            <Check className="h-4 w-4 text-primary mx-auto" />
+                          </td>
+                          <td className="p-3 text-center">
+                            <span className="text-muted-foreground text-xs">Screen only</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="p-3 text-muted-foreground">Custom Overlays</td>
+                          <td className="p-3 text-center">
+                            <Check className="h-4 w-4 text-primary mx-auto" />
+                          </td>
+                          <td className="p-3 text-center">
+                            <X className="h-4 w-4 text-muted-foreground mx-auto" />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="p-3 text-muted-foreground">Multiple Scenes</td>
+                          <td className="p-3 text-center">
+                            <Check className="h-4 w-4 text-primary mx-auto" />
+                          </td>
+                          <td className="p-3 text-center">
+                            <X className="h-4 w-4 text-muted-foreground mx-auto" />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="p-3 text-muted-foreground">Latency</td>
+                          <td className="p-3 text-center">4-7 seconds</td>
+                          <td className="p-3 text-center">
+                            <span className="text-primary font-medium">&lt;1 second</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="p-3 text-muted-foreground">Best For</td>
+                          <td className="p-3 text-center text-xs">Gaming, tutorials, professional</td>
+                          <td className="p-3 text-center text-xs">Casual, Q&A, quick updates</td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
-                </RadioGroup>
-              </div>
+                </TabsContent>
+                
+                <TabsContent value="help" className="mt-4">
+                  <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="obs">
+                      <AccordionTrigger className="text-sm">
+                        <div className="flex items-center gap-2">
+                          <Settings className="h-4 w-4" />
+                          How to stream with OBS / Streamlabs
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="text-sm text-muted-foreground space-y-3">
+                        <div className="space-y-2">
+                          <p className="font-medium text-foreground">Step 1: Download Software</p>
+                          <p>Download OBS Studio (free) from obsproject.com or Streamlabs from streamlabs.com</p>
+                        </div>
+                        <div className="space-y-2">
+                          <p className="font-medium text-foreground">Step 2: Create Your Stream</p>
+                          <p>Click "Go Live" here. After creating, you'll see your RTMP URL and Stream Key.</p>
+                        </div>
+                        <div className="space-y-2">
+                          <p className="font-medium text-foreground">Step 3: Configure OBS</p>
+                          <ul className="list-disc list-inside space-y-1 ml-2">
+                            <li>Click "Open in OBS" button (auto-configures settings)</li>
+                            <li>Or manually: Settings → Stream → Custom → paste Server URL and Key</li>
+                          </ul>
+                        </div>
+                        <div className="space-y-2">
+                          <p className="font-medium text-foreground">Step 4: Set Up Your Scene</p>
+                          <ul className="list-disc list-inside space-y-1 ml-2">
+                            <li>Add sources: Game Capture, Display Capture, or Video Capture</li>
+                            <li>Add your webcam and microphone</li>
+                            <li>Optionally add overlays, alerts, and chat widgets</li>
+                          </ul>
+                        </div>
+                        <div className="space-y-2">
+                          <p className="font-medium text-foreground">Step 5: Go Live!</p>
+                          <p>Click "Start Streaming" in OBS. Your stream will appear on Lumina.</p>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                    
+                    <AccordionItem value="browser">
+                      <AccordionTrigger className="text-sm">
+                        <div className="flex items-center gap-2">
+                          <Monitor className="h-4 w-4" />
+                          How to stream from your Browser
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="text-sm text-muted-foreground space-y-3">
+                        <div className="space-y-2">
+                          <p className="font-medium text-foreground">Step 1: Allow Permissions</p>
+                          <p>Your browser will ask for camera and microphone access. Click "Allow".</p>
+                        </div>
+                        <div className="space-y-2">
+                          <p className="font-medium text-foreground">Step 2: Check Your Preview</p>
+                          <p>You'll see a preview of your camera. Make sure lighting and audio are good.</p>
+                        </div>
+                        <div className="space-y-2">
+                          <p className="font-medium text-foreground">Step 3: Optional - Share Your Screen</p>
+                          <p>Click the screen share button to show your screen instead of camera.</p>
+                        </div>
+                        <div className="space-y-2">
+                          <p className="font-medium text-foreground">Step 4: Go Live!</p>
+                          <p>Click "Go Live" and you're streaming instantly. No software needed!</p>
+                        </div>
+                        <div className="p-3 bg-amber-500/10 rounded-lg border border-amber-500/20">
+                          <p className="text-amber-600 dark:text-amber-400 text-xs">
+                            <strong>Tip:</strong> Use Chrome or Edge for best compatibility. 
+                            Make sure you have a stable internet connection (5+ Mbps upload).
+                          </p>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                    
+                    <AccordionItem value="tips">
+                      <AccordionTrigger className="text-sm">
+                        <div className="flex items-center gap-2">
+                          <HelpCircle className="h-4 w-4" />
+                          Streaming Tips for Success
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="text-sm text-muted-foreground space-y-2">
+                        <ul className="space-y-2">
+                          <li className="flex items-start gap-2">
+                            <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                            <span><strong>Good lighting:</strong> Face a window or use a ring light</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                            <span><strong>Stable internet:</strong> Use wired connection if possible</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                            <span><strong>Engage viewers:</strong> Read chat and respond to comments</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                            <span><strong>Consistent schedule:</strong> Stream at the same time regularly</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                            <span><strong>Quality audio:</strong> A good mic matters more than video quality</span>
+                          </li>
+                        </ul>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </TabsContent>
+              </Tabs>
 
-              <div className="p-4 rounded-lg bg-muted/50 border">
-                <div className="flex items-center gap-3 mb-2">
-                  <Radio className="h-5 w-5 text-primary" />
-                  <span className="font-medium">Stream Features</span>
+              <div className="p-3 rounded-lg bg-muted/50 border">
+                <div className="flex items-center gap-2 mb-2">
+                  <Radio className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium">All streams include:</span>
                 </div>
-                <ul className="text-sm text-muted-foreground space-y-1 ml-8">
-                  <li className="flex items-center gap-2">
-                    <MessageCircle className="h-3 w-3" />
-                    Live chat with viewers
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Coins className="h-3 w-3" />
-                    Receive AXM tips during stream
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Users className="h-3 w-3" />
-                    Real-time viewer count
-                  </li>
-                </ul>
+                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground ml-6">
+                  <span className="flex items-center gap-1">
+                    <MessageCircle className="h-3 w-3" /> Live chat
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Coins className="h-3 w-3" /> LUM tips
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Users className="h-3 w-3" /> Viewer count
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Video className="h-3 w-3" /> Auto-recording
+                  </span>
+                </div>
               </div>
             </div>
             
