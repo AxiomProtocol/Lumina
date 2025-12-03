@@ -284,7 +284,7 @@ export default function Bridge() {
   } = useArbitrumBridge();
 
   const [activeTab, setActiveTab] = useState<'deposit' | 'withdraw'>('deposit');
-  const [asset, setAsset] = useState<'ETH' | 'LUM'>('ETH');
+  const [asset, setAsset] = useState<'ETH' | 'AXM'>('ETH');
   const [amount, setAmount] = useState('');
 
   const sourceChain = activeTab === 'deposit' ? 'L1' : 'L2';
@@ -391,7 +391,7 @@ export default function Bridge() {
               <CardHeader>
                 <CardTitle>Bridge Assets</CardTitle>
                 <CardDescription>
-                  Transfer ETH or LUM tokens between networks
+                  Transfer ETH or AXM tokens between networks
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -415,11 +415,11 @@ export default function Bridge() {
                     ETH
                   </Button>
                   <Button
-                    variant={asset === 'LUM' ? 'default' : 'outline'}
-                    onClick={() => setAsset('LUM')}
-                    data-testid="button-asset-lum"
+                    variant={asset === 'AXM' ? 'default' : 'outline'}
+                    onClick={() => setAsset('AXM')}
+                    data-testid="button-asset-axm"
                   >
-                    LUM
+                    AXM
                   </Button>
                 </div>
 
@@ -537,7 +537,7 @@ export default function Bridge() {
                     <span className="font-mono">{l1Balance}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>LUM</span>
+                    <span>AXM</span>
                     <span className="font-mono">{l1TokenBalance}</span>
                   </div>
                 </div>
@@ -549,7 +549,7 @@ export default function Bridge() {
                     <span className="font-mono">{l2Balance}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>LUM</span>
+                    <span>AXM</span>
                     <span className="font-mono">{l2TokenBalance}</span>
                   </div>
                 </div>

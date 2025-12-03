@@ -19,7 +19,7 @@ import { CONTRACT_ADDRESSES } from "@/lib/contracts";
 
 interface BridgeModalProps {
   trigger?: React.ReactNode;
-  defaultAsset?: 'ETH' | 'LUM';
+  defaultAsset?: 'ETH' | 'AXM';
   defaultType?: 'deposit' | 'withdraw';
 }
 
@@ -45,7 +45,7 @@ export function BridgeModal({
 
   const [open, setOpen] = useState(false);
   const [type, setType] = useState<'deposit' | 'withdraw'>(defaultType);
-  const [asset, setAsset] = useState<'ETH' | 'LUM'>(defaultAsset);
+  const [asset, setAsset] = useState<'ETH' | 'AXM'>(defaultAsset);
   const [amount, setAmount] = useState('');
 
   const sourceChain = type === 'deposit' ? 'L1' : 'L2';
@@ -148,12 +148,12 @@ export function BridgeModal({
               ETH
             </Button>
             <Button
-              variant={asset === 'LUM' ? 'default' : 'outline'}
+              variant={asset === 'AXM' ? 'default' : 'outline'}
               size="sm"
-              onClick={() => setAsset('LUM')}
-              data-testid="modal-asset-lum"
+              onClick={() => setAsset('AXM')}
+              data-testid="modal-asset-axm"
             >
-              LUM
+              AXM
             </Button>
           </div>
 

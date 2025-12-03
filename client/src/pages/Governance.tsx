@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "@/components/ui/card";
@@ -12,13 +12,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Vote, Plus, Clock, CheckCircle, XCircle, MinusCircle, Users, Coins, HelpCircle, Shield, TrendingUp, Zap, Scale, Wallet, Loader2 } from "lucide-react";
+import { Vote, Plus, Clock, CheckCircle, XCircle, MinusCircle, Users, Coins, HelpCircle, Shield, TrendingUp, Zap, Scale, Wallet, Loader2, ArrowLeftRight, Layers, RefreshCw, AlertCircle } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useAuth } from "@/lib/authContext";
 import { useWallet } from "@/lib/walletContext";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { format, formatDistanceToNow } from "date-fns";
+import { L1_NETWORK_CONFIG, L2_NETWORK_CONFIG, switchToL1, switchToL2, getL2Provider } from "@/lib/arbitrumBridge";
+import { BrowserProvider, formatEther, Contract } from "ethers";
+import { CONTRACT_ADDRESSES, AXM_TOKEN_ABI } from "@/lib/contracts";
 
 interface ProposalWithDetails {
   id: string;
@@ -36,23 +39,218 @@ interface ProposalWithDetails {
   quorumRequired: string;
   proposer: { id: string; username: string; displayName: string | null; avatarUrl: string | null };
   createdAt: string;
-  userVote?: { voteType: string } | null;
+  userVote?: { voteType: string; chain?: string } | null;
+  l1Votes?: { for: number; against: number; abstain: number };
+  l2Votes?: { for: number; against: number; abstain: number };
+}
+
+interface CrossChainVotingPower {
+  l1Balance: string;
+  l2Balance: string;
+  l1VotingPower: string;
+  l2VotingPower: string;
+  totalVotingPower: string;
+}
+
+function CrossChainVotingStatus({ 
+  address, 
+  chainId,
+  votingChain,
+  onChainChange 
+}: { 
+  address: string | null; 
+  chainId: number | null;
+  votingChain: "L1" | "L2";
+  onChainChange: (chain: "L1" | "L2") => void;
+}) {
+  const { toast } = useToast();
+  const [votingPower, setVotingPower] = useState<CrossChainVotingPower>({
+    l1Balance: "0",
+    l2Balance: "0",
+    l1VotingPower: "0",
+    l2VotingPower: "0",
+    totalVotingPower: "0",
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSwitching, setIsSwitching] = useState(false);
+
+  const isOnL1 = chainId === L1_NETWORK_CONFIG.chainId;
+  const isOnL2 = chainId === L2_NETWORK_CONFIG.chainId;
+  const currentNetwork = isOnL1 ? "Ethereum" : isOnL2 ? "Arbitrum" : "Unknown";
+
+  useEffect(() => {
+    if (address && window.ethereum) {
+      fetchVotingPower();
+    }
+  }, [address, chainId]);
+
+  const fetchVotingPower = async () => {
+    if (!address) return;
+    
+    setIsLoading(true);
+    try {
+      const l2Provider = await getL2Provider();
+
+      let l2TokenBalance = BigInt(0);
+      try {
+        const tokenContract = new Contract(CONTRACT_ADDRESSES.AXM_TOKEN, AXM_TOKEN_ABI, l2Provider);
+        l2TokenBalance = await tokenContract.balanceOf(address);
+      } catch (e) {
+        console.warn("Could not fetch L2 token balance:", e);
+      }
+
+      const axmBalance = formatEther(l2TokenBalance);
+      const axmPower = parseFloat(axmBalance).toFixed(4);
+
+      setVotingPower({
+        l1Balance: "0",
+        l2Balance: axmBalance,
+        l1VotingPower: "0",
+        l2VotingPower: axmPower,
+        totalVotingPower: axmPower,
+      });
+    } catch (error) {
+      console.error("Failed to fetch voting power:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSwitchToL1 = async () => {
+    setIsSwitching(true);
+    try {
+      const success = await switchToL1();
+      if (success) {
+        onChainChange("L1");
+        toast({ title: "Switched to Ethereum", description: "You can now vote from L1" });
+      }
+    } catch (error) {
+      toast({ title: "Switch Failed", description: "Could not switch to Ethereum", variant: "destructive" });
+    } finally {
+      setIsSwitching(false);
+    }
+  };
+
+  const handleSwitchToL2 = async () => {
+    setIsSwitching(true);
+    try {
+      const success = await switchToL2();
+      if (success) {
+        onChainChange("L2");
+        toast({ title: "Switched to Arbitrum", description: "You can now vote from L2" });
+      }
+    } catch (error) {
+      toast({ title: "Switch Failed", description: "Could not switch to Arbitrum", variant: "destructive" });
+    } finally {
+      setIsSwitching(false);
+    }
+  };
+
+  if (!address) return null;
+
+  return (
+    <Card className="border-primary/20 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-cyan-500/5">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-lg flex items-center gap-2">
+          <Layers className="h-5 w-5 text-primary" />
+          Cross-Chain Voting
+        </CardTitle>
+        <CardDescription>
+          Vote from Ethereum L1 or Arbitrum L2 - voting power is based on your AXM balance on Arbitrum
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+          <div className="flex items-center gap-2">
+            <div className={`w-2 h-2 rounded-full ${isOnL1 || isOnL2 ? "bg-green-500" : "bg-yellow-500"}`} />
+            <span className="text-sm">Connected to: <strong>{currentNetwork}</strong></span>
+          </div>
+          <Badge variant={votingChain === "L2" ? "default" : "secondary"}>
+            Voting from {votingChain}
+          </Badge>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <Button
+            variant={isOnL1 ? "default" : "outline"}
+            className="w-full gap-2"
+            onClick={handleSwitchToL1}
+            disabled={isSwitching || isOnL1}
+            data-testid="button-switch-l1"
+          >
+            {isSwitching && !isOnL1 ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <div className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center">
+                <span className="text-[8px] text-white font-bold">E</span>
+              </div>
+            )}
+            Ethereum L1
+          </Button>
+          <Button
+            variant={isOnL2 ? "default" : "outline"}
+            className="w-full gap-2"
+            onClick={handleSwitchToL2}
+            disabled={isSwitching || isOnL2}
+            data-testid="button-switch-l2"
+          >
+            {isSwitching && !isOnL2 ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <div className="w-4 h-4 rounded-full bg-cyan-500 flex items-center justify-center">
+                <span className="text-[8px] text-white font-bold">A</span>
+              </div>
+            )}
+            Arbitrum L2
+          </Button>
+        </div>
+
+        <div className="space-y-2 p-3 rounded-lg border border-dashed border-muted-foreground/30">
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">AXM Balance (L2)</span>
+            <span className="font-mono">{isLoading ? "..." : votingPower.l2Balance} AXM</span>
+          </div>
+          <div className="border-t border-muted pt-2 flex justify-between text-sm font-medium">
+            <span>Voting Power</span>
+            <span className="text-primary font-mono">{isLoading ? "..." : votingPower.totalVotingPower} AXM</span>
+          </div>
+        </div>
+
+        <div className="flex items-start gap-2 p-3 rounded-lg bg-blue-500/10 text-sm">
+          <AlertCircle className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+          <p className="text-muted-foreground">
+            <strong className="text-foreground">Cross-chain voting</strong>: You can vote from either Ethereum L1 or Arbitrum L2, 
+            but your voting power is determined by your AXM holdings on Arbitrum L2.
+          </p>
+        </div>
+      </CardContent>
+    </Card>
+  );
 }
 
 export default function Governance() {
   const { user } = useAuth();
-  const { isConnected, address, connect } = useWallet();
+  const { isConnected, address, connect, chainId } = useWallet();
   const { toast } = useToast();
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [tab, setTab] = useState("active");
   const [selectedProposal, setSelectedProposal] = useState<ProposalWithDetails | null>(null);
   const [isSigningVote, setIsSigningVote] = useState(false);
+  const [votingChain, setVotingChain] = useState<"L1" | "L2">("L2");
 
   const [createForm, setCreateForm] = useState({
     title: "",
     description: "",
     category: "general",
   });
+
+  useEffect(() => {
+    if (chainId === L1_NETWORK_CONFIG.chainId) {
+      setVotingChain("L1");
+    } else if (chainId === L2_NETWORK_CONFIG.chainId) {
+      setVotingChain("L2");
+    }
+  }, [chainId]);
 
   const { data: proposals, isLoading } = useQuery<ProposalWithDetails[]>({
     queryKey: ["/api/governance/proposals"],
@@ -79,17 +277,22 @@ export default function Governance() {
   });
 
   const voteMutation = useMutation({
-    mutationFn: async ({ proposalId, voteType, signature, message }: { proposalId: string; voteType: string; signature?: string; message?: string }) => {
+    mutationFn: async ({ proposalId, voteType, signature, message, chain }: { proposalId: string; voteType: string; signature?: string; message?: string; chain: "L1" | "L2" }) => {
       const res = await apiRequest("POST", `/api/governance/proposals/${proposalId}/vote`, { 
         voteType, 
         signature, 
         message,
-        walletAddress: address 
+        walletAddress: address,
+        chain,
+        chainId: chain === "L1" ? L1_NETWORK_CONFIG.chainId : L2_NETWORK_CONFIG.chainId,
       });
       return res.json();
     },
-    onSuccess: () => {
-      toast({ title: "Vote Cast!", description: "Your vote has been recorded on-chain" });
+    onSuccess: (_, variables) => {
+      toast({ 
+        title: "Vote Cast!", 
+        description: `Your vote from ${variables.chain} has been recorded on-chain` 
+      });
       queryClient.invalidateQueries({ queryKey: ["/api/governance/proposals"] });
     },
     onError: (error: any) => {
@@ -122,7 +325,7 @@ export default function Governance() {
     try {
       setIsSigningVote(true);
       
-      const message = `Lumina DAO Vote\n\nProposal: ${proposalId}\nVote: ${voteType}\nTimestamp: ${Date.now()}`;
+      const message = `Lumina DAO Vote\n\nProposal: ${proposalId}\nVote: ${voteType}\nChain: ${votingChain}\nTimestamp: ${Date.now()}`;
       
       if (window.ethereum && address) {
         try {
@@ -131,7 +334,7 @@ export default function Governance() {
             params: [message, address],
           });
           
-          voteMutation.mutate({ proposalId, voteType, signature, message });
+          voteMutation.mutate({ proposalId, voteType, signature, message, chain: votingChain });
         } catch (signError: any) {
           if (signError.code === 4001) {
             toast({ 
@@ -140,11 +343,11 @@ export default function Governance() {
               variant: "destructive" 
             });
           } else {
-            voteMutation.mutate({ proposalId, voteType });
+            voteMutation.mutate({ proposalId, voteType, chain: votingChain });
           }
         }
       } else {
-        voteMutation.mutate({ proposalId, voteType });
+        voteMutation.mutate({ proposalId, voteType, chain: votingChain });
       }
     } finally {
       setIsSigningVote(false);
@@ -438,6 +641,15 @@ export default function Governance() {
           </div>
         </div>
 
+        {isConnected && (
+          <CrossChainVotingStatus 
+            address={address} 
+            chainId={chainId} 
+            votingChain={votingChain}
+            onChainChange={setVotingChain}
+          />
+        )}
+
         <Tabs value={tab} onValueChange={setTab}>
           <TabsList className="mb-6">
             <TabsTrigger value="active" data-testid="tab-active">Active</TabsTrigger>
@@ -486,7 +698,7 @@ export default function Governance() {
                 <AccordionTrigger className="text-sm">What is the Lumina DAO?</AccordionTrigger>
                 <AccordionContent className="text-sm text-muted-foreground">
                   The Lumina DAO (Decentralized Autonomous Organization) is the governance system that allows 
-                  LUM token holders to collectively make decisions about the platform's future. All proposals 
+                  AXM token holders to collectively make decisions about the platform's future. All proposals 
                   and votes are recorded on the Arbitrum One blockchain, ensuring transparency and immutability.
                 </AccordionContent>
               </AccordionItem>

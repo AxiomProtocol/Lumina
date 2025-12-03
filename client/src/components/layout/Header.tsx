@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Search, Plus, Menu, Moon, Sun, Wallet, AlertTriangle } from "lucide-react";
+import { Search, Plus, Menu, Moon, Sun, Wallet, AlertTriangle, ArrowLeftRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -102,6 +102,11 @@ export function Header({ onMenuClick }: HeaderProps) {
                 <DropdownMenuItem className="justify-between">
                   <span>AXM Balance</span>
                   <span className="font-mono">{axmBalance}</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate("/bridge")} data-testid="button-bridge">
+                  <ArrowLeftRight className="h-4 w-4 mr-2" />
+                  Arbitrum Bridge
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={disconnect} data-testid="button-disconnect-wallet">
