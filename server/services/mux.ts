@@ -1,9 +1,19 @@
 import Mux from "@mux/mux-node";
 
-const mux = new Mux({
-  tokenId: process.env.MUX_TOKEN_ID,
-  tokenSecret: process.env.MUX_TOKEN_SECRET,
-});
+function getMuxClient(): Mux {
+  const tokenId = process.env.MUX_TOKEN_ID;
+  const tokenSecret = process.env.MUX_TOKEN_SECRET;
+  
+  if (!tokenId || !tokenSecret) {
+    throw new Error("Mux credentials not configured. Please set MUX_TOKEN_ID and MUX_TOKEN_SECRET environment variables.");
+  }
+  
+  return new Mux({ tokenId, tokenSecret });
+}
+
+export function isMuxConfigured(): boolean {
+  return !!(process.env.MUX_TOKEN_ID && process.env.MUX_TOKEN_SECRET);
+}
 
 export interface MuxLiveStream {
   id: string;
@@ -20,6 +30,7 @@ export interface MuxStreamStatus {
 }
 
 export async function createMuxLiveStream(): Promise<MuxLiveStream> {
+  const mux = getMuxClient();
   const liveStream = await mux.video.liveStreams.create({
     playback_policy: ["public"],
     new_asset_settings: {
@@ -46,6 +57,7 @@ export async function createMuxLiveStream(): Promise<MuxLiveStream> {
 }
 
 export async function getMuxStreamStatus(liveStreamId: string): Promise<MuxStreamStatus> {
+  const mux = getMuxClient();
   const stream = await mux.video.liveStreams.retrieve(liveStreamId);
   
   return {
@@ -55,18 +67,22 @@ export async function getMuxStreamStatus(liveStreamId: string): Promise<MuxStrea
 }
 
 export async function deleteMuxLiveStream(liveStreamId: string): Promise<void> {
+  const mux = getMuxClient();
   await mux.video.liveStreams.delete(liveStreamId);
 }
 
 export async function disableMuxLiveStream(liveStreamId: string): Promise<void> {
+  const mux = getMuxClient();
   await mux.video.liveStreams.disable(liveStreamId);
 }
 
 export async function enableMuxLiveStream(liveStreamId: string): Promise<void> {
+  const mux = getMuxClient();
   await mux.video.liveStreams.enable(liveStreamId);
 }
 
 export async function resetMuxStreamKey(liveStreamId: string): Promise<string> {
+  const mux = getMuxClient();
   const result = await mux.video.liveStreams.resetStreamKey(liveStreamId);
   return result.stream_key!;
 }
