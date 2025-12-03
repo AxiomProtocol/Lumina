@@ -6,7 +6,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, username: string, password: string) => Promise<void>;
+  signup: (email: string, username: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
   updateUser: (updates: Partial<User>) => void;
 }
@@ -42,12 +42,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await queryClient.invalidateQueries();
   }
 
-  async function signup(email: string, username: string, password: string) {
+  async function signup(email: string, username: string, password: string): Promise<User> {
     const response = await apiRequest("POST", "/api/auth/signup", { email, username, password });
     const data = await response.json();
     setUser(data.user);
     setIsLoading(false);
     await queryClient.invalidateQueries();
+    return data.user;
   }
 
   async function logout() {

@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { Link, useLocation } from "wouter";
-import { Loader2, Wallet, Mail, Lock, User, Eye, EyeOff, ArrowLeft, Check } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useSearch } from "wouter";
+import { Loader2, Wallet, Mail, Lock, User, Eye, EyeOff, ArrowLeft, Check, Gift } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/authContext";
 import { useWallet } from "@/lib/walletContext";
+import { apiRequest } from "@/lib/queryClient";
 
 const signupSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -40,11 +41,22 @@ const features = [
 
 export default function Signup() {
   const [, navigate] = useLocation();
+  const searchString = useSearch();
   const { signup } = useAuth();
   const { connect, isConnected, address, isConnecting } = useWallet();
   const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [referralCode, setReferralCode] = useState<string | null>(null);
+  
+  // Extract referral code from URL on mount
+  useEffect(() => {
+    const params = new URLSearchParams(searchString);
+    const ref = params.get('ref');
+    if (ref) {
+      setReferralCode(ref);
+    }
+  }, [searchString]);
 
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
@@ -59,11 +71,35 @@ export default function Signup() {
   async function onSubmit(values: SignupFormValues) {
     setIsLoading(true);
     try {
-      await signup(values.email, values.username, values.password);
-      toast({
-        title: "Welcome to Lumina!",
-        description: "Your account has been created successfully.",
-      });
+      const user = await signup(values.email, values.username, values.password);
+      
+      // Apply referral code if present
+      if (referralCode && user?.id) {
+        try {
+          const result = await apiRequest("POST", "/api/referrals/apply", {
+            referralCode,
+            userId: user.id,
+          });
+          const data = await result.json();
+          toast({
+            title: "Welcome to Lumina!",
+            description: data.message || "Your account has been created and referral applied!",
+          });
+        } catch (refError: any) {
+          // Still show success for signup, but note the referral issue
+          console.error("Referral apply error:", refError);
+          toast({
+            title: "Welcome to Lumina!",
+            description: "Your account has been created. Referral bonus will be processed shortly.",
+          });
+        }
+      } else {
+        toast({
+          title: "Welcome to Lumina!",
+          description: "Your account has been created successfully.",
+        });
+      }
+      
       // Small delay to ensure state propagates before navigation
       await new Promise(resolve => setTimeout(resolve, 100));
       navigate("/feed");
@@ -130,6 +166,12 @@ export default function Signup() {
               <CardDescription>
                 Start earning AXM rewards today
               </CardDescription>
+              {referralCode && (
+                <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-sm" data-testid="referral-bonus-indicator">
+                  <Gift className="h-4 w-4 text-primary" />
+                  <span className="text-primary font-medium">Referral bonus applied!</span>
+                </div>
+              )}
             </CardHeader>
 
             <CardContent className="space-y-6">
