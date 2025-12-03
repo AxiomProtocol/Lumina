@@ -85,6 +85,13 @@ All contracts are deployed on Arbitrum One (Chain ID: 42161). Source: https://gi
 - **WHITEPAPER.md** - Comprehensive professional whitepaper covering platform vision, architecture, tokenomics, smart contracts, governance, and roadmap
 
 ## Recent Changes
+- **Comprehensive Security Hardening** (December 2025): Implemented multiple layers of security:
+  - **CSRF Protection**: Double Submit Cookie pattern with timing-safe validation for all state-changing requests
+  - **XSS Prevention**: Server-side HTML sanitization using sanitize-html on all user-generated content (posts, comments, messages, profiles, groups)
+  - **Rate Limiting**: Auth endpoints (10 req/15min), post creation (10 posts/min) using express-rate-limit with memory store
+  - **WebSocket Security**: Token-based authentication with one-time tokens (5-minute expiry) preventing user impersonation
+  - **Session Security**: Session regeneration on login/signup to prevent session fixation attacks
+  - **Stripe Webhook Security**: Signature verification using raw request body (ready for production with STRIPE_WEBHOOK_SECRET)
 - **Dual-Provider Streaming Architecture** (December 2025): Added support for both professional RTMP streaming (via Mux) and browser-based WebRTC streaming (via Cloudflare Stream). Users can choose between:
   - **OBS/Streamlabs (Professional)**: Best quality, RTMP ingest via Mux with HLS delivery, one-click software auto-configuration
   - **Browser (Quick Start)**: Go live instantly using webcam/microphone, WHIP protocol via Cloudflare Stream with WHEP playback
