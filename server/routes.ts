@@ -288,15 +288,16 @@ export async function registerRoutes(app: Express): Promise<void> {
         }
       }
 
+      // Sanitize text fields to prevent XSS
       const updates: any = {};
-      if (displayName !== undefined) updates.displayName = displayName;
-      if (bio !== undefined) updates.bio = bio;
-      if (username !== undefined) updates.username = username;
+      if (displayName !== undefined) updates.displayName = sanitizeText(displayName);
+      if (bio !== undefined) updates.bio = sanitizeText(bio);
+      if (username !== undefined) updates.username = sanitizeText(username);
       if (avatarUrl !== undefined) updates.avatarUrl = avatarUrl;
       if (bannerUrl !== undefined) updates.bannerUrl = bannerUrl;
-      if (location !== undefined) updates.location = location;
+      if (location !== undefined) updates.location = sanitizeText(location);
       if (website !== undefined) updates.website = website;
-      if (pronouns !== undefined) updates.pronouns = pronouns;
+      if (pronouns !== undefined) updates.pronouns = sanitizeText(pronouns);
       if (profileTheme !== undefined) updates.profileTheme = profileTheme;
       if (profileAccentColor !== undefined) updates.profileAccentColor = profileAccentColor;
       if (showWalletOnProfile !== undefined) updates.showWalletOnProfile = showWalletOnProfile;
@@ -724,10 +725,15 @@ export async function registerRoutes(app: Express): Promise<void> {
 
   app.post("/api/groups", requireAuth, async (req, res) => {
     try {
-      const group = await storage.createGroup({
+      // Sanitize group fields
+      const sanitizedBody = {
         ...req.body,
+        name: req.body.name ? sanitizeText(req.body.name) : undefined,
+        description: req.body.description ? sanitizeText(req.body.description) : undefined,
         createdById: req.session.userId!,
-      });
+      };
+      
+      const group = await storage.createGroup(sanitizedBody);
       
       await storage.createGroupMembership({
         groupId: group.id,
@@ -1200,10 +1206,13 @@ export async function registerRoutes(app: Express): Promise<void> {
         return res.status(404).json({ error: "Conversation not found" });
       }
 
+      // Sanitize message content to prevent XSS
+      const sanitizedContent = sanitizeText(content.trim());
+
       const message = await storage.createMessage({
         conversationId: req.params.id,
         senderId: req.session.userId!,
-        content: content.trim(),
+        content: sanitizedContent,
       });
 
       const recipientId = conversation.participantIds.find(id => id !== req.session.userId!);
@@ -1217,7 +1226,7 @@ export async function registerRoutes(app: Express): Promise<void> {
             messageId: message.id,
             senderId: req.session.userId!,
             senderName: sender.displayName || sender.username,
-            content: content.trim(),
+            content: sanitizedContent,
             createdAt: message.createdAt?.toISOString() || new Date().toISOString(),
           });
           
@@ -1225,7 +1234,7 @@ export async function registerRoutes(app: Express): Promise<void> {
             userId: recipientId,
             type: "message",
             title: "New Message",
-            message: `${sender.displayName || sender.username}: ${content.slice(0, 50)}${content.length > 50 ? "..." : ""}`,
+            message: `${sender.displayName || sender.username}: ${sanitizedContent.slice(0, 50)}${sanitizedContent.length > 50 ? "..." : ""}`,
             data: { conversationId: req.params.id, senderId: req.session.userId!, senderName: sender.displayName || sender.username },
           });
           
