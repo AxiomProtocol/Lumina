@@ -5,7 +5,7 @@ import { notificationHub } from "./websocket";
 import { sendBulkEmail, emailTemplates, sendEmail } from "./services/email";
 import { sendSMS, smsTemplates } from "./services/sms";
 import { createCheckoutSession, isStripeConfigured, getPublishableKey } from "./services/payments";
-import { contentModerationService } from "./services/contentModeration";
+import { contentModerationService, type ModerationResult } from "./services/contentModeration";
 import {
   insertUserSchema,
   insertPostSchema,
@@ -369,7 +369,14 @@ export async function registerRoutes(app: Express): Promise<void> {
         return res.status(400).json({ error: "Content or media required" });
       }
 
-      let moderationResult = { isViolation: false, explanation: "", severity: "low" as const };
+      let moderationResult: ModerationResult = { 
+        isViolation: false, 
+        explanation: "", 
+        severity: "low",
+        violationType: null,
+        confidenceScore: 0,
+        suggestedAction: "approve"
+      };
 
       // Check text content
       if (content) {
@@ -4133,7 +4140,7 @@ export async function registerRoutes(app: Express): Promise<void> {
             actionType: "appeal_approved",
             targetUserId: appeal.userId,
             violationId: appeal.violationId,
-            performedById: req.session.userId,
+            performedBy: req.session.userId,
             reason: notes || "Appeal approved - warning removed",
           });
         }
@@ -4153,7 +4160,7 @@ export async function registerRoutes(app: Express): Promise<void> {
           actionType: "appeal_denied",
           targetUserId: appeal.userId,
           violationId: appeal.violationId,
-          performedById: req.session.userId,
+          performedBy: req.session.userId,
           reason: notes || "Appeal denied",
         });
       }

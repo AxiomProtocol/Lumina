@@ -219,10 +219,16 @@ export function isCloudflareConfigured(): boolean {
   return !!(process.env.CLOUDFLARE_ACCOUNT_ID && process.env.CLOUDFLARE_STREAM_API_TOKEN);
 }
 
+export async function getCloudflareStreamStatus(inputId: string): Promise<{ state: string }> {
+  const input = await getCloudflareStreamInput(inputId);
+  return { state: input?.status || "idle" };
+}
+
 export default {
   createCloudflareStreamInput,
   getCloudflareStreamInput,
   deleteCloudflareStreamInput,
   listCloudflareStreamInputs,
   isCloudflareConfigured,
+  getCloudflareStreamStatus,
 };

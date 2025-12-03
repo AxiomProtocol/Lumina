@@ -54,7 +54,7 @@ RESPONSE FORMAT (JSON):
 }
 `;
 
-interface ModerationResult {
+export interface ModerationResult {
   isViolation: boolean;
   violationType: string | null;
   severity: "low" | "medium" | "high" | "critical";

@@ -1448,7 +1448,7 @@ export const fiatOrderStatusEnum = pgEnum("fiat_order_status", ["pending", "proc
 export const adminActionTypeEnum = pgEnum("admin_action_type", [
   "report_reviewed", "user_verified", "user_banned", "content_removed", "badge_issued",
   "user_deleted", "setting_updated", "notification_sent", "email_sent", "chat_sent",
-  "moderation_action", "warning_issued"
+  "moderation_action", "warning_issued", "appeal_reviewed"
 ]);
 
 // ============= ADMIN DASHBOARD =============
