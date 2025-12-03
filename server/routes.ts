@@ -383,9 +383,18 @@ export async function registerRoutes(app: Express): Promise<void> {
         moderationResult = await contentModerationService.analyzeTextContent(content);
       }
 
-      // Check image content if present and no text violation found
-      if (!moderationResult.isViolation && mediaUrl && mediaType === "image") {
-        moderationResult = await contentModerationService.analyzeImageContent(mediaUrl, content);
+      // Check media content if present - always analyze if mediaUrl exists
+      // Don't trust client-provided mediaType
+      if (mediaUrl) {
+        try {
+          const mediaResult = await contentModerationService.analyzeImageContent(mediaUrl, content);
+          // Use media result if it shows a violation (or if no text violation)
+          if (mediaResult.isViolation || !moderationResult.isViolation) {
+            moderationResult = mediaResult;
+          }
+        } catch (mediaError) {
+          console.error("Pre-check media moderation failed:", mediaError);
+        }
       }
 
       res.json({
@@ -412,14 +421,16 @@ export async function registerRoutes(app: Express): Promise<void> {
 
   app.post("/api/posts", requireAuth, async (req, res) => {
     try {
-      const { content, postType, mediaUrl, skipModeration } = req.body;
+      const { content, postType, mediaUrl, mediaType } = req.body;
       
-      // Run moderation check on new posts unless explicitly skipped
+      // Run moderation check on new posts
       let moderationResult = null;
-      if (!skipModeration && content) {
+      
+      // Check text content
+      if (content) {
         moderationResult = await contentModerationService.analyzeTextContent(content);
         
-        // For high/critical severity violations, reject immediately
+        // For high/critical severity text violations, reject immediately
         if (moderationResult.isViolation && 
             (moderationResult.severity === "high" || moderationResult.severity === "critical")) {
           return res.status(400).json({ 
@@ -427,6 +438,34 @@ export async function registerRoutes(app: Express): Promise<void> {
             moderationResult,
             blocked: true
           });
+        }
+      }
+      
+      // Check media content - always analyze if mediaUrl is present
+      // Don't trust client-provided mediaType - analyze all media URLs as potential images
+      let mediaModFailed = false;
+      if (mediaUrl) {
+        try {
+          const mediaResult = await contentModerationService.analyzeImageContent(mediaUrl, content);
+          
+          // For high/critical severity image violations, reject immediately
+          if (mediaResult.isViolation && 
+              (mediaResult.severity === "high" || mediaResult.severity === "critical")) {
+            return res.status(400).json({ 
+              error: "Media content violates community guidelines",
+              moderationResult: mediaResult,
+              blocked: true
+            });
+          }
+          
+          // If no text violation but there's a media violation, use that result
+          if (!moderationResult?.isViolation && mediaResult.isViolation) {
+            moderationResult = mediaResult;
+          }
+        } catch (mediaError) {
+          console.error("Media moderation failed:", mediaError);
+          // Mark for manual review when media moderation fails
+          mediaModFailed = true;
         }
       }
 
@@ -445,6 +484,17 @@ export async function registerRoutes(app: Express): Promise<void> {
           post.id,
           moderationResult,
           content
+        );
+      }
+      
+      // If media moderation failed, add to manual review queue
+      if (mediaModFailed && mediaUrl) {
+        await contentModerationService.addToModerationQueue(
+          post.id,
+          null,
+          req.session.userId!,
+          "post_with_media",
+          2 // Higher priority for media moderation failures
         );
       }
 
