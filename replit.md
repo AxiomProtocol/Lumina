@@ -85,6 +85,13 @@ All contracts are deployed on Arbitrum One (Chain ID: 42161). Source: https://gi
 - **WHITEPAPER.md** - Comprehensive professional whitepaper covering platform vision, architecture, tokenomics, smart contracts, governance, and roadmap
 
 ## Recent Changes
+- **Arbitrum Bridge Integration** (December 2025): Added comprehensive bridge functionality for L1 ↔ L2 asset transfers:
+  - **Bridge Page** (`/bridge`): Full-featured bridge UI with deposit/withdraw tabs, ETH/LUM token selection, gas estimator, transaction tracker, and L1/L2 sync status
+  - **Bridge Modal** (`BridgeModal.tsx`): Quick bridge modal for wallet integration
+  - **Bridge Utilities** (`arbitrumBridge.ts`): Core bridge utilities using ethers v6 API with L1/L2 network configs, bridge contract addresses, gas estimation, and transaction persistence
+  - **Bridge Hook** (`useArbitrumBridge.ts`): React hook for bridge operations including depositETH, withdrawETH, depositToken, withdrawToken, balance tracking, and chain switching
+  - Key files: `client/src/lib/arbitrumBridge.ts`, `client/src/lib/useArbitrumBridge.ts`, `client/src/pages/Bridge.tsx`, `client/src/components/BridgeModal.tsx`
+  - Features: Deposit/withdraw ETH and LUM tokens, gas cost breakdown, pending transaction tracking, L1/L2 sync status display, balance refreshing
 - **Comprehensive Security Hardening** (December 2025): Implemented multiple layers of security:
   - **CSRF Protection**: Double Submit Cookie pattern with timing-safe validation for all state-changing requests
   - **XSS Prevention**: Server-side HTML sanitization using sanitize-html on all user-generated content (posts, comments, messages, profiles, groups)

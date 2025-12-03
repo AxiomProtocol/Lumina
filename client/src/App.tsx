@@ -40,6 +40,7 @@ import Guidelines from "@/pages/Guidelines";
 import BusinessDashboard from "@/pages/BusinessDashboard";
 import Whitepaper from "@/pages/Whitepaper";
 import Treasury from "@/pages/Treasury";
+import Bridge from "@/pages/Bridge";
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { user, isLoading } = useAuth();
@@ -95,6 +96,7 @@ function Router() {
       <Route path="/guidelines" component={Guidelines} />
       <Route path="/whitepaper" component={Whitepaper} />
       <Route path="/treasury" component={Treasury} />
+      <Route path="/bridge" component={Bridge} />
       <Route path="/business" component={() => <ProtectedRoute component={BusinessDashboard} />} />
       <Route path="/settings">
         {() => <ProtectedRoute component={Settings} />}
