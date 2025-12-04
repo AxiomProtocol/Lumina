@@ -133,6 +133,7 @@ export default function Academy() {
   const [enrollingCourse, setEnrollingCourse] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeCourseIds, setActiveCourseIds] = useState<Set<number>>(new Set());
+  const [courseByTitle, setCourseByTitle] = useState<Map<string, CourseInfo>>(new Map());
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -184,6 +185,13 @@ export default function Academy() {
       const activeCourses = courseResults.filter((c): c is CourseInfo => c !== null && c.status === 1);
       setCourses(activeCourses);
       setActiveCourseIds(new Set(activeCourses.map(c => c.courseId)));
+      
+      // Create a map from course title to on-chain course for matching frontend courses
+      const titleMap = new Map<string, CourseInfo>();
+      activeCourses.forEach(course => {
+        titleMap.set(course.title.toLowerCase().trim(), course);
+      });
+      setCourseByTitle(titleMap);
 
     } catch (error) {
       console.error('Failed to fetch academy data:', error);
@@ -233,6 +241,22 @@ export default function Academy() {
       case 3: return "bg-orange-500/10 text-orange-500 border-orange-500/20";
       default: return "bg-muted text-muted-foreground";
     }
+  };
+
+  // Helper to get on-chain course by matching frontend course title
+  const getOnChainCourse = (frontendTitle: string): CourseInfo | undefined => {
+    return courseByTitle.get(frontendTitle.toLowerCase().trim());
+  };
+
+  // Check if a frontend course is active (published on-chain)
+  const isCourseActive = (frontendTitle: string): boolean => {
+    return courseByTitle.has(frontendTitle.toLowerCase().trim());
+  };
+
+  // Check if user is enrolled in a course by its title
+  const isEnrolledByTitle = (frontendTitle: string): boolean => {
+    const onChain = getOnChainCourse(frontendTitle);
+    return onChain ? enrolledCourseIds.includes(onChain.courseId) : false;
   };
 
   const completedTracks = COURSE_CATEGORIES.map(cat => {
@@ -529,37 +553,50 @@ export default function Academy() {
                             View Course
                           </Button>
                         </Link>
-                        {enrolledCourseIds.includes(course.id) ? (
-                          <Button variant="secondary" size="sm" className="w-full" disabled>
-                            <CheckCircle className="h-4 w-4 mr-2" />
-                            Enrolled
-                          </Button>
-                        ) : activeCourseIds.has(course.id) ? (
-                          <Button 
-                            size="sm"
-                            className="w-full" 
-                            onClick={() => handleEnroll(course.id)}
-                            disabled={enrollingCourse === course.id || !isConnected}
-                            data-testid={`button-enroll-${course.id}`}
-                          >
-                            {enrollingCourse === course.id ? (
-                              <>
-                                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                                Enrolling...
-                              </>
-                            ) : (
-                              <>
-                                <Play className="h-4 w-4 mr-2" />
-                                Start Course
-                              </>
-                            )}
-                          </Button>
-                        ) : (
-                          <Button variant="secondary" size="sm" className="w-full" disabled>
-                            <Clock className="h-4 w-4 mr-2" />
-                            Coming Soon
-                          </Button>
-                        )}
+                        {(() => {
+                          const onChainCourse = getOnChainCourse(course.title);
+                          const isActive = isCourseActive(course.title);
+                          const isEnrolled = isEnrolledByTitle(course.title);
+                          const courseIdForEnroll = onChainCourse?.courseId;
+                          
+                          if (isEnrolled) {
+                            return (
+                              <Button variant="secondary" size="sm" className="w-full" disabled>
+                                <CheckCircle className="h-4 w-4 mr-2" />
+                                Enrolled
+                              </Button>
+                            );
+                          } else if (isActive && courseIdForEnroll) {
+                            return (
+                              <Button 
+                                size="sm"
+                                className="w-full" 
+                                onClick={() => handleEnroll(courseIdForEnroll)}
+                                disabled={enrollingCourse === courseIdForEnroll || !isConnected}
+                                data-testid={`button-enroll-${course.id}`}
+                              >
+                                {enrollingCourse === courseIdForEnroll ? (
+                                  <>
+                                    <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                                    Enrolling...
+                                  </>
+                                ) : (
+                                  <>
+                                    <Play className="h-4 w-4 mr-2" />
+                                    Start Course
+                                  </>
+                                )}
+                              </Button>
+                            );
+                          } else {
+                            return (
+                              <Button variant="secondary" size="sm" className="w-full" disabled>
+                                <Clock className="h-4 w-4 mr-2" />
+                                Coming Soon
+                              </Button>
+                            );
+                          }
+                        })()}
                       </CardFooter>
                       <div className="px-4 pb-4">
                         <div className="flex items-center gap-2 text-xs">
@@ -625,33 +662,46 @@ export default function Academy() {
                                   View
                                 </Button>
                               </Link>
-                              {enrolledCourseIds.includes(course.id) ? (
-                                <Button variant="secondary" size="sm" disabled>
-                                  <CheckCircle className="h-4 w-4 mr-2" />
-                                  Enrolled
-                                </Button>
-                              ) : activeCourseIds.has(course.id) ? (
-                                <Button 
-                                  size="sm"
-                                  onClick={() => handleEnroll(course.id)}
-                                  disabled={enrollingCourse === course.id || !isConnected}
-                                  data-testid={`button-enroll-${course.id}`}
-                                >
-                                  {enrollingCourse === course.id ? (
-                                    <RefreshCw className="h-4 w-4 animate-spin" />
-                                  ) : (
-                                    <>
-                                      <Play className="h-4 w-4 mr-2" />
-                                      Start
-                                    </>
-                                  )}
-                                </Button>
-                              ) : (
-                                <Button variant="secondary" size="sm" disabled>
-                                  <Clock className="h-4 w-4 mr-1" />
-                                  Soon
-                                </Button>
-                              )}
+                              {(() => {
+                                const onChainCourse = getOnChainCourse(course.title);
+                                const isActive = isCourseActive(course.title);
+                                const isEnrolled = isEnrolledByTitle(course.title);
+                                const courseIdForEnroll = onChainCourse?.courseId;
+                                
+                                if (isEnrolled) {
+                                  return (
+                                    <Button variant="secondary" size="sm" disabled>
+                                      <CheckCircle className="h-4 w-4 mr-2" />
+                                      Enrolled
+                                    </Button>
+                                  );
+                                } else if (isActive && courseIdForEnroll) {
+                                  return (
+                                    <Button 
+                                      size="sm"
+                                      onClick={() => handleEnroll(courseIdForEnroll)}
+                                      disabled={enrollingCourse === courseIdForEnroll || !isConnected}
+                                      data-testid={`button-enroll-${course.id}`}
+                                    >
+                                      {enrollingCourse === courseIdForEnroll ? (
+                                        <RefreshCw className="h-4 w-4 animate-spin" />
+                                      ) : (
+                                        <>
+                                          <Play className="h-4 w-4 mr-2" />
+                                          Start
+                                        </>
+                                      )}
+                                    </Button>
+                                  );
+                                } else {
+                                  return (
+                                    <Button variant="secondary" size="sm" disabled>
+                                      <Clock className="h-4 w-4 mr-1" />
+                                      Soon
+                                    </Button>
+                                  );
+                                }
+                              })()}
                             </div>
                           </div>
                         </div>
