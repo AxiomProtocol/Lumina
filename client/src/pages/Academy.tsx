@@ -117,7 +117,7 @@ const PLATFORM_UNLOCKS = [
 
 export default function Academy() {
   const { toast } = useToast();
-  const { isConnected, address } = useWallet();
+  const { isConnected, address, connect } = useWallet();
   const academy = useAcademyContract();
   
   const [totalCourses, setTotalCourses] = useState<number>(0);
@@ -711,7 +711,12 @@ export default function Academy() {
                 Connect your wallet to start learning, earning XP, and collecting on-chain certificates 
                 that unlock exclusive platform features.
               </p>
-              <Button size="lg" className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600">
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600"
+                onClick={() => connect()}
+                data-testid="button-connect-wallet"
+              >
                 <Wallet className="h-5 w-5 mr-2" />
                 Connect Wallet to Start
               </Button>
