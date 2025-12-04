@@ -9835,7 +9835,62 @@ You now understand:
           "Purpose statement crafting",
           "Niche vs broad focus",
           "Differentiating your group"
-        ]
+        ],
+        content: `## Starting With Purpose
+
+Great groups begin with a clear "why."
+
+### Purpose Statement Crafting
+
+**What's Your Group About?**
+Not just the topic—the deeper purpose.
+
+**Good Purpose Statements**:
+- "Helping Web3 creators succeed together"
+- "A supportive space for new NFT artists"
+- "Daily accountability for content creators"
+
+**Weak Purpose Statements**:
+- "Crypto stuff"
+- "For creators"
+- "Community"
+
+**Framework for Purpose**:
+"We help [who] achieve [what] by [how]"
+
+### Niche vs Broad Focus
+
+**Niche Groups**:
+- Specific audience
+- Deep expertise
+- Strong identity
+- Easier to find your people
+- Example: "Lumina Video Creators"
+
+**Broad Groups**:
+- Wide appeal
+- More members potential
+- Less focused discussion
+- Harder to maintain culture
+- Example: "Lumina Community"
+
+**Recommendation**: Start niche, expand if needed.
+
+### Differentiating Your Group
+
+**Why Your Group?**
+- What makes it unique?
+- Why join yours vs others?
+- What can't members get elsewhere?
+
+**Differentiation Ideas**:
+- Exclusive access
+- Unique format
+- Specific focus
+- Community culture
+- Expert leadership
+
+🔥 **Action Step**: Write your group's purpose statement in one sentence.`
       },
       {
         id: 2,
@@ -9846,7 +9901,61 @@ You now understand:
           "Group settings optimization",
           "Welcome message creation",
           "Initial content seeding"
-        ]
+        ],
+        content: `## First Impressions Matter
+
+Set up your group to welcome members warmly.
+
+### Group Settings Optimization
+
+**Essential Settings**:
+- Clear group name
+- Compelling description
+- Relevant category
+- Appropriate visibility (public/private)
+- Join requirements
+
+**Profile Elements**:
+- Banner image (branded)
+- Group avatar
+- Pinned welcome post
+- Rules easily visible
+
+### Welcome Message Creation
+
+**What New Members See**:
+Immediate welcome sets the tone.
+
+**Good Welcome Message Elements**:
+1. Warm greeting
+2. Group purpose reminder
+3. How to get started
+4. First action to take
+5. Where to get help
+
+**Example**:
+"Welcome to [Group]! We're so glad you're here. Start by introducing yourself in the Introductions thread. Check out our pinned Resources post for tips. If you have questions, just ask—we're a helpful bunch!"
+
+### Initial Content Seeding
+
+**Before Inviting Members**:
+- 5-10 quality posts already there
+- Conversation starters
+- Resource posts
+- Example of good content
+
+**Why This Matters**:
+Empty groups feel dead.
+Seeded content shows what's expected.
+
+**Seed Content Ideas**:
+- Introduction (you start)
+- Discussion question
+- Resource compilation
+- Group FAQ
+- Success story
+
+🔥 **Action Step**: Create your welcome message and 5 seed posts before inviting members.`
       },
       {
         id: 3,
@@ -9857,7 +9966,64 @@ You now understand:
           "Cultural values definition",
           "Modeling behavior",
           "Ritual and tradition creation"
-        ]
+        ],
+        content: `## Building Deliberate Culture
+
+Culture happens whether you plan it or not. Plan it.
+
+### Cultural Values Definition
+
+**What Culture Do You Want?**
+- Supportive? Competitive?
+- Casual? Professional?
+- Focused? Free-flowing?
+- Beginner-friendly? Expert-level?
+
+**Define 3-5 Core Values**:
+Example values:
+- Be helpful first
+- Celebrate others' wins
+- Share knowledge freely
+- Constructive feedback only
+- No gatekeeping
+
+### Modeling Behavior
+
+**You Set the Tone**:
+- How you post = how they post
+- How you respond = how they respond
+- What you celebrate = what they value
+
+**Leadership Behaviors**:
+- Respond to every new member
+- Acknowledge quality contributions
+- Handle conflicts publicly (when appropriate)
+- Admit mistakes openly
+
+**Consistency Matters**:
+Do it every day, not occasionally.
+
+### Ritual and Tradition Creation
+
+**Recurring Events**:
+- Weekly discussion threads
+- Monthly challenges
+- Regular AMAs
+- Milestone celebrations
+
+**Examples**:
+- "Win Wednesday" - share wins
+- "Feedback Friday" - critique each other
+- Monthly member spotlight
+- Anniversary celebrations
+
+**Why Rituals Work**:
+- Creates anticipation
+- Builds habit
+- Strengthens bonds
+- Defines identity
+
+🔥 **Action Step**: Define your 3 core values. Create one weekly ritual.`
       },
       {
         id: 4,
@@ -9868,7 +10034,73 @@ You now understand:
           "Promotion strategies",
           "Member vetting",
           "Referral encouragement"
-        ]
+        ],
+        content: `## Quality Growth
+
+The right members matter more than many members.
+
+### Promotion Strategies
+
+**Where to Promote**:
+- Your main content
+- Other groups (carefully)
+- Social platforms
+- Direct invitations
+- Partner collaborations
+
+**How to Promote**:
+- Show value, not just "join us"
+- Share group wins and moments
+- Member testimonials
+- Exclusive teasers
+
+**Organic Growth**:
+Great content spreads naturally.
+Focus on making the group valuable.
+
+### Member Vetting
+
+**Why Vet Members**:
+- Protect culture
+- Ensure quality
+- Keep out bad actors
+
+**Vetting Methods**:
+- Application questions
+- Approval process
+- Referral requirements
+- Trial periods
+
+**Application Questions**:
+- Why do you want to join?
+- What will you contribute?
+- How did you find us?
+
+### Referral Encouragement
+
+**Member-Driven Growth**:
+Best members come from other members.
+
+**Encourage Referrals**:
+- Ask directly
+- Make it easy (share link)
+- Recognize referrers
+- Create referral events
+
+**Quality Control**:
+"Invite people who you'd want to see succeed here."
+
+### Growth Pace
+
+**Sustainable Growth**:
+- Too fast = culture loss
+- Too slow = stagnation
+- Right pace = strong foundation
+
+**Guideline**:
+Grow at a rate where you can welcome each new member personally.
+
+🔥 **Action Step**: Identify 10 specific people you'd love to have in your group. Invite them personally.`
       },
       {
         id: 5,
@@ -9879,7 +10111,71 @@ You now understand:
           "Discussion prompts",
           "Regular events",
           "Member spotlights"
-        ]
+        ],
+        content: `## Keeping Members Active
+
+Engaged members stay. Here's how to keep them participating.
+
+### Discussion Prompts
+
+**Good Prompts**:
+- Easy to answer
+- Relevant to members
+- Invite personal sharing
+- Open-ended
+
+**Prompt Examples**:
+- "What's your biggest challenge this week?"
+- "Share a win from the last 7 days"
+- "What's one thing you learned recently?"
+- "Hot take: [topic opinion]"
+
+**Prompt Cadence**:
+At least one per day keeps activity going.
+
+### Regular Events
+
+**Event Types**:
+- Live Q&A sessions
+- Workshops/trainings
+- Challenges (7-day, 30-day)
+- Competitions
+- Collaborative projects
+
+**Event Schedule**:
+Weekly: At least one event
+Monthly: Special event or challenge
+Quarterly: Big community moment
+
+### Member Spotlights
+
+**Why Spotlights**:
+- Recognizes contributors
+- Creates aspirational examples
+- Builds connections
+- Encourages participation
+
+**How to Spotlight**:
+- Feature member's work
+- Interview format
+- Success story shares
+- Behind-the-scenes
+
+### Engagement Tactics
+
+**Quick Wins**:
+- Reply to every post
+- Ask follow-up questions
+- Tag relevant members
+- Create reaction culture
+
+**Gamification**:
+- Points for participation
+- Levels and badges
+- Leaderboards
+- Rewards for activity
+
+🔥 **Action Step**: Plan next week's discussion prompts. Schedule one event.`
       },
       {
         id: 6,
@@ -9890,7 +10186,69 @@ You now understand:
           "Rules and enforcement",
           "Warning systems",
           "Ban decisions"
-        ]
+        ],
+        content: `## Fair and Consistent Moderation
+
+Good moderation protects the community.
+
+### Rules and Enforcement
+
+**Clear Rules**:
+- Written explicitly
+- Examples included
+- Consequences stated
+- Easy to find
+
+**Core Rules Every Group Needs**:
+1. Be respectful
+2. Stay on topic
+3. No spam/self-promotion (unless allowed)
+4. No harassment
+5. Follow platform guidelines
+
+**Enforcement Principles**:
+- Consistent application
+- Fair treatment
+- Document decisions
+- Explain actions
+
+### Warning Systems
+
+**Progressive Discipline**:
+1. Private reminder
+2. Official warning
+3. Temporary restriction
+4. Removal
+
+**Warning Format**:
+"Hi [Name], your post/comment violated [rule]. Please [action needed]. This is a [first/second] warning. Questions? DM me."
+
+**Documentation**:
+Keep records of warnings.
+Helps with consistency and appeals.
+
+### Ban Decisions
+
+**When to Ban**:
+- Repeated violations after warnings
+- Severe violations (no warning needed)
+- Bad faith participation
+- Harassment
+
+**Types of Bans**:
+- Temporary (cooldown period)
+- Permanent (no return)
+- Shadow (see but can't post)
+
+**Ban Communication**:
+Explain why clearly.
+Leave door open for appeal if appropriate.
+
+**Hard Decisions**:
+Sometimes popular members break rules.
+Apply rules fairly regardless.
+
+🔥 **Action Step**: Write your group rules. Include examples for clarity.`
       },
       {
         id: 7,
@@ -9901,7 +10259,67 @@ You now understand:
           "Mod recruitment",
           "Training and guidelines",
           "Mod communication"
-        ]
+        ],
+        content: `## Building Your Team
+
+You'll need help as the group grows.
+
+### Mod Recruitment
+
+**When to Add Mods**:
+- 50+ active members
+- You can't respond timely
+- Different time zones needed
+- Specialized topics
+
+**Who Makes Good Mods**:
+- Active, positive members
+- Good judgment
+- Available time
+- Aligned with values
+- Conflict management skills
+
+**How to Recruit**:
+- Watch for natural leaders
+- Invite specifically (don't post openly)
+- Trial period first
+- Start with limited permissions
+
+### Training and Guidelines
+
+**Mod Guidelines Document**:
+- How to handle situations
+- What decisions they can make
+- When to escalate
+- Communication standards
+
+**Training Process**:
+1. Share guidelines
+2. Walk through examples
+3. Shadow period
+4. Gradual responsibility
+5. Regular check-ins
+
+**Decision Framework**:
+- Minor issues: Handle independently
+- Medium issues: Consult before action
+- Major issues: Escalate to you
+
+### Mod Communication
+
+**Stay Connected**:
+- Private mod channel
+- Regular mod meetings
+- Shared documentation
+- Quick response expectations
+
+**Mod Appreciation**:
+- Thank them regularly
+- Recognize contributions
+- Give perks when possible
+- Listen to their feedback
+
+🔥 **Action Step**: Identify 2-3 potential mods from your most engaged members.`
       },
       {
         id: 8,
@@ -9912,7 +10330,82 @@ You now understand:
           "Preventing stagnation",
           "Evolving with members",
           "Leadership succession"
-        ]
+        ],
+        content: `## Long-Term Community Health
+
+Groups die slowly if not maintained. Keep yours thriving.
+
+### Preventing Stagnation
+
+**Signs of Stagnation**:
+- Decreasing activity
+- Same people posting
+- Repetitive content
+- Member complaints
+
+**Prevention Strategies**:
+- Regular new content formats
+- Fresh topics and themes
+- New member integration
+- Periodic reinvention
+
+**Shake Things Up**:
+- New recurring events
+- Community challenges
+- Collaborations with other groups
+- Member-led initiatives
+
+### Evolving with Members
+
+**Members Change**:
+- Beginners become experts
+- Interests shift
+- Needs evolve
+
+**How to Evolve**:
+- Regular member surveys
+- Watch for new needs
+- Adapt offerings
+- Add new tracks/topics
+
+**Don't Be Afraid to Pivot**:
+If the group needs to change, change it.
+Better than dying slowly.
+
+### Leadership Succession
+
+**You Won't Lead Forever**:
+- Burnout happens
+- Life changes
+- Opportunities arise
+
+**Build Leaders**:
+- Delegate real responsibility
+- Develop mod skills
+- Share leadership publicly
+- Create succession plan
+
+**Succession Planning**:
+- Identify potential leaders
+- Give them increasing authority
+- Document everything
+- Prepare for transition
+
+### Congratulations!
+
+You've completed "Leading Groups"!
+
+You now understand:
+- Purpose-driven creation
+- Setting up for success
+- Building culture
+- Growing membership
+- Driving engagement
+- Effective moderation
+- Building teams
+- Long-term sustainability
+
+🔥 **Final Action Step**: Create your group launch plan. Set a date to go live.`
       }
     ]
   },
@@ -9942,7 +10435,65 @@ You now understand:
           "Values alignment",
           "Audience interest mapping",
           "Cause research"
-        ]
+        ],
+        content: `## Finding Your Cause
+
+Use your platform for good. Start with what matters to you.
+
+### Values Alignment
+
+**Start With You**:
+- What issues keep you up at night?
+- What changes do you want to see?
+- What are you naturally passionate about?
+
+**Authentic Connection**:
+- You'll talk about it more
+- Your passion shows through
+- More sustainable long-term
+- Audience trusts authenticity
+
+**Avoid**:
+- Causes just because they're popular
+- Issues you don't understand
+- Performative activism
+
+### Audience Interest Mapping
+
+**What Does Your Audience Care About?**
+- Poll them directly
+- Watch what they engage with
+- Read their comments
+- Notice their concerns
+
+**Overlap Zone**:
+Your passions ∩ Their interests = Maximum impact
+
+**Example**:
+You care about: Education access
+Your audience cares about: Web3 opportunities
+Overlap: Web3 education for underserved communities
+
+### Cause Research
+
+**Before You Advocate**:
+- Understand the issue deeply
+- Know the organizations working on it
+- Learn from those affected
+- Understand counterarguments
+
+**Research Sources**:
+- Academic research
+- Nonprofit reports
+- Affected community voices
+- Expert interviews
+
+**Red Flags**:
+- Organizations with overhead problems
+- Causes with unclear goals
+- Issues where your voice isn't needed
+
+🔥 **Action Step**: List 3 causes you care about. Research one deeply this week.`
       },
       {
         id: 2,
@@ -9953,7 +10504,72 @@ You now understand:
           "Storytelling for impact",
           "Facts and emotion balance",
           "Call to action design"
-        ]
+        ],
+        content: `## Creating Impactful Content
+
+Change minds and inspire action through content.
+
+### Storytelling for Impact
+
+**Story > Statistics**:
+"One person's story" beats "millions affected"
+Statistics inform, stories move.
+
+**Story Structure**:
+1. Person/situation (relatable)
+2. Challenge/problem
+3. Impact on them
+4. What could change
+5. Call to action
+
+**Whose Story?**:
+- Affected individuals (with permission)
+- Your own connection
+- Community voices
+
+### Facts and Emotion Balance
+
+**Both Matter**:
+- Facts build credibility
+- Emotion drives action
+- Together = persuasion
+
+**Formula**:
+Hook with emotion → Support with facts → Close with emotion
+
+**Fact Presentation**:
+- Cite sources
+- Use visuals
+- Make numbers relatable
+- Context matters
+
+**Emotional Elements**:
+- Personal stories
+- Visual imagery
+- Music and tone
+- Direct address
+
+### Call to Action Design
+
+**Clear Actions**:
+- What specifically should they do?
+- Make it easy
+- One primary action
+- Immediate if possible
+
+**Action Types**:
+- Donate (direct impact)
+- Share (spread awareness)
+- Sign (petition/pledge)
+- Learn (education)
+- Volunteer (time)
+
+**Good CTA Examples**:
+- "Donate $5 to [org] today"
+- "Share this with 3 friends"
+- "Learn more at [link]"
+
+🔥 **Action Step**: Create one piece of advocacy content with a clear call to action.`
       },
       {
         id: 3,
@@ -9964,7 +10580,71 @@ You now understand:
           "Finding partners",
           "Collaboration structures",
           "Maintaining authenticity"
-        ]
+        ],
+        content: `## Working With Organizations
+
+Partnerships amplify your impact.
+
+### Finding Partners
+
+**Types of Partners**:
+- Established nonprofits
+- Grassroots organizations
+- Social enterprises
+- Other creators
+
+**How to Find Them**:
+- Research organizations in your cause area
+- Ask your audience for recommendations
+- Attend events (virtual or IRL)
+- Look for local chapters
+
+**Vetting Organizations**:
+- Check Charity Navigator ratings
+- Review their financials
+- Talk to people they serve
+- Understand their approach
+
+### Collaboration Structures
+
+**Partnership Types**:
+- Awareness campaigns
+- Fundraising drives
+- Volunteer promotion
+- Content collaboration
+- Ambassador programs
+
+**What You Offer**:
+- Audience reach
+- Content creation skills
+- Community engagement
+- Fresh perspectives
+
+**What They Offer**:
+- Credibility
+- Resources and information
+- Access to stories
+- Official backing
+
+### Maintaining Authenticity
+
+**Stay True**:
+- Only partner with aligned organizations
+- Maintain editorial independence
+- Be transparent about relationships
+- Don't compromise your voice
+
+**Disclosure**:
+Always disclose partnerships.
+Your audience deserves honesty.
+
+**When to Say No**:
+- Misaligned values
+- Poor reputation
+- Restricting content
+- Feels transactional
+
+🔥 **Action Step**: Reach out to one organization you admire. Express interest in collaboration.`
       },
       {
         id: 4,
@@ -9975,7 +10655,67 @@ You now understand:
           "Campaign design",
           "Goal setting",
           "Transparency and trust"
-        ]
+        ],
+        content: `## Fundraising That Works
+
+Turn your influence into donations.
+
+### Campaign Design
+
+**Campaign Elements**:
+- Clear cause explanation
+- Specific funding need
+- Timeline
+- Progress tracking
+- Thank you plan
+
+**Campaign Types**:
+- One-time fundraisers
+- Ongoing support drives
+- Emergency response
+- Matching campaigns
+- Birthday fundraisers
+
+### Goal Setting
+
+**Right-Sized Goals**:
+- Achievable but ambitious
+- Based on audience size
+- Specific use of funds
+- Stretch goals for momentum
+
+**Goal Framework**:
+| Audience Size | Realistic Goal |
+|--------------|----------------|
+| 1,000 | $500-1,000 |
+| 10,000 | $5,000-10,000 |
+| 100,000 | $50,000+ |
+
+**Milestones**:
+Break big goals into smaller wins.
+Celebrate each milestone publicly.
+
+### Transparency and Trust
+
+**Be Transparent About**:
+- Where money goes
+- Who receives it
+- Your relationship to cause
+- Any compensation you receive
+
+**Building Trust**:
+- Show receipts/proof
+- Update on progress
+- Thank donors publicly
+- Report on impact
+
+**After Campaign**:
+- Report total raised
+- Show how it was used
+- Share impact stories
+- Thank everyone again
+
+🔥 **Action Step**: Plan a small fundraiser ($500 goal). Identify the cause and organization.`
       },
       {
         id: 5,
@@ -9986,7 +10726,66 @@ You now understand:
           "Trigger warnings and sensitivity",
           "Fact-checking importance",
           "Avoiding harm"
-        ]
+        ],
+        content: `## Navigating Sensitive Issues
+
+Some topics need extra care. Here's how to handle them responsibly.
+
+### Trigger Warnings and Sensitivity
+
+**When to Use Warnings**:
+- Content about trauma
+- Graphic imagery
+- Distressing topics
+- Personal disclosures
+
+**How to Warn**:
+"Content warning: This discusses [topic]. Take care of yourself."
+
+**Presentation Considerations**:
+- Allow people to opt out
+- Don't surprise with graphic content
+- Consider timing
+- Provide resources
+
+### Fact-Checking Importance
+
+**Why It Matters More**:
+- Sensitive topics = higher stakes
+- Misinformation causes harm
+- Credibility essential
+
+**Fact-Checking Process**:
+1. Verify claims from multiple sources
+2. Check source credibility
+3. Consult experts when possible
+4. Update if you get it wrong
+
+**When Unsure**:
+Say "I'm still learning about this"
+Better than spreading misinformation.
+
+### Avoiding Harm
+
+**Potential Harms**:
+- Triggering trauma
+- Spreading misinformation
+- Exploitation of suffering
+- Speaking over affected people
+
+**Harm Reduction**:
+- Center affected voices
+- Provide resources
+- Consider impact
+- Accept feedback gracefully
+
+**If You Make a Mistake**:
+- Acknowledge it
+- Apologize sincerely
+- Correct the record
+- Learn and improve
+
+🔥 **Action Step**: Identify one sensitive topic you might cover. Research how to discuss it responsibly.`
       },
       {
         id: 6,
@@ -9997,7 +10796,76 @@ You now understand:
           "Impact metrics",
           "Reporting to supporters",
           "Celebrating wins"
-        ]
+        ],
+        content: `## Tracking Your Impact
+
+Show the difference you've made.
+
+### Impact Metrics
+
+**What to Track**:
+- Money raised
+- Awareness reach (views, shares)
+- Actions taken (donations, sign-ups)
+- Direct outcomes
+
+**Beyond Numbers**:
+- Stories of change
+- Qualitative feedback
+- Community responses
+- Long-term shifts
+
+**Creating Dashboard**:
+Track metrics over time.
+Show progress visually.
+
+### Reporting to Supporters
+
+**Regular Updates**:
+- Campaign progress
+- How funds were used
+- Stories from beneficiaries
+- What's next
+
+**Report Format**:
+- Simple and visual
+- Honest about challenges
+- Celebratory of wins
+- Forward-looking
+
+**When to Report**:
+- End of campaigns
+- Major milestones
+- Quarterly/annually
+- After significant events
+
+### Celebrating Wins
+
+**Why Celebrate**:
+- Maintains momentum
+- Thanks supporters
+- Shows impact is real
+- Inspires continued action
+
+**Celebration Ideas**:
+- Public thank you posts
+- Sharing impact stories
+- Milestone announcements
+- Community recognition
+
+### Congratulations!
+
+You've completed "Positive Impact"!
+
+You now understand:
+- Finding your cause
+- Creating advocacy content
+- Building partnerships
+- Fundraising effectively
+- Handling sensitive topics
+- Measuring impact
+
+🔥 **Final Action Step**: Commit to one cause. Create your first piece of advocacy content.`
       }
     ]
   },
@@ -10027,7 +10895,60 @@ You now understand:
           "Ambassador responsibilities",
           "Impact of good ambassadors",
           "Recognition and rewards"
-        ]
+        ],
+        content: `## Becoming an Ambassador
+
+Ambassadors are the heart of community support.
+
+### Ambassador Responsibilities
+
+**What Ambassadors Do**:
+- Welcome new users
+- Answer questions
+- Share knowledge
+- Report issues
+- Model positive behavior
+
+**Daily Activities**:
+- Monitor community channels
+- Help lost users
+- Share tips and resources
+- Celebrate member wins
+- Flag problems to team
+
+**Time Commitment**:
+A few hours per week makes a difference.
+Quality over quantity.
+
+### Impact of Good Ambassadors
+
+**Why Ambassadors Matter**:
+- First human contact for new users
+- Reduce support burden
+- Create welcoming atmosphere
+- Catch problems early
+
+**Success Stories**:
+- "An ambassador helped me in my first hour"
+- "I almost left, but someone welcomed me"
+- "Made my first friend through an ambassador"
+
+**The Ripple Effect**:
+Help one person → They help others → Community grows stronger
+
+### Recognition and Rewards
+
+**Ambassador Perks**:
+- Special badge on profile
+- Access to ambassador channel
+- Early feature previews
+- Platform recognition
+- AXM rewards for activity
+
+**Growth Path**:
+Ambassador → Senior Ambassador → Community Lead
+
+🔥 **Action Step**: Decide if ambassadorship fits you. Apply if ready.`
       },
       {
         id: 2,
@@ -10038,7 +10959,62 @@ You now understand:
           "Welcome message templates",
           "Orientation guidance",
           "Common new user struggles"
-        ]
+        ],
+        content: `## Welcoming New Members
+
+The first moments matter most.
+
+### Welcome Message Templates
+
+**Basic Welcome**:
+"Hey [Name], welcome to Lumina! Great to have you here. Let me know if you have any questions!"
+
+**Helpful Welcome**:
+"Welcome [Name]! Start by completing your profile and making your first post. Here's a quick guide: [link]. I'm here if you need help!"
+
+**Personalized Welcome**:
+"Hey [Name], I see you're into [interest from profile]. You'll fit right in! Check out [relevant group/content]. Welcome!"
+
+**Key Elements**:
+- Use their name
+- Be warm and genuine
+- Offer specific help
+- Keep it brief
+
+### Orientation Guidance
+
+**First Steps to Share**:
+1. Complete your profile
+2. Connect your wallet
+3. Make your first post
+4. Follow some creators
+5. Join a group
+
+**Resources to Share**:
+- Getting started guide
+- FAQ page
+- Popular content to follow
+- Relevant groups
+
+### Common New User Struggles
+
+**Frequent Issues**:
+- Wallet connection problems
+- Confused by features
+- Don't know what to post
+- Feel overwhelmed
+
+**How to Help**:
+- Step-by-step guidance
+- Link to resources
+- Offer to answer questions
+- Be patient
+
+**Remember**:
+What's obvious to you isn't to them.
+Assume zero prior knowledge.
+
+🔥 **Action Step**: Write 3 welcome message variations you can use.`
       },
       {
         id: 3,
@@ -10049,7 +11025,64 @@ You now understand:
           "Common questions database",
           "When to escalate",
           "Teaching vs telling"
-        ]
+        ],
+        content: `## Being a Helpful Resource
+
+Accurate, kind answers build trust.
+
+### Common Questions Database
+
+**Know These Answers**:
+- How do I connect my wallet?
+- How do I earn AXM?
+- How do rewards work?
+- How do I create a post?
+- How do I join groups?
+
+**Build Your Knowledge**:
+- Bookmark FAQ and help pages
+- Save common answer templates
+- Stay updated on platform changes
+- Test features yourself
+
+### When to Escalate
+
+**Handle Yourself**:
+- Basic how-to questions
+- Feature explanations
+- General guidance
+- Navigation help
+
+**Escalate to Support**:
+- Technical bugs
+- Account issues
+- Payment problems
+- Security concerns
+- Policy violations
+
+**How to Escalate**:
+"I'll connect you with our support team who can help with this. [Tag support or provide link]"
+
+### Teaching vs Telling
+
+**Telling**:
+"Click Settings, then Profile, then Edit."
+- Quick but doesn't teach
+
+**Teaching**:
+"Look for the gear icon (Settings). From there, you can customize everything about your profile. Try it and let me know what you find!"
+- Builds understanding
+
+**When to Use Each**:
+- Simple questions: Tell
+- Complex questions: Teach
+- Repeat questions: Teach (so they learn)
+
+**Patience Matters**:
+Some people need more help.
+Never make them feel dumb.
+
+🔥 **Action Step**: Learn answers to the 10 most common questions. Practice explaining them simply.`
       },
       {
         id: 4,
@@ -10060,7 +11093,64 @@ You now understand:
           "Staying calm",
           "Empathetic responses",
           "When to step back"
-        ]
+        ],
+        content: `## Handling Difficult Situations
+
+Conflicts happen. Handle them gracefully.
+
+### Staying Calm
+
+**Your State Matters**:
+Calm person = Calm conversation
+Agitated person = Escalation
+
+**Staying Centered**:
+- Breathe before responding
+- Take time to think
+- Don't take it personally
+- Remember: they're frustrated, not attacking you
+
+**Signs You Need a Break**:
+- Feeling defensive
+- Wanting to "win"
+- Getting angry
+- Typing in ALL CAPS
+
+### Empathetic Responses
+
+**The Magic Formula**:
+Acknowledge → Empathize → Help
+
+**Example**:
+Upset user: "This platform is broken! Nothing works!"
+
+Bad response: "It works fine for everyone else."
+
+Good response: "I can hear you're frustrated. That's really annoying when things don't work as expected. Let me help you figure out what's happening."
+
+**Phrases That Help**:
+- "I understand that's frustrating"
+- "I'd feel the same way"
+- "Let's figure this out together"
+- "Thank you for your patience"
+
+### When to Step Back
+
+**Recognize These Signs**:
+- Conversation going in circles
+- Personal attacks starting
+- No progress being made
+- You're losing your cool
+
+**How to Step Back**:
+- "I want to make sure you get the right help. Let me bring in [someone else]."
+- "I'm going to step away briefly, but I'll make sure someone assists you."
+
+**It's Okay to Tag Out**:
+You don't have to handle everything.
+Getting help is smart, not weak.
+
+🔥 **Action Step**: Practice the Acknowledge → Empathize → Help formula with three scenarios.`
       },
       {
         id: 5,
@@ -10071,7 +11161,78 @@ You now understand:
           "Brand alignment",
           "Constructive feedback",
           "Public vs private communication"
-        ]
+        ],
+        content: `## Being a Community Face
+
+You represent us. Do it well.
+
+### Brand Alignment
+
+**Know the Values**:
+- Positivity
+- Helpfulness
+- Web3 education
+- Creator empowerment
+- Community first
+
+**Reflect These in**:
+- How you communicate
+- What content you create
+- How you help others
+- Your public presence
+
+**Not Required**:
+- Being perfect
+- Only positive feedback
+- Abandoning your personality
+
+### Constructive Feedback
+
+**Giving Platform Feedback**:
+- Be specific
+- Suggest solutions
+- Use appropriate channels
+- Be constructive, not destructive
+
+**Example**:
+Bad: "This feature is stupid"
+Good: "I've noticed [feature] could work better if [suggestion]. What do you think?"
+
+**Handling User Complaints**:
+- Acknowledge the issue
+- Report to appropriate team
+- Follow up if possible
+
+### Public vs Private Communication
+
+**Public**:
+- Formal and helpful
+- Solution-focused
+- Representative of community
+
+**Private**:
+- Can be more casual
+- Deeper troubleshooting
+- More personal connection
+
+**When to Go Private**:
+- Sensitive issues
+- Personal information needed
+- Extended troubleshooting
+- Conflict resolution
+
+### Congratulations!
+
+You've completed "Volunteer Training"!
+
+You now understand:
+- Ambassador responsibilities
+- Welcoming newcomers
+- Answering questions
+- De-escalation skills
+- Representing community
+
+🔥 **Final Action Step**: Apply to become an ambassador. Start helping one person per day.`
       }
     ]
   },
@@ -10101,7 +11262,60 @@ You now understand:
           "Core guidelines",
           "Prohibited content types",
           "Consequence tiers"
-        ]
+        ],
+        content: `## Understanding Community Guidelines
+
+Rules keep everyone safe. Here's what you need to know.
+
+### Core Guidelines
+
+**The Basics**:
+1. **Be Respectful**: Treat everyone with dignity
+2. **Be Honest**: No deception or fraud
+3. **Be Safe**: Don't endanger yourself or others
+4. **Be Legal**: Follow laws and regulations
+5. **Be Authentic**: Be yourself, not someone else
+
+**Golden Rule**:
+Treat others as you'd want to be treated.
+When in doubt, don't post.
+
+### Prohibited Content Types
+
+**Absolutely Not Allowed**:
+- Hate speech and discrimination
+- Harassment and bullying
+- Violent or graphic content
+- Sexual/explicit content
+- Fraud and scams
+- Copyright infringement
+- Illegal activities
+- Doxxing/private info sharing
+
+**Crypto-Specific Rules**:
+- No pump and dump schemes
+- No financial fraud
+- No wallet draining attempts
+- No fake giveaways
+
+### Consequence Tiers
+
+**How Violations Are Handled**:
+
+| Severity | Example | Consequence |
+|----------|---------|-------------|
+| Minor | Off-topic spam | Warning |
+| Moderate | Mild harassment | Temp restriction |
+| Serious | Hate speech | Account suspension |
+| Severe | Scams/fraud | Permanent ban |
+
+**Strike System**:
+- 1st offense: Warning
+- 2nd offense: 24-48 hour restriction
+- 3rd offense: Extended suspension
+- 4th offense: Permanent ban
+
+🔥 **Action Step**: Read the full community guidelines. Bookmark them for reference.`
       },
       {
         id: 2,
@@ -10112,7 +11326,72 @@ You now understand:
           "Common violation types",
           "Gray area navigation",
           "Context consideration"
-        ]
+        ],
+        content: `## Spotting Violations
+
+Learn to identify problematic content.
+
+### Common Violation Types
+
+**Harassment**:
+- Repeated unwanted contact
+- Threats or intimidation
+- Mocking or ridiculing
+- Stalking behavior
+
+**Scams**:
+- "Send 1 ETH, get 2 back"
+- Fake giveaways
+- Impersonation
+- Phishing links
+
+**Spam**:
+- Repetitive posts
+- Irrelevant promotion
+- Bot-like behavior
+- Mass messaging
+
+**Hate Content**:
+- Discrimination based on identity
+- Slurs and hate symbols
+- Dehumanizing language
+- Calls for violence
+
+### Gray Area Navigation
+
+**When It's Unclear**:
+- Consider the intent
+- Look at the context
+- Think about impact
+- When in doubt, report
+
+**Gray Area Examples**:
+- Heated debate vs harassment
+- Criticism vs hate
+- Joke vs offensive content
+- Strong opinion vs incitement
+
+**Ask Yourself**:
+- Would this hurt someone?
+- Is this creating an unsafe environment?
+- Would you want this directed at you?
+
+### Context Consideration
+
+**Context Matters**:
+Same words can be okay or not depending on:
+- Who's saying it
+- Who they're saying it to
+- The surrounding conversation
+- Cultural/group context
+
+**Don't Jump to Conclusions**:
+- Read the full thread
+- Check profile for patterns
+- Consider if it could be satire
+- Look for clarification
+
+🔥 **Action Step**: Review recent posts in your feed. Can you spot any potential violations?`
       },
       {
         id: 3,
@@ -10123,7 +11402,70 @@ You now understand:
           "Reporting process",
           "Providing context",
           "Follow-up expectations"
-        ]
+        ],
+        content: `## Submitting Good Reports
+
+Better reports = Better moderation.
+
+### Reporting Process
+
+**How to Report**:
+1. Click the three dots (...) on content
+2. Select "Report"
+3. Choose violation category
+4. Add details (optional but helpful)
+5. Submit
+
+**What Gets Reported**:
+- Individual posts
+- Comments
+- Messages
+- Profiles
+- Groups
+
+### Providing Context
+
+**Good Report**:
+"This user has sent me 5 unsolicited messages asking for wallet access after I said no."
+
+**Weak Report**:
+"This is bad"
+
+**Include**:
+- What rule was violated
+- Any relevant history
+- Impact on you/community
+- Links to related content (if available)
+
+**Be Specific**:
+- Dates and times help
+- Quote the problematic content
+- Explain why it's harmful
+- Include screenshots if needed
+
+### Follow-up Expectations
+
+**What Happens After**:
+- Report is reviewed
+- Action may be taken
+- You may or may not be notified
+
+**What You Won't See**:
+- Specific action taken
+- Details of investigation
+- Other reports filed
+
+**Timeline**:
+- Most reports reviewed within 24-48 hours
+- Complex cases may take longer
+- Emergency reports prioritized
+
+**If Nothing Happens**:
+- Mods may have seen context you didn't
+- Content may have been borderline
+- You can report again with more info
+
+🔥 **Action Step**: Familiarize yourself with the report button. Know where to find it.`
       },
       {
         id: 4,
@@ -10134,7 +11476,80 @@ You now understand:
           "Positive content creation",
           "Constructive interactions",
           "Supporting others"
-        ]
+        ],
+        content: `## Leading by Example
+
+Be the community member you want to see.
+
+### Positive Content Creation
+
+**Create Content That**:
+- Adds value
+- Educates or entertains
+- Builds connection
+- Inspires positivity
+
+**Avoid Content That**:
+- Tears others down
+- Spreads negativity
+- Causes harm
+- Violates guidelines
+
+**Think Before Posting**:
+- Would I want this saved forever?
+- Would I be proud of this tomorrow?
+- Does this help or hurt?
+
+### Constructive Interactions
+
+**Good Interactions**:
+- Thoughtful comments
+- Helpful feedback
+- Genuine encouragement
+- Respectful disagreement
+
+**Handling Disagreement**:
+- Focus on ideas, not people
+- Stay calm
+- Seek understanding
+- Know when to walk away
+
+**Calling In vs Calling Out**:
+- Calling out: Public criticism
+- Calling in: Private conversation
+- Usually, calling in works better
+
+### Supporting Others
+
+**When You See Someone Struggling**:
+- Reach out privately
+- Offer support
+- Share resources
+- Don't judge
+
+**When You See Harassment**:
+- Report it
+- Support the target (if appropriate)
+- Don't pile on
+- Document if needed
+
+**Community Care**:
+- Check on quiet members
+- Welcome newcomers
+- Celebrate others' wins
+- Share knowledge freely
+
+### Congratulations!
+
+You've completed "Safety & Guidelines"!
+
+You now understand:
+- Community guidelines
+- Recognizing violations
+- Effective reporting
+- Being a safety role model
+
+🔥 **Final Action Step**: Commit to being a positive force. Model the behavior you want to see.`
       }
     ]
   }
