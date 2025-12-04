@@ -8023,7 +8023,85 @@ You now understand:
           "Tipping motivations",
           "Emotional triggers",
           "Value exchange mindset"
-        ]
+        ],
+        content: `## Why People Tip
+
+Understanding tipping psychology helps you inspire more support.
+
+### Tipping Motivations
+
+**Why People Tip Creators**:
+
+**1. Gratitude**
+- You helped them
+- They learned something
+- You entertained them
+- They feel thankful
+
+**2. Connection**
+- They feel connected to you
+- They're part of something
+- They want to support your journey
+- Personal relationship feeling
+
+**3. Status**
+- Being recognized as supporter
+- Top tipper leaderboards
+- Exclusive access
+- Badges and recognition
+
+**4. Reciprocity**
+- You gave value first
+- They feel obligated
+- Natural human response
+- Want to give back
+
+### Emotional Triggers
+
+**What Moves People to Act**:
+
+**Joy**: Content that makes them happy
+**Learning**: Content that teaches something
+**Inspiration**: Content that motivates
+**Relief**: Content that solves a problem
+**Belonging**: Content that includes them
+
+**Emotional Journey**:
+Content → Emotion → Connection → Action (Tip)
+
+### The Value Exchange Mindset
+
+**Traditional Mindset**:
+"I create content, you tip me"
+- Transactional
+- Feels like begging
+- Awkward
+
+**Value Exchange Mindset**:
+"I provide value, you show appreciation"
+- Relationship-based
+- Natural
+- Comfortable for both
+
+**The Shift**:
+You're not asking for money.
+You're giving them a way to say thank you.
+
+### Tipping on Lumina
+
+**How It Works**:
+- Direct AXM transfers
+- Visible to community
+- Goes straight to creator
+- No intermediary fees
+
+**Why AXM Tipping is Special**:
+- Permanent on blockchain
+- Accumulates value
+- Shows commitment
+- Builds relationship
+
+🔥 **Action Step**: Think about content you've tipped for. What motivated you? Apply those insights to your content.`
       },
       {
         id: 2,
@@ -8034,7 +8112,93 @@ You now understand:
           "Wallet configuration",
           "Profile tip settings",
           "Payment visibility"
-        ]
+        ],
+        content: `## Getting Ready to Receive Tips
+
+Make it easy for supporters to tip you.
+
+### Wallet Configuration
+
+**Connecting Your Wallet**:
+1. Navigate to Profile Settings
+2. Connect MetaMask wallet
+3. Confirm on Arbitrum network
+4. Wallet linked to profile
+
+**Why This Matters**:
+- Tips go directly to your wallet
+- You control your funds
+- No platform custody
+- Instant access
+
+### Profile Tip Settings
+
+**Enable Tipping**:
+1. Go to Creator Settings
+2. Toggle "Enable Tips"
+3. Set minimum tip (optional)
+4. Add tip message (optional)
+
+**Custom Tip Amounts**:
+- Set suggested amounts
+- Example: 10, 50, 100 AXM
+- Makes tipping easier
+- Guides supporter decisions
+
+### Visibility and Transparency
+
+**What Tippers See**:
+- Tip button on your content
+- Your suggested amounts
+- Your thank you message
+- Transaction confirmation
+
+**What You See**:
+- Incoming tips in dashboard
+- Tipper identity (if not anonymous)
+- Tip amounts
+- Total tips received
+
+### Making Tipping Easy
+
+**Reduce Friction**:
+- Clear tip button placement
+- Simple amounts
+- Quick confirmation
+- Thank you message immediate
+
+**On Your Profile**:
+- Tip button visible
+- Recent tippers shown (optional)
+- Total support displayed (optional)
+
+### Best Practices
+
+**Do**:
+- Test the tip flow yourself
+- Make it obvious how to tip
+- Thank tippers promptly
+- Track your top supporters
+
+**Don't**:
+- Hide tip functionality
+- Make it complicated
+- Ignore tippers
+- Set minimums too high
+
+### Notification Setup
+
+**Get Notified When**:
+- You receive a tip
+- Big tips arrive
+- New tippers emerge
+
+**How to Configure**:
+1. Settings → Notifications
+2. Enable tip alerts
+3. Choose notification method
+
+🔥 **Action Step**: Complete your tipping setup. Send yourself a small test tip to verify it works.`
       },
       {
         id: 3,
@@ -8045,7 +8209,103 @@ You now understand:
           "Value-first content",
           "Vulnerability and authenticity",
           "Call-to-action placement"
-        ]
+        ],
+        content: `## Creating Tip-Worthy Content
+
+Not all content earns tips equally. Here's what works.
+
+### Value-First Content
+
+**Types of Value**:
+
+**Educational**: Teach something useful
+- How-to guides
+- Tutorials
+- Industry insights
+- Tips and tricks
+
+**Entertainment**: Make them feel good
+- Humor
+- Stories
+- Creative work
+- Engaging content
+
+**Transformation**: Help them change
+- Before/after
+- Journey documentation
+- Problem solving
+- Breakthrough moments
+
+### Vulnerability and Authenticity
+
+**Why Vulnerability Works**:
+- Creates connection
+- Shows humanity
+- Builds trust
+- Inspires reciprocity
+
+**Authentic Sharing**:
+- Your real journey
+- Struggles and wins
+- Behind the scenes
+- Honest perspectives
+
+**Balance**:
+Be vulnerable but not victimized.
+Share struggles with solutions.
+
+### Call-to-Action Placement
+
+**The Soft Ask**:
+"If this helped, tips are always appreciated"
+- After delivering value
+- Not before
+- Casual, not desperate
+
+**CTA Placement**:
+- End of valuable content
+- After solving a problem
+- When connection is high
+- In profile/bio
+
+**What NOT to Do**:
+- Lead with asking
+- Beg or guilt-trip
+- Ask repeatedly
+- Make it the focus
+
+### Content Types That Earn
+
+**High Tip Potential**:
+1. Detailed tutorials
+2. Exclusive insights
+3. Personal stories
+4. Problem solutions
+5. Entertainment value
+
+**Low Tip Potential**:
+1. Generic content
+2. Complaints
+3. Low-effort posts
+4. Purely promotional
+5. Copied content
+
+### The Tip-Earning Formula
+
+1. **Hook**: Get attention
+2. **Value**: Deliver substantially
+3. **Connection**: Build relationship
+4. **Soft CTA**: Make it easy
+
+### Timing Matters
+
+**Best Times for Tips**:
+- After major value delivery
+- During live streams
+- Following transformations
+- When emotions are high
+
+🔥 **Action Step**: Create one piece of high-value content. Include a soft CTA. Track the response.`
       },
       {
         id: 4,
@@ -8056,7 +8316,91 @@ You now understand:
           "Thank you best practices",
           "Exclusive recognition",
           "Community building with supporters"
-        ]
+        ],
+        content: `## Nurturing Your Tippers
+
+One-time tippers become regulars through relationship building.
+
+### Thank You Best Practices
+
+**Immediate Response**:
+- Thank within 24 hours
+- Personalized message
+- Genuine appreciation
+- Specific acknowledgment
+
+**Great Thank You Examples**:
+- "Your tip on my DeFi tutorial means so much. Thanks for supporting my content!"
+- "I noticed you've tipped twice now. You're amazing!"
+- Not: "Thanks for the tip" (too generic)
+
+**Public vs Private**:
+- Public: Recognition, inspires others
+- Private: Personal, deeper connection
+- Best: Both when appropriate
+
+### Exclusive Recognition
+
+**Ways to Recognize Supporters**:
+- Tipper leaderboard
+- Shoutouts in content
+- Special badges
+- Early access
+- Direct replies
+
+**Tipper Tiers**:
+| Tier | Lifetime Tips | Recognition |
+|------|--------------|-------------|
+| Supporter | $10+ | Name mention |
+| Fan | $50+ | Shoutout |
+| Champion | $200+ | Special badge |
+| Patron | $500+ | Direct access |
+
+### Community Building
+
+**Creating Supporter Community**:
+- Exclusive group for tippers
+- Special content for supporters
+- Behind-the-scenes access
+- Direct communication channel
+
+**Making Them Feel Special**:
+- Remember their contributions
+- Reference past conversations
+- Include them in decisions
+- Celebrate their milestones
+
+### Converting One-Time to Regular
+
+**The Path**:
+One-time → Recognized → Engaged → Regular
+
+**How to Progress Them**:
+1. Thank genuinely
+2. Follow up occasionally
+3. Deliver consistent value
+4. Make them feel valued
+5. Create tipping opportunities
+
+### Retention Strategies
+
+**Keep Supporters Engaged**:
+- Consistent content
+- Regular interaction
+- Exclusive updates
+- Personal touches
+
+**When Tips Slow Down**:
+- Don't panic
+- Keep delivering value
+- Stay connected
+- Be patient
+
+### Congratulations!
+
+You've learned how to build lasting supporter relationships.
+
+🔥 **Action Step**: Reach out to your top 3 tippers with personalized thank you messages this week.`
       },
       {
         id: 5,
@@ -8067,7 +8411,104 @@ You now understand:
           "Reciprocity dynamics",
           "Networking through tips",
           "Budget allocation"
-        ]
+        ],
+        content: `## Tipping as a Growth Strategy
+
+Giving tips strategically grows your own following.
+
+### Reciprocity Dynamics
+
+**The Psychology**:
+When you give, people feel inclined to give back.
+Not immediately, but over time.
+
+**How It Works**:
+1. You tip a creator
+2. They notice you
+3. They check your content
+4. They potentially follow/engage
+5. They may tip back
+
+**It's Not Manipulation**:
+Only tip content you genuinely appreciate.
+Authenticity matters.
+
+### Networking Through Tips
+
+**Tips as Introductions**:
+- Gets you noticed by bigger creators
+- Opens doors for collaboration
+- Shows you're a community member
+- Builds your reputation
+
+**Strategic Approach**:
+- Tip creators in your niche
+- Tip rising stars
+- Tip consistent quality
+- Include thoughtful messages
+
+### Budget Allocation
+
+**How Much to Tip**:
+- Start small, grow with success
+- 5-10% of earnings reinvested
+- Sustainable over time
+- Don't overextend
+
+**Monthly Budget Example**:
+| Earning Level | Tip Budget |
+|--------------|------------|
+| $100/month | $5-10 |
+| $500/month | $25-50 |
+| $1000/month | $50-100 |
+
+### Who to Tip
+
+**Prioritize**:
+1. Creators who inspire you
+2. Rising creators in your niche
+3. Collaborators and friends
+4. Creators you want to connect with
+
+**Diversify**:
+- Don't tip just one person
+- Spread across community
+- Mix big and small creators
+
+### The Right Way to Tip
+
+**Best Practices**:
+- Genuine appreciation only
+- Include a personal message
+- Don't expect anything back
+- Be consistent, not one-time
+
+**What NOT to Do**:
+- Tip expecting immediate return
+- Use tips to ask for favors
+- Tip with strings attached
+- Be transactional
+
+### Building Community Through Generosity
+
+**The Bigger Picture**:
+- You become known as generous
+- Others want to support you back
+- Community forms around mutual support
+- Rising tide lifts all boats
+
+### Congratulations!
+
+You've completed "Tipping Economy"!
+
+You now understand:
+- Tipping psychology
+- Technical setup
+- Content that earns
+- Supporter relationships
+- Strategic tipping
+
+🔥 **Final Action Step**: Set a monthly tipping budget. Tip 5 creators this week who deserve support.`
       }
     ]
   },
@@ -8097,7 +8538,70 @@ You now understand:
           "Free vs paid content balance",
           "Community value proposition",
           "Sustainable creator income"
-        ]
+        ],
+        content: `## Understanding Paid Communities
+
+Paid communities are the most sustainable creator business model.
+
+### Why Paid Communities Work
+
+**The Core Value**:
+- Exclusive access to you
+- Community of like-minded people
+- Premium content and experiences
+- Direct relationship
+
+**Benefits for Creators**:
+- Predictable recurring revenue
+- Deeper audience relationships
+- Less reliance on algorithms
+- Sustainable long-term income
+
+### Free vs Paid Content Balance
+
+**The Funnel**:
+Free Content → Builds Audience → Paid Community → Core Revenue
+
+**What Should Be Free**:
+- Discovery content
+- Value demonstrations
+- Community samples
+- General insights
+
+**What Should Be Paid**:
+- Deep dives
+- Personal access
+- Exclusive content
+- Community membership
+
+**The 90/10 Rule**:
+90% of your audience: Free content
+10% (or less): Paid members
+Those 10% can provide most income.
+
+### Community Value Proposition
+
+**What Members Really Pay For**:
+1. **Access**: To you directly
+2. **Community**: Like-minded people
+3. **Content**: Exclusive material
+4. **Transformation**: Results they want
+5. **Status**: Being an insider
+
+### Sustainable Creator Income
+
+**Monthly Recurring Revenue (MRR)**:
+- Predictable income
+- Compounds over time
+- Less hustle than one-off sales
+- Freedom to create
+
+**Math Example**:
+- 100 members × $20/month = $2,000/month
+- 500 members × $20/month = $10,000/month
+- Scales with quality, not just volume
+
+🔥 **Action Step**: Define what unique value you can offer that people would pay for monthly.`
       },
       {
         id: 2,
@@ -8108,7 +8612,81 @@ You now understand:
           "Exclusive content ideas",
           "Access and community benefits",
           "Unique experiences"
-        ]
+        ],
+        content: `## Creating Your Premium Offer
+
+What will people actually pay for? Let's design something irresistible.
+
+### Exclusive Content Ideas
+
+**Content Types**:
+- Behind-the-scenes
+- In-depth tutorials
+- Early access
+- Extended versions
+- Member-only series
+- Templates and resources
+
+**Content Cadence**:
+Weekly minimum for retention.
+Mix content types for variety.
+
+### Access and Community Benefits
+
+**Access Benefits**:
+- Direct messaging with you
+- Q&A sessions
+- Office hours
+- Feedback on their work
+- Priority responses
+
+**Community Benefits**:
+- Exclusive Discord/group
+- Networking with peers
+- Accountability partners
+- Collaboration opportunities
+- Mastermind groups
+
+### Unique Experiences
+
+**Experience Ideas**:
+- Live workshops
+- Group calls
+- Challenges
+- Cohort programs
+- Virtual events
+- IRL meetups (advanced)
+
+### Designing Your Stack
+
+**The Value Stack**:
+Layer multiple benefits together:
+
+1. Base: Community access
+2. +: Exclusive content
+3. +: Monthly live call
+4. +: Direct messaging
+5. +: Special resources
+
+**More Value = Higher Price Justified**
+
+### Finding Your Angle
+
+**Questions to Answer**:
+- What do people always ask you?
+- What would you have paid for when starting?
+- What transformation can you enable?
+- What do you know that others don't?
+
+### Validation Before Launch
+
+**Test Your Idea**:
+- Survey your audience
+- Gauge interest informally
+- Pre-sell before building
+- Start with waitlist
+
+🔥 **Action Step**: List 10 things you could offer members. Pick the top 5 for your core package.`
       },
       {
         id: 3,
@@ -8119,7 +8697,71 @@ You now understand:
           "Tier design principles",
           "Pricing psychology",
           "Upgrade paths"
-        ]
+        ],
+        content: `## Structuring Your Membership Tiers
+
+Multiple tiers serve different needs and budgets.
+
+### Tier Design Principles
+
+**Good/Better/Best Framework**:
+- **Basic**: Access to community + some content
+- **Standard**: Full content + live sessions
+- **Premium**: Everything + direct access
+
+**Keep It Simple**:
+- Maximum 3-4 tiers
+- Clear differences between each
+- Easy to understand value
+
+### Example Tier Structure
+
+| Tier | Price | Includes |
+|------|-------|----------|
+| Supporter | $5/mo | Community access |
+| Member | $20/mo | + All content + monthly call |
+| VIP | $50/mo | + 1:1 time + early access |
+
+### Pricing Psychology
+
+**Anchoring**:
+Show higher tier first.
+Makes middle tier feel reasonable.
+
+**Price Points**:
+- $5-10: Low barrier, high volume
+- $15-30: Sweet spot for most
+- $50-100: Premium, lower volume
+- $100+: High-touch required
+
+**What to Charge**:
+- Value delivered × 10% = minimum price
+- What would you pay? = gut check
+- What competitors charge = market rate
+
+### Upgrade Paths
+
+**Design for Upgrades**:
+- Clear value at each level
+- Incentives to upgrade
+- Easy upgrade process
+- Downgrade options too
+
+**Promotion Strategies**:
+- Trial higher tiers
+- Limited-time upgrades
+- Founding member pricing
+- Annual discounts
+
+### AXM/Crypto Considerations
+
+**Web3 Pricing Benefits**:
+- Global payments easy
+- No payment processor fees
+- Token-gated access
+- NFT membership passes
+
+🔥 **Action Step**: Design your 2-3 tiers. Price them based on the value you'll deliver.`
       },
       {
         id: 4,
@@ -8130,7 +8772,80 @@ You now understand:
           "Pre-launch buildup",
           "Founding member incentives",
           "Launch day execution"
-        ]
+        ],
+        content: `## Launching Successfully
+
+A great launch creates momentum. Here's how to do it right.
+
+### Pre-Launch Buildup
+
+**Timeline** (4-6 weeks before):
+
+**Week 1-2**:
+- Announce it's coming
+- Start waitlist
+- Tease benefits
+
+**Week 3-4**:
+- Share more details
+- Build anticipation
+- Answer questions
+
+**Week 5-6**:
+- Final countdown
+- Early access for waitlist
+- Launch prep
+
+### Founding Member Incentives
+
+**Why Founding Members**:
+- Early revenue
+- Initial community
+- Testimonials
+- Feedback for improvement
+
+**Incentive Ideas**:
+- Discounted price (locked forever)
+- Extra benefits
+- Founding member badge
+- Lifetime access
+- Input on direction
+
+**Example**:
+"First 50 members get 40% off forever + Founding Member status"
+
+### Launch Day Execution
+
+**Launch Checklist**:
+- [ ] Email list notified
+- [ ] Social posts scheduled
+- [ ] Community ready
+- [ ] Payment working
+- [ ] Onboarding prepared
+- [ ] Support ready
+
+**Launch Activities**:
+- Go live with announcement
+- Multiple posts throughout day
+- Stories/updates
+- Engage with every comment
+- Thank first members publicly
+
+### Post-Launch
+
+**First Week**:
+- Welcome each member personally
+- Deliver immediate value
+- Ask for feedback
+- Fix any issues fast
+
+**First Month**:
+- Establish rhythms
+- Build community culture
+- Gather testimonials
+- Plan ongoing content
+
+🔥 **Action Step**: Create your launch timeline. Set a specific launch date.`
       },
       {
         id: 5,
@@ -8141,7 +8856,80 @@ You now understand:
           "Content calendars for members",
           "Surprise and delight moments",
           "Feedback loops"
-        ]
+        ],
+        content: `## Keeping Members Happy
+
+Launching is easy. Retention is the real game.
+
+### Content Calendars for Members
+
+**Weekly Rhythm**:
+| Day | Content |
+|-----|---------|
+| Monday | New exclusive post |
+| Wednesday | Live Q&A |
+| Friday | Member spotlight |
+
+**Monthly Rhythm**:
+- Week 1: New training/workshop
+- Week 2: Guest expert
+- Week 3: Community challenge
+- Week 4: Recap + preview
+
+### Creating Systems
+
+**Batching**:
+- Create content in batches
+- Schedule in advance
+- Reduce daily pressure
+
+**Templates**:
+- Content templates
+- Email templates
+- Response templates
+- Saves time, maintains quality
+
+### Surprise and Delight Moments
+
+**Unexpected Bonuses**:
+- Bonus content drops
+- Early access to new things
+- Member appreciation days
+- Random gifts/shoutouts
+
+**Why This Matters**:
+Surprises create emotional bonds.
+Expectations + exceeded = loyalty.
+
+### Feedback Loops
+
+**Regular Check-ins**:
+- Monthly surveys
+- Direct messages
+- Community polls
+- Casual conversations
+
+**What to Ask**:
+- What's working?
+- What's missing?
+- What would make you upgrade?
+- How likely to recommend? (NPS)
+
+**Acting on Feedback**:
+- Thank for feedback
+- Implement suggestions
+- Communicate changes
+- Close the loop
+
+### Metrics to Track
+
+**Key Numbers**:
+- Monthly churn rate
+- Member engagement
+- Content consumption
+- Community activity
+
+🔥 **Action Step**: Create your first month's content calendar. Include at least one surprise.`
       },
       {
         id: 6,
@@ -8152,7 +8940,70 @@ You now understand:
           "Onboarding processes",
           "Communication standards",
           "Handling disappointment"
-        ]
+        ],
+        content: `## Setting Clear Expectations
+
+Unmet expectations cause churn. Manage them proactively.
+
+### Onboarding Processes
+
+**First Impression Matters**:
+Welcome → Orientation → Integration → Engagement
+
+**Onboarding Sequence**:
+1. Welcome message (immediate)
+2. How to get started guide
+3. Introduce yourself prompt
+4. First quick win
+5. Community introduction
+
+**New Member Checklist**:
+- [ ] Complete profile
+- [ ] Introduce yourself
+- [ ] Access content library
+- [ ] Join first live session
+- [ ] Connect with 3 members
+
+### Communication Standards
+
+**Be Clear About**:
+- Response time expectations
+- How to reach you
+- What's included vs not
+- Community guidelines
+- Content schedule
+
+**Create a Member Guide**:
+Document everything members need to know.
+Reduce confusion and support load.
+
+### Handling Disappointment
+
+**When Members Are Unhappy**:
+1. Listen fully first
+2. Acknowledge their feelings
+3. Understand the issue
+4. Offer solution
+5. Follow up
+
+**Common Complaints**:
+- "Not enough content" → Show them what exists
+- "Can't find things" → Improve organization
+- "Not what I expected" → Clarify or refund
+- "Too expensive" → Demonstrate value
+
+### Refund Policies
+
+**Options**:
+- No refunds (clear upfront)
+- 7-30 day guarantee
+- Pro-rated refunds
+- Case-by-case
+
+**Recommendation**:
+Be generous. Unhappy members hurt more than refunds cost.
+
+🔥 **Action Step**: Write your member onboarding sequence. Send it within 5 minutes of joining.`
       },
       {
         id: 7,
@@ -8163,7 +9014,82 @@ You now understand:
           "Rules and guidelines",
           "Moderator recruitment",
           "Conflict resolution"
-        ]
+        ],
+        content: `## Moderating Growing Communities
+
+Healthy communities need active moderation.
+
+### Rules and Guidelines
+
+**Essential Rules**:
+- Be respectful
+- No spam or promotion
+- Stay on topic
+- No harassment
+- Confidentiality expectations
+
+**Creating Guidelines**:
+- Clear and specific
+- Explain the why
+- Examples of violations
+- Consequences stated
+
+**Displaying Rules**:
+- Pinned posts
+- Onboarding materials
+- Community description
+- Regular reminders
+
+### Moderator Recruitment
+
+**When to Add Mods**:
+- 100+ active members
+- Too much for you alone
+- Different time zones needed
+- Specialized areas
+
+**Who Makes Good Mods**:
+- Active members
+- Positive contributors
+- Good judgment
+- Available time
+- Aligned values
+
+**Moderator Responsibilities**:
+- Welcome new members
+- Answer questions
+- Enforce rules
+- Escalate issues
+- Foster discussions
+
+### Conflict Resolution
+
+**When Conflicts Arise**:
+1. Assess the situation
+2. Private message involved parties
+3. Listen to both sides
+4. Apply rules fairly
+5. Document outcome
+
+**Escalation Ladder**:
+1. Warning
+2. Temporary mute
+3. Probation
+4. Removal
+
+**Handling Toxic Members**:
+One bad actor can poison a community.
+Remove faster than you think necessary.
+
+### Creating Community Culture
+
+**Lead by Example**:
+- Be active
+- Set the tone
+- Recognize good behavior
+- Address bad behavior quickly
+
+🔥 **Action Step**: Write your community guidelines. Share them with your community.`
       },
       {
         id: 8,
@@ -8174,7 +9100,86 @@ You now understand:
           "Churn warning signs",
           "Re-engagement campaigns",
           "Exit interviews"
-        ]
+        ],
+        content: `## Keeping Members Longer
+
+Every month a member stays = more revenue. Focus on retention.
+
+### Understanding Churn
+
+**Churn Rate**:
+Members lost / Total members × 100
+
+**Healthy Benchmarks**:
+- 5-7% monthly = good
+- 3-5% monthly = great
+- 10%+ monthly = problem
+
+**Why Members Leave**:
+- Not using it
+- Not getting value
+- Financial reasons
+- Life changes
+- Found alternative
+
+### Churn Warning Signs
+
+**Early Indicators**:
+- Decreased activity
+- Stopped attending live sessions
+- No engagement for weeks
+- Payment failures
+
+**Monitor**:
+- Last login date
+- Content consumption
+- Community participation
+- Support tickets
+
+### Re-engagement Campaigns
+
+**For Inactive Members**:
+1. Week 2 inactive: "We miss you" message
+2. Week 3 inactive: Personal check-in
+3. Week 4 inactive: Special offer
+4. Week 5 inactive: Last chance
+
+**Re-engagement Content**:
+- Highlight what they're missing
+- Share member wins
+- Offer help
+- Ask what's wrong
+
+### Exit Interviews
+
+**When They Cancel**:
+- Ask why (survey or DM)
+- Look for patterns
+- Learn and improve
+- Leave door open
+
+**Exit Survey Questions**:
+- Why are you leaving?
+- What would have kept you?
+- Would you return in future?
+- What could we do better?
+
+### Retention Tactics
+
+**Keep Them Engaged**:
+- Regular value delivery
+- Personal touchpoints
+- Community connections
+- Gamification/progress
+- Exclusive long-term benefits
+
+**Loyalty Rewards**:
+- 6-month badge
+- 1-year celebration
+- Anniversary gifts
+- Veteran benefits
+
+🔥 **Action Step**: Identify your at-risk members. Reach out to 3 today with personal messages.`
       },
       {
         id: 9,
@@ -8185,7 +9190,81 @@ You now understand:
           "Automation opportunities",
           "Team building",
           "Maintaining intimacy at scale"
-        ]
+        ],
+        content: `## Growing Sustainably
+
+Scale without losing what makes your community special.
+
+### Automation Opportunities
+
+**What to Automate**:
+- Welcome messages
+- Onboarding sequences
+- Content scheduling
+- Payment reminders
+- Basic FAQs
+
+**What NOT to Automate**:
+- Personal interactions
+- Conflict resolution
+- Major announcements
+- Relationship building
+
+### Team Building
+
+**First Hires**:
+1. Community moderator
+2. Content assistant
+3. Admin support
+
+**Finding Help**:
+- Active community members
+- Part-time contractors
+- Virtual assistants
+
+**Delegating Effectively**:
+- Clear responsibilities
+- Training and resources
+- Regular check-ins
+- Feedback loops
+
+### Maintaining Intimacy at Scale
+
+**The Challenge**:
+Personal touch + Large scale = Hard
+
+**Solutions**:
+
+**Tiered Access**:
+- General: Community
+- Mid: Group calls
+- Premium: 1:1 time
+
+**Office Hours**:
+- Scheduled times for access
+- Efficient for you
+- Still personal
+
+**Featured Members**:
+- Spotlight members
+- Creates personal moments
+- Scalable recognition
+
+**Small Groups**:
+- Break into cohorts
+- Peer connections
+- Less reliance on you
+
+### Growth Milestones
+
+| Members | Focus |
+|---------|-------|
+| 0-50 | Personal touch, learn needs |
+| 50-200 | Systems and rhythm |
+| 200-500 | Add team, automate |
+| 500+ | Scale structures |
+
+🔥 **Action Step**: Identify one thing you do that could be automated or delegated.`
       },
       {
         id: 10,
@@ -8196,7 +9275,84 @@ You now understand:
           "One-time purchases",
           "Live events and workshops",
           "Merchandise and products"
-        ]
+        ],
+        content: `## Beyond Monthly Subscriptions
+
+Layer additional revenue on top of your community.
+
+### One-Time Purchases
+
+**Digital Products**:
+- Courses and workshops
+- Templates and resources
+- Tools and software
+- Ebooks and guides
+
+**Pricing Strategy**:
+- Member discount (10-30% off)
+- Exclusive early access
+- Bundle with membership
+
+### Live Events and Workshops
+
+**Virtual Events**:
+- Intensive workshops
+- Multi-day summits
+- Guest expert sessions
+- Masterclasses
+
+**Pricing**:
+- Include some in membership
+- Premium events extra
+- Non-members pay more
+
+**In-Person Events**:
+- Meetups (free or low cost)
+- Retreats (premium)
+- Conferences (major production)
+
+### Merchandise and Products
+
+**Branded Merch**:
+- T-shirts, hoodies
+- Mugs, stickers
+- Member-exclusive items
+
+**Physical Products**:
+- Related to your niche
+- Curated recommendations
+- White-label products
+
+### NFT Integration
+
+**Web3 Opportunities**:
+- NFT membership passes
+- Exclusive NFT drops
+- Token-gated content
+- Community tokens
+
+### Additional Revenue Ideas
+
+- Sponsored content (careful with this)
+- Affiliate recommendations
+- Consulting/coaching
+- Job board/marketplace
+- Certification programs
+
+### Congratulations!
+
+You've completed "Building Paid Communities"!
+
+You now understand:
+- Premium community models
+- Offer design
+- Tier pricing
+- Launch strategies
+- Retention tactics
+- Scaling approaches
+- Advanced monetization
+
+🔥 **Final Action Step**: Plan your paid community. Set a launch date within 60 days.`
       }
     ]
   },
@@ -8226,7 +9382,54 @@ You now understand:
           "Reward structure",
           "Tracking and attribution",
           "Tier bonuses"
-        ]
+        ],
+        content: `## Understanding the Referral Program
+
+Earn AXM by bringing new users to Lumina.
+
+### Reward Structure
+
+**How You Earn**:
+- Referral link provided in profile
+- Share with potential users
+- They sign up through your link
+- You earn rewards when they're active
+
+**Reward Types**:
+- Sign-up bonus: When they join
+- Activity bonus: When they engage
+- Milestone bonus: When they achieve levels
+
+### Tracking and Attribution
+
+**Your Referral Link**:
+lumina.com/ref/[your-username]
+
+**Tracking Duration**:
+- Cookie lasts 30 days
+- First-click attribution
+- Link tracked on blockchain
+
+**Viewing Your Referrals**:
+- Dashboard shows all referrals
+- Status (signed up, active, inactive)
+- Rewards earned and pending
+
+### Tier Bonuses
+
+**Referral Volume Tiers**:
+| Referrals | Bonus |
+|-----------|-------|
+| 1-10 | Base rate |
+| 11-50 | +10% |
+| 51-100 | +25% |
+| 100+ | +50% |
+
+**Quality Multipliers**:
+Active referrals earn more than inactive.
+Referrals who create content multiply rewards.
+
+🔥 **Action Step**: Find your referral link. Share it with one person today.`
       },
       {
         id: 2,
@@ -8237,7 +9440,59 @@ You now understand:
           "Ideal referral profiles",
           "Where to find them",
           "Qualification strategies"
-        ]
+        ],
+        content: `## Finding the Right People
+
+Quality referrals beat quantity. Target people who'll succeed.
+
+### Ideal Referral Profiles
+
+**Best Candidates**:
+- Content creators looking for new platforms
+- People interested in Web3/crypto
+- Active social media users
+- Friends in creative niches
+- People frustrated with other platforms
+
+**Less Ideal**:
+- People with no interest in crypto
+- Inactive social media users
+- Those who don't create content
+
+### Where to Find Them
+
+**Online Communities**:
+- Twitter/X crypto spaces
+- Discord servers
+- Reddit communities
+- Telegram groups
+- Other creator platforms
+
+**Personal Network**:
+- Friends who create content
+- Family with relevant interests
+- Colleagues in creative fields
+- Alumni networks
+
+**Professional Networks**:
+- Industry events
+- Conferences
+- Online workshops
+- Creator meetups
+
+### Qualification Strategies
+
+**Before Referring, Ask**:
+- Are they interested in earning crypto?
+- Do they create content regularly?
+- Would they use a Web3 platform?
+- Are they tech-comfortable?
+
+**Soft Qualification**:
+Share content about Lumina first.
+Those who engage are good candidates.
+
+🔥 **Action Step**: List 10 people in your network who fit the ideal profile.`
       },
       {
         id: 3,
@@ -8248,7 +9503,63 @@ You now understand:
           "Value-first messaging",
           "Storytelling approaches",
           "Avoiding common pitfalls"
-        ]
+        ],
+        content: `## Creating Genuine Messages
+
+Nobody likes spam. Refer authentically.
+
+### Value-First Messaging
+
+**Lead With Value**:
+- Share what YOU get from the platform
+- Explain benefits for THEM
+- Offer to help them get started
+
+**Good Example**:
+"I've been using Lumina for a month and earned 500 AXM. If you're interested in Web3 and creating content, you might like it too."
+
+**Bad Example**:
+"Sign up with my link!!! Free crypto!!!"
+
+### Storytelling Approaches
+
+**Share Your Journey**:
+- Why you joined
+- What you've learned
+- Results you've achieved
+- Challenges overcome
+
+**Make It Personal**:
+- Specific experiences
+- Real numbers (when appropriate)
+- Honest assessment
+- Genuine enthusiasm
+
+### Avoiding Common Pitfalls
+
+**Don't**:
+- Mass message strangers
+- Promise unrealistic earnings
+- Pressure people
+- Spam in unrelated communities
+- Use fake urgency
+
+**Do**:
+- Personalize each message
+- Answer questions honestly
+- Give them time to decide
+- Follow up once, max twice
+- Accept "no" gracefully
+
+### Message Templates
+
+**DM Template**:
+"Hey [Name], I know you create [content type]. I've been using Lumina, a Web3 platform, and thought you might be interested. Happy to share more if you're curious."
+
+**Post Template**:
+"My experience on Lumina so far: [genuine update]. If anyone wants to check it out, I have a referral link in my bio."
+
+🔥 **Action Step**: Write your personal referral story in 3-4 sentences.`
       },
       {
         id: 4,
@@ -8259,7 +9570,71 @@ You now understand:
           "Tutorial content",
           "Success story sharing",
           "Platform showcase videos"
-        ]
+        ],
+        content: `## Content That Drives Referrals
+
+Let content do the selling. Here's what works.
+
+### Tutorial Content
+
+**Helpful Tutorials**:
+- "How I set up my Lumina profile"
+- "Earning my first AXM: Step by step"
+- "NFT creation on Lumina walkthrough"
+- "Using the Lumina mobile app"
+
+**Why This Works**:
+- Provides genuine value
+- Shows platform features
+- Natural referral placement
+- Evergreen content
+
+### Success Story Sharing
+
+**Document Your Wins**:
+- Weekly earning updates
+- Engagement milestones
+- Community connections made
+- Skills developed
+
+**Format Ideas**:
+- Thread breakdowns
+- Before/after comparisons
+- Monthly income reports
+- Case studies
+
+### Platform Showcase Videos
+
+**Video Content Ideas**:
+- Platform tour
+- Feature highlights
+- Day-in-the-life content
+- Comparison videos
+- Tips and tricks
+
+**Include**:
+- Genuine reactions
+- Real results
+- Honest pros and cons
+- Clear call-to-action
+
+### Content Distribution
+
+**Where to Share**:
+- Your Lumina profile (obviously)
+- Other social platforms
+- YouTube
+- Blog/website
+- Newsletters
+
+### Call-to-Action Placement
+
+**Natural CTA**:
+End of content: "If you want to try Lumina, my referral link is [link]"
+In bio: Referral link permanently placed
+Pinned content: Getting started guide with link
+
+🔥 **Action Step**: Create one piece of referral content. Could be a post, video, or tutorial.`
       },
       {
         id: 5,
@@ -8270,7 +9645,76 @@ You now understand:
           "Network effect design",
           "Incentive alignment",
           "Gamification elements"
-        ]
+        ],
+        content: `## Creating Compound Growth
+
+The best referral systems multiply themselves.
+
+### Network Effect Design
+
+**The Viral Loop**:
+1. You refer User A
+2. User A becomes active
+3. User A refers User B
+4. User B becomes active
+5. User B refers User C
+6. ...and so on
+
+**Making It Happen**:
+- Help referrals succeed
+- Teach them to refer
+- Create referral culture
+- Celebrate their wins
+
+### Incentive Alignment
+
+**Align Everyone's Interests**:
+- You win: Referral bonus
+- They win: Great platform
+- Platform wins: Growth
+- Network wins: Better community
+
+**Tiered Incentives**:
+Consider helping referrals:
+- Onboarding support
+- Content feedback
+- Strategy sharing
+- Community introduction
+
+### Gamification Elements
+
+**Make It Fun**:
+- Referral leaderboards
+- Challenges and competitions
+- Badges for milestones
+- Public recognition
+
+**Monthly Challenges**:
+- "Who can refer 10 creators?"
+- "Best referral story"
+- "Most active referral network"
+
+### Building a Referral Team
+
+**Create Your Network**:
+- Top referrers connect
+- Share strategies
+- Mutual support
+- Collective growth
+
+**Community Approach**:
+Not just individual referrals
+Build a referral community
+
+### Long-term Thinking
+
+**Sustainable Growth**:
+- Quality over quantity
+- Relationships over transactions
+- Teaching over recruiting
+- Value over extraction
+
+🔥 **Action Step**: Help one of your referrals make their first referral.`
       },
       {
         id: 6,
@@ -8281,7 +9725,84 @@ You now understand:
           "Key metrics to track",
           "A/B testing approaches",
           "Continuous improvement"
-        ]
+        ],
+        content: `## Data-Driven Referrals
+
+What gets measured gets improved.
+
+### Key Metrics to Track
+
+**Primary Metrics**:
+- Total referrals
+- Active referrals (% of total)
+- Referral earnings
+- Conversion rate
+
+**Secondary Metrics**:
+- Best referring channels
+- Top performing content
+- Time to activation
+- Referral quality score
+
+### Setting Up Tracking
+
+**Spreadsheet Basics**:
+| Date | Source | Signed Up | Activated | Earnings |
+|------|--------|-----------|-----------|----------|
+| ... | ... | ... | ... | ... |
+
+**Track**:
+- Where you shared
+- What messaging used
+- Who converted
+- What they did next
+
+### A/B Testing Approaches
+
+**Test One Variable**:
+- Different messaging
+- Different platforms
+- Different content types
+- Different CTAs
+
+**Example Test**:
+Week 1: Share journey story
+Week 2: Share tutorial content
+Compare: Which got more signups?
+
+### Continuous Improvement
+
+**Monthly Review**:
+- What worked this month?
+- What didn't work?
+- What will I try next?
+- What will I stop doing?
+
+**Optimization Cycle**:
+Try → Measure → Learn → Adjust → Repeat
+
+### When Something Works
+
+**Double Down**:
+Found a winning strategy?
+- Do more of it
+- Refine it further
+- Teach others
+- Document for yourself
+
+### Congratulations!
+
+You've completed "Referral Mastery"!
+
+You now understand:
+- Referral mechanics
+- Finding audiences
+- Authentic messaging
+- Content strategies
+- Viral loops
+- Tracking and optimization
+
+🔥 **Final Action Step**: Set a referral goal for this month. Track your progress daily.`
       }
     ]
   },
