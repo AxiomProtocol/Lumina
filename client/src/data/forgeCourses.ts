@@ -4267,7 +4267,91 @@ Welcome to the future of finance and social media.
           "Digital ownership explained",
           "NFT use cases beyond art",
           "The creator economy angle"
-        ]
+        ],
+        content: `## Understanding NFTs
+
+NFTs are more than hype. They're a fundamental shift in how digital ownership works.
+
+### What is an NFT?
+
+**NFT = Non-Fungible Token**
+
+**Fungible** (Interchangeable):
+- One dollar equals any other dollar
+- One Bitcoin equals any other Bitcoin
+- Units are identical
+
+**Non-Fungible** (Unique):
+- Each token is distinct
+- Has unique properties
+- Cannot be directly swapped
+
+### Digital Ownership Explained
+
+**The Problem Before NFTs**:
+- Digital files are infinitely copyable
+- No way to prove "ownership"
+- Creators couldn't sell originals
+- No scarcity for digital goods
+
+**What NFTs Solve**:
+- Provable ownership on blockchain
+- Authentic "original" verified
+- Scarcity can be programmed
+- Ownership history is transparent
+
+**What You Actually Own**:
+- A token pointing to the asset
+- Provable ownership rights
+- Potentially: commercial rights, access, membership
+
+### NFT Use Cases Beyond Art
+
+**Digital Art**: The most visible use case
+**Music**: Albums, songs, stems as NFTs
+**Gaming**: In-game items, characters, skins
+**Collectibles**: Trading cards, sports moments
+**Memberships**: Exclusive access tokens
+**Identity**: Proof of achievement, credentials
+**Real Estate**: Property deeds (emerging)
+**Tickets**: Event access, anti-scalping
+
+### The Creator Economy Angle
+
+**Traditional Model**:
+- Creators sell to platforms
+- Platforms own the relationship
+- One-time payment
+- No secondary market benefit
+
+**NFT Model**:
+- Creators sell directly to fans
+- Creators keep the relationship
+- Royalties on resales (5-10%)
+- Community building asset
+
+### Why This Matters for You
+
+**As a Creator**:
+- New revenue stream
+- Direct fan connection
+- Passive income from royalties
+- Community building tool
+
+**As a Collector**:
+- Support creators directly
+- Own verifiable originals
+- Potential appreciation
+- Access and membership perks
+
+### Common Misconceptions
+
+**"It's just a JPEG"**: The token represents ownership, not the file
+**"Anyone can screenshot"**: Ownership proof is on-chain
+**"It's a scam"**: Technology is real; individual projects vary
+**"It's bad for environment"**: Arbitrum uses 99%+ less energy than old systems
+
+🔥 **Action Step**: Browse an NFT marketplace (OpenSea, Blur). Look at different categories beyond art.`
       },
       {
         id: 2,
@@ -4278,7 +4362,121 @@ Welcome to the future of finance and social media.
           "Supported file formats",
           "Resolution and size guidelines",
           "Metadata preparation"
-        ]
+        ],
+        content: `## Getting Your Art NFT-Ready
+
+Proper preparation ensures your NFT displays correctly and looks professional everywhere.
+
+### Supported File Formats
+
+**Images**:
+- PNG (recommended for art)
+- JPEG (smaller files)
+- GIF (animations)
+- SVG (vector graphics)
+- WEBP (efficient web format)
+
+**Video**:
+- MP4 (most compatible)
+- WEBM
+- MOV (larger files)
+
+**Audio**:
+- MP3
+- WAV (higher quality)
+- FLAC
+
+**3D**:
+- GLB/GLTF
+- Supported on select platforms
+
+### Resolution and Size Guidelines
+
+**Image Recommendations**:
+- Minimum: 1000 x 1000 pixels
+- Recommended: 2000 x 2000 or higher
+- Max file size: varies (50-100MB typical)
+
+**Video Recommendations**:
+- 1080p or higher
+- Keep under 100MB (most platforms)
+- Shorter = smaller file
+
+**Why Higher Resolution**:
+- Future-proof for displays
+- Print-quality if needed
+- Professional appearance
+- Zoom-friendly
+
+### Optimizing File Size
+
+**For Images**:
+- Use PNG for crisp edges
+- Use JPEG for photographs
+- Compress without visible quality loss
+- Tools: TinyPNG, ImageOptim
+
+**For Video**:
+- Use efficient codecs (H.264)
+- Balance quality vs size
+- Consider shorter loops
+
+### Understanding Metadata
+
+**What is Metadata?**:
+Information attached to your NFT that describes it.
+
+**Standard Fields**:
+- **Name**: Title of your NFT
+- **Description**: Story, meaning, details
+- **External URL**: Link to more info
+- **Attributes/Properties**: Traits and values
+
+**Example Attributes**:
+- Background: Blue
+- Rarity: Legendary
+- Edition: 1 of 10
+- Artist: Your Name
+
+### Writing Good Descriptions
+
+**Include**:
+- Story behind the piece
+- Inspiration and meaning
+- Technical details (medium, tools)
+- Rights information
+- Your artist statement
+
+**Keep It**:
+- Engaging and personal
+- Clear about what buyer gets
+- Professional but authentic
+
+### Preparing Collections
+
+**If Creating Multiple NFTs**:
+- Consistent naming convention
+- Organized trait system
+- Planned rarity distribution
+- Collection-wide theme
+
+**File Organization**:
+- Number your files consistently
+- Match filenames to NFT names
+- Keep originals backed up
+- Prepare metadata spreadsheet
+
+### Technical Checklist
+
+- [ ] High resolution source file
+- [ ] Optimized for upload
+- [ ] Correct file format
+- [ ] Name prepared
+- [ ] Description written
+- [ ] Attributes defined
+- [ ] External links ready
+
+🔥 **Action Step**: Prepare one piece of art for minting. Optimize it, write the description, and define its attributes.`
       },
       {
         id: 3,
@@ -4289,7 +4487,122 @@ Welcome to the future of finance and social media.
           "Marketplace comparison",
           "Fee structures",
           "Audience considerations"
-        ]
+        ],
+        content: `## Selecting Your NFT Platform
+
+Where you sell matters. Different marketplaces attract different buyers.
+
+### Major NFT Marketplaces
+
+**OpenSea**:
+- Largest general marketplace
+- Easy to use
+- Supports multiple chains
+- Good for beginners
+- 2.5% marketplace fee
+
+**Blur**:
+- Trader-focused
+- Zero marketplace fees
+- More professional/serious collectors
+- Ethereum focused
+- Advanced trading features
+
+**Foundation**:
+- Curated/invite model
+- Higher-end art focus
+- Strong community
+- 5% marketplace fee
+- Quality over quantity
+
+**Rarible**:
+- Multi-chain support
+- Community governed
+- Good for emerging artists
+- Flexible fees
+
+**SuperRare**:
+- High-end digital art
+- Curated artists
+- Gallery feel
+- 3% buyer fee + 15% first sale
+
+### Marketplace Comparison
+
+| Feature | OpenSea | Blur | Foundation |
+|---------|---------|------|------------|
+| Ease of Use | High | Medium | Medium |
+| Audience | General | Traders | Art Collectors |
+| Fees | 2.5% | 0% | 5% |
+| Best For | Beginners | Volume | Serious Art |
+
+### Understanding Fee Structures
+
+**Marketplace Fees**:
+- Platform's cut of each sale
+- Varies from 0-5%
+- Usually from seller
+
+**Gas Fees**:
+- Blockchain transaction costs
+- Vary by network activity
+- Can be significant on Ethereum mainnet
+
+**Creator Royalties**:
+- Your ongoing percentage
+- 5-10% typical
+- Not all platforms enforce
+
+### Chain Considerations
+
+**Ethereum Mainnet**:
+- Most established
+- Highest fees
+- Largest collector base
+
+**Polygon**:
+- Low/no gas fees
+- Growing ecosystem
+- Easy for beginners
+
+**Arbitrum** (Lumina's home):
+- Low fees
+- Ethereum security
+- Growing NFT scene
+
+### Audience Considerations
+
+**Who Are You Selling To?**:
+- Collectors? (Foundation, SuperRare)
+- Traders? (Blur, OpenSea)
+- Community members? (Platform-native markets)
+- First-time buyers? (Low-fee chains)
+
+**Where Is Your Audience?**:
+- Where do they already shop?
+- What chains are they on?
+- What's their budget range?
+
+### Multi-Platform Strategy
+
+**Option 1**: Focus on one marketplace
+- Build reputation there
+- Become known in that community
+- Simpler to manage
+
+**Option 2**: Diversify across platforms
+- Different pieces for different markets
+- Broader exposure
+- More management overhead
+
+### Recommendation for Beginners
+
+1. Start with OpenSea (easiest)
+2. Use Arbitrum or Polygon (low fees)
+3. Build reputation
+4. Expand to other platforms later
+
+🔥 **Action Step**: Explore 3 different NFT marketplaces. Note their vibe, featured artists, and fee structures.`
       },
       {
         id: 4,
@@ -4300,7 +4613,119 @@ Welcome to the future of finance and social media.
           "Minting walkthrough",
           "Gas fee management",
           "Lazy minting options"
-        ]
+        ],
+        content: `## Minting Step by Step
+
+Time to put your art on the blockchain. Follow this guide carefully.
+
+### Before You Start
+
+**Requirements**:
+- Crypto wallet (MetaMask)
+- Small amount of ETH for gas
+- Your prepared digital asset
+- Metadata ready (name, description, traits)
+
+### Minting Walkthrough (OpenSea Example)
+
+**Step 1: Connect Wallet**
+- Go to opensea.io
+- Click "Connect wallet"
+- Select MetaMask
+- Approve connection
+
+**Step 2: Create Collection (Optional)**
+- Go to your profile
+- Click "Create a collection"
+- Add collection image and banner
+- Set collection name and description
+- Set royalty percentage
+
+**Step 3: Create NFT**
+- Click "Create" button
+- Upload your file
+- Add name and description
+- Add properties/traits
+- Choose collection
+
+**Step 4: Review and Create**
+- Double-check all details
+- Click "Create"
+- Sign the transaction in MetaMask
+- Wait for confirmation
+
+### Understanding Gas Fees
+
+**When You Pay Gas**:
+- Creating collections (sometimes)
+- First sale on marketplace
+- Minting on some platforms
+- Listing/unlisting (varies)
+
+**Minimizing Gas**:
+- Use off-peak hours (check etherscan.io/gastracker)
+- Use Layer 2s (Arbitrum, Polygon)
+- Choose platforms with lazy minting
+
+### Lazy Minting Explained
+
+**Traditional Minting**:
+- You pay gas to mint
+- NFT exists on-chain immediately
+- Upfront cost to you
+
+**Lazy Minting**:
+- No upfront gas cost
+- NFT minted when sold
+- Buyer pays minting gas
+- Great for testing the market
+
+**Platforms with Lazy Minting**:
+- OpenSea (Polygon)
+- Rarible
+- Mintable
+
+### Setting Up Your Listing
+
+**Pricing Options**:
+- Fixed price (set your price)
+- Auction (let buyers bid)
+- Dutch auction (price decreases over time)
+
+**Duration**:
+- Short (1-7 days): urgency
+- Medium (1-4 weeks): standard
+- Long/No expiry: patient approach
+
+**Reserve Price**:
+- Minimum acceptable bid
+- Auction won't complete below it
+
+### Post-Minting Checklist
+
+- [ ] Verify NFT appears correctly
+- [ ] Check metadata displays properly
+- [ ] Test all links work
+- [ ] Share on social media
+- [ ] Engage with your community
+
+### Common Minting Mistakes
+
+- Wrong file uploaded
+- Typos in name/description
+- Forgetting to set royalties
+- Setting price in wrong currency
+- Not having enough gas
+
+### Your First Mint Recommendation
+
+1. Use OpenSea on Polygon (free minting)
+2. Start with one piece
+3. Set reasonable price
+4. Learn the process
+5. Then scale up
+
+🔥 **Action Step**: Mint your first NFT on OpenSea using Polygon. Start with something simple to learn the process.`
       },
       {
         id: 5,
@@ -4311,7 +4736,133 @@ Welcome to the future of finance and social media.
           "Fixed price vs auction",
           "Research-based pricing",
           "Edition sizes"
-        ]
+        ],
+        content: `## Pricing Your NFTs
+
+Pricing is both art and science. Find the sweet spot for your work.
+
+### The Pricing Dilemma
+
+**Too High**:
+- No sales
+- Discouragement
+- Perceived as out of touch
+
+**Too Low**:
+- Undervalues your work
+- Hard to raise later
+- Sets wrong expectation
+
+**Just Right**:
+- Sales happen
+- You feel valued
+- Room to grow
+
+### Fixed Price vs Auction
+
+**Fixed Price**:
+Pros:
+- Simple for buyers
+- Predictable for you
+- Works at any volume
+
+Best when:
+- Editions (multiple copies)
+- Established pricing
+- Consistent releases
+
+**Auction**:
+Pros:
+- Market determines value
+- Can exceed expectations
+- Creates excitement
+
+Best when:
+- 1/1 pieces
+- Strong existing audience
+- Unique/special works
+
+### Research-Based Pricing
+
+**How to Research**:
+1. Find artists at your level
+2. Check their recent sales
+3. Note their following size
+4. Consider time invested
+5. Factor in your uniqueness
+
+**Data Points to Gather**:
+- Average sale price in your niche
+- Prices from similar follower counts
+- Historical trends
+- Platform-specific patterns
+
+### The Pricing Formula
+
+Consider these factors:
+- Time invested
+- Material/tool costs
+- Your experience level
+- Your audience size
+- Market conditions
+- Comparable sales
+
+**Beginner Reality**:
+- Start lower than you think
+- Build collector base
+- Prove consistent quality
+- Raise prices gradually
+
+### Edition Sizes
+
+**1/1 (One of One)**:
+- Unique, single piece
+- Highest value per NFT
+- Collector focused
+- Artist statement pieces
+
+**Limited Editions (1/10, 1/100)**:
+- Multiple copies of same art
+- Lower price per piece
+- More accessible
+- Community building
+
+**Open Editions**:
+- Unlimited copies
+- Time-limited usually
+- Very low prices
+- Maximum reach
+
+### Edition Pricing Strategy
+
+| Edition Size | Typical Price Range | Best For |
+|--------------|--------------------| ---------|
+| 1/1 | $100-$10,000+ | Collectors |
+| 1/10 | $20-$500 | Serious fans |
+| 1/100 | $5-$100 | Community |
+| Open | $1-$20 | Reach |
+
+### Dynamic Pricing
+
+**Starting Low, Raising**:
+- First sales at low price
+- Raise with each sale
+- Rewards early buyers
+- Creates urgency
+
+**Tiered Pricing**:
+- First 10: lowest price
+- Next 10: higher
+- And so on
+
+### Price Psychology
+
+- Round numbers feel "set"
+- .99 endings feel retail
+- .42 or .69 feel personal
+- Match your brand
+
+🔥 **Action Step**: Research 10 NFT artists at your level. Note their prices, editions, and sales. Create your pricing framework.`
       },
       {
         id: 6,
@@ -4322,7 +4873,126 @@ Welcome to the future of finance and social media.
           "Building collector relationships",
           "Social media promotion",
           "Community engagement"
-        ]
+        ],
+        content: `## Getting Your NFTs Seen
+
+Creating is half the battle. The other half is getting the right eyes on your work.
+
+### Building Collector Relationships
+
+**Collectors Are People**:
+- They want connection, not just art
+- They invest in artists, not just pieces
+- They want to feel part of something
+
+**How to Build Relationships**:
+- Engage with their content
+- Remember their purchases
+- Offer exclusive access
+- Share your process
+
+### Social Media Strategy
+
+**Primary Platform**: Twitter/X
+- NFT community headquarters
+- Collectors actively browse
+- Engagement = visibility
+
+**Secondary**: Instagram
+- Visual showcase
+- Behind the scenes
+- Broader audience
+
+**Emerging**: Farcaster, Lens
+- Web3-native social
+- Crypto-focused audience
+- Early adopter advantage
+
+### Effective Twitter/X Approach
+
+**Content Mix**:
+- 40% Art/process
+- 30% Engagement with others
+- 20% Personal/personality
+- 10% Direct sales posts
+
+**Best Practices**:
+- Post when audience is active
+- Use relevant hashtags
+- Quote retweet with value
+- Join Twitter Spaces
+
+### The Power of Process
+
+**Share Your Journey**:
+- Work in progress shots
+- Time-lapse videos
+- Behind-the-scenes
+- Challenges and learnings
+
+**Why It Works**:
+- Humanizes you
+- Creates anticipation
+- Shows skill and effort
+- Builds emotional connection
+
+### Community Engagement
+
+**Where to Engage**:
+- Artist Discord servers
+- NFT project communities
+- Twitter/X threads
+- In-person events
+
+**How to Engage**:
+- Be genuinely helpful
+- Support other artists
+- Share knowledge
+- Avoid constant self-promotion
+
+### Pre-Launch Strategy
+
+**2-4 Weeks Before**:
+- Tease the upcoming drop
+- Share process content
+- Build anticipation
+- Engage more than usual
+
+**1 Week Before**:
+- Reveal more details
+- Announce date/time
+- Remind daily
+- Answer questions
+
+**Day Of**:
+- Multiple reminder posts
+- Be available to engage
+- Celebrate sales publicly
+- Thank your collectors
+
+### Post-Sale Relationship
+
+**After Someone Buys**:
+- Thank them publicly
+- Thank them privately
+- Keep them updated
+- Offer early access to future work
+
+**Building Repeat Collectors**:
+- Collector-only perks
+- Early access
+- Special editions
+- Personal touches
+
+### Common Marketing Mistakes
+
+- Only posting when selling
+- Ignoring other artists
+- Being transactional
+- Inconsistent presence
+- Not engaging with buyers
+
+🔥 **Action Step**: Create a 7-day content calendar leading up to your next NFT drop. Include process, engagement, and announcements.`
       },
       {
         id: 7,
@@ -4333,7 +5003,117 @@ Welcome to the future of finance and social media.
           "Royalty percentages",
           "Marketplace royalty support",
           "Long-term revenue planning"
-        ]
+        ],
+        content: `## The Royalty Advantage
+
+Royalties are revolutionary for creators. Get paid every time your work resells.
+
+### How Royalties Work
+
+**Traditional Art Sale**:
+- Artist sells for $100
+- Collector resells for $1000
+- Artist gets $0 from resale
+
+**NFT Royalty Model**:
+- Artist sells for $100
+- Sets 10% royalty
+- Collector resells for $1000
+- Artist automatically receives $100
+
+### Setting Royalty Percentages
+
+**Common Rates**:
+- 5% (standard)
+- 7.5% (moderate)
+- 10% (higher end)
+
+**Factors to Consider**:
+- Higher royalty = more per sale
+- Higher royalty = less attractive to traders
+- Industry standard is 5-10%
+
+**Recommendation**: Start with 5-7.5%
+
+### Marketplace Royalty Reality
+
+**The Challenge**:
+Not all marketplaces enforce royalties equally.
+
+**Full Enforcement**:
+- Foundation
+- SuperRare
+- Some curated platforms
+
+**Optional/Negotiable**:
+- OpenSea (now optional)
+- Blur (optional)
+- Many others
+
+**Protecting Your Royalties**:
+- Use platforms that enforce
+- Build direct relationships
+- Create collector incentives
+- Consider on-chain enforcement
+
+### Long-Term Royalty Strategy
+
+**Building Royalty Value**:
+- Create demand for your work
+- Encourage trading/collecting
+- Build community around your art
+- Price for long-term gains
+
+**Example Projection**:
+- 100 NFTs sold at $50
+- Average 2 resales each over time
+- 5% royalty at average $75 resale
+- = $750 passive income
+
+### Alternative Revenue Streams
+
+**Beyond Royalties**:
+- Commissions for collectors
+- Print sales of NFT art
+- Merchandise
+- Physical companion pieces
+- Experiences and access
+
+### Building Collector Communities
+
+**Why Community Matters**:
+- Collectors trade with each other
+- Community = more resales
+- More resales = more royalties
+
+**How to Build**:
+- Discord for collectors
+- Exclusive content access
+- Early access to new work
+- Collector events (virtual/IRL)
+
+### Tax Considerations
+
+**Important Note**:
+Royalty income is taxable.
+
+**Keep Records Of**:
+- All royalty payments
+- Original sale prices
+- Platform fees paid
+- Business expenses
+
+**Consult a professional** for your specific situation.
+
+### Long-Term Thinking
+
+**The Compounding Effect**:
+- Early work keeps earning
+- More pieces = more potential
+- Growing reputation = higher resales
+- Time in market matters
+
+🔥 **Action Step**: Calculate potential royalty income from your next 10 NFT sales with various resale scenarios.`
       },
       {
         id: 8,
@@ -4344,7 +5124,137 @@ Welcome to the future of finance and social media.
           "Collection themes",
           "Release strategies",
           "Roadmap planning"
-        ]
+        ],
+        content: `## From Pieces to Collections
+
+Cohesive collections create stronger narratives and more engaged collectors.
+
+### What Makes a Collection?
+
+**More Than Random Art**:
+- Unified theme or story
+- Consistent style elements
+- Planned rarity/variations
+- Clear collector appeal
+
+**Collection Benefits**:
+- Easier to market
+- Collectors "collect"
+- Higher perceived value
+- Community building
+
+### Collection Themes
+
+**Thematic Approaches**:
+- Story-based (narrative collection)
+- Style-based (aesthetic variations)
+- Trait-based (generative/PFP)
+- Series-based (ongoing releases)
+
+**Questions to Answer**:
+- What connects these pieces?
+- Why would someone want multiple?
+- What's the story/concept?
+- How does it evolve?
+
+### Planning Your Collection
+
+**Size Considerations**:
+- Small (10-50): Intimate, rare
+- Medium (100-500): Community, accessible
+- Large (1000+): Generative, mass appeal
+
+**Trait System** (for larger collections):
+- Define categories (background, body, accessory)
+- Create variations per category
+- Plan rarity distribution
+- Ensure all combinations work
+
+### Release Strategies
+
+**All at Once**:
+- Big launch event
+- Maximum hype
+- FOMO factor
+- Stressful but exciting
+
+**Rolling Release**:
+- Pieces over time
+- Sustained engagement
+- Less pressure
+- Longer campaign
+
+**Epochs/Chapters**:
+- Phases with themes
+- Story progression
+- Multiple hype cycles
+- Collector retention
+
+### Roadmap Planning
+
+**What is a Roadmap?**:
+Promises of what you'll deliver over time.
+
+**Common Roadmap Items**:
+- Physical prints for holders
+- Future collections
+- Community events
+- Collaborations
+- Token/utility evolution
+
+**Roadmap Caution**:
+- Only promise what you can deliver
+- Be realistic about timeline
+- Under-promise, over-deliver
+- Avoid feature creep
+
+### Pre-Launch Preparation
+
+**Before You Launch**:
+- All art complete and checked
+- Metadata verified
+- Pricing finalized
+- Marketing plan ready
+- Community informed
+
+**Technical Checklist**:
+- Smart contract tested (if custom)
+- Reveal mechanism ready (if hidden)
+- Website/landing page live
+- Wallet list prepared (if allowlist)
+
+### Launch Day Execution
+
+**The Big Day**:
+- Be online and responsive
+- Monitor for issues
+- Engage with mints publicly
+- Handle problems quickly
+- Celebrate with community
+
+### Post-Launch
+
+**After Launch**:
+- Thank all collectors
+- Deliver on promises
+- Continue community building
+- Plan next moves
+- Learn from experience
+
+### Congratulations!
+
+You've completed "Your First NFT"!
+
+You now know how to:
+- Understand NFT value
+- Prepare artwork properly
+- Choose the right marketplace
+- Mint and price your NFTs
+- Market effectively
+- Set up royalties
+- Plan collections
+
+🔥 **Final Action Step**: Plan a 5-piece mini collection. Define the theme, prepare the art, and create a launch timeline.`
       }
     ]
   },
@@ -4374,7 +5284,88 @@ Welcome to the future of finance and social media.
           "Traditional vs decentralized finance",
           "Smart contracts in finance",
           "Key DeFi principles"
-        ]
+        ],
+        content: `## Understanding Decentralized Finance
+
+DeFi rebuilds financial services without banks or intermediaries. It's finance by code.
+
+### Traditional vs Decentralized Finance
+
+**Traditional Finance (TradFi)**:
+- Banks hold your money
+- Institutions control access
+- Slow settlement (days)
+- Business hours only
+- Geographic restrictions
+- Identity required
+
+**Decentralized Finance (DeFi)**:
+- You hold your money
+- Open to anyone
+- Fast settlement (seconds-minutes)
+- 24/7/365 operation
+- Global access
+- Pseudonymous
+
+### Smart Contracts in Finance
+
+**What They Are**:
+Self-executing code that runs financial operations automatically.
+
+**What They Do**:
+- Hold and transfer funds
+- Execute trades
+- Calculate interest
+- Distribute rewards
+- Enforce agreements
+
+**The Advantage**:
+- No human intervention needed
+- Rules can't be changed arbitrarily
+- Transparent and auditable
+- Trustless operation
+
+### Key DeFi Principles
+
+**Composability** ("Money Legos"):
+- DeFi protocols connect to each other
+- Build complex strategies
+- Combine services freely
+
+**Permissionless**:
+- Anyone can use
+- No application required
+- No minimum amounts
+
+**Non-Custodial**:
+- You control your funds
+- No third party holds your money
+- Your keys, your crypto
+
+**Transparent**:
+- All code is open source
+- All transactions are public
+- Anyone can audit
+
+### Main DeFi Categories
+
+**Trading**: Decentralized exchanges (DEXs)
+**Lending**: Borrow and lend crypto
+**Staking**: Earn rewards on locked tokens
+**Yield**: Earn returns on deposits
+**Insurance**: Protect against smart contract risks
+**Derivatives**: Options, futures, synthetic assets
+
+### The DeFi Advantage for Creators
+
+**Why Creators Care**:
+- Receive payments instantly
+- Keep more earnings (no intermediary fees)
+- Global audience access
+- Programmatic revenue streams
+- Token-based monetization
+
+🔥 **Action Step**: Explore DeFiLlama.com to see the scope of DeFi. Note the Total Value Locked (TVL) across protocols.`
       },
       {
         id: 2,
@@ -4385,7 +5376,97 @@ Welcome to the future of finance and social media.
           "AMM mechanics",
           "Swapping tokens",
           "Slippage and price impact"
-        ]
+        ],
+        content: `## Trading on Decentralized Exchanges
+
+DEXs let you trade tokens directly from your wallet. No accounts, no permissions.
+
+### How DEXs Work
+
+**Traditional Exchange**:
+- Order book matches buyers/sellers
+- Company runs the exchange
+- Account required
+- Centralized custody
+
+**DEX (Automated Market Maker)**:
+- Liquidity pools set prices
+- Smart contracts run everything
+- Wallet connection only
+- You keep custody
+
+### AMM Mechanics
+
+**Automated Market Makers Explained**:
+
+Instead of order books, DEXs use liquidity pools:
+- Pools contain pairs of tokens (e.g., ETH/USDC)
+- Price determined by ratio in pool
+- Trades change the ratio
+
+**The Constant Product Formula**:
+x × y = k
+
+Where:
+- x = amount of token A
+- y = amount of token B
+- k = constant value
+
+As you buy token A, its supply decreases, price increases.
+
+### Swapping Tokens
+
+**The Process**:
+1. Connect wallet to DEX
+2. Select tokens (from/to)
+3. Enter amount
+4. Review rate and fees
+5. Approve token (first time only)
+6. Confirm swap
+7. Transaction processes
+
+**Popular DEXs**:
+- Uniswap (Ethereum/Arbitrum)
+- Camelot (Arbitrum native)
+- SushiSwap (multi-chain)
+- Curve (stablecoins)
+
+### Slippage and Price Impact
+
+**Slippage**:
+Difference between expected and actual trade price.
+
+**Causes**:
+- Large trade relative to pool
+- Fast-moving markets
+- Low liquidity
+
+**Setting Slippage Tolerance**:
+- 0.5%: Very tight (may fail)
+- 1%: Standard for stable trades
+- 3-5%: Volatile tokens
+- Higher: Risky, may be exploited
+
+**Price Impact**:
+How much your trade moves the price.
+
+**Low Price Impact**: Trade is small relative to pool
+**High Price Impact**: Trade significantly moves price
+
+### Practical Trading Tips
+
+**Before Trading**:
+- Check multiple DEXs for best rate
+- Use aggregators (1inch, Paraswap)
+- Verify token contract address
+- Consider gas costs
+
+**During Trading**:
+- Set appropriate slippage
+- Review all details before confirming
+- Don't rush large trades
+
+🔥 **Action Step**: Make a small swap on a DEX (like Camelot on Arbitrum). Note the price impact and fees.`
       },
       {
         id: 3,
@@ -4396,7 +5477,98 @@ Welcome to the future of finance and social media.
           "How staking works",
           "APY calculations",
           "Lock periods and risks"
-        ]
+        ],
+        content: `## Earning Through Staking
+
+Staking puts your tokens to work. Lock them up, earn rewards.
+
+### How Staking Works
+
+**The Basic Concept**:
+- Lock your tokens in a protocol
+- Protocol uses them (various purposes)
+- You earn rewards over time
+- Unlock to retrieve tokens
+
+**Why Protocols Offer Staking**:
+- Security (Proof of Stake networks)
+- Governance participation
+- Liquidity commitment
+- Reduce circulating supply
+- Community alignment
+
+### Types of Staking
+
+**Network Staking**:
+- Secure the blockchain itself
+- Usually higher minimums
+- Validators or delegators
+- Example: Ethereum staking
+
+**Protocol Staking**:
+- Lock tokens in specific protocol
+- Earn protocol tokens
+- Usually lower minimums
+- Example: AXM staking on Lumina
+
+**Liquid Staking**:
+- Stake and receive derivative token
+- Maintain liquidity while staked
+- Example: stETH for ETH
+
+### APY Calculations
+
+**APR vs APY**:
+- APR: Annual Percentage Rate (simple interest)
+- APY: Annual Percentage Yield (compound interest)
+
+**APY Formula**:
+APY = (1 + r/n)^n - 1
+Where r = rate, n = compounding periods
+
+**Example**:
+- 10% APR compounded daily
+- APY ≈ 10.52%
+
+**What Affects Rewards**:
+- Amount staked
+- Total staked in pool
+- Token emissions
+- Lock period multipliers
+
+### Lock Periods and Risks
+
+**Lock Period Trade-offs**:
+| Duration | Rewards | Flexibility |
+|----------|---------|-------------|
+| No lock | Lower | High |
+| 30 days | Medium | Medium |
+| 90+ days | Higher | Low |
+
+**Risks to Consider**:
+- **Price Risk**: Token value can drop while locked
+- **Smart Contract Risk**: Bugs or exploits
+- **Opportunity Cost**: Can't use tokens elsewhere
+- **Lock Risk**: Can't exit during crashes
+
+### Staking Strategies
+
+**Conservative**:
+- No-lock or short-lock only
+- Blue-chip tokens
+- Established protocols
+
+**Moderate**:
+- Mix of lock periods
+- Diversified protocols
+- Balance rewards and flexibility
+
+**Aggressive**:
+- Long lock periods
+- New protocols
+- Maximum yield
+
+🔥 **Action Step**: Calculate potential staking rewards for 100 AXM over 30 days at current rates.`
       },
       {
         id: 4,
@@ -4407,7 +5579,110 @@ Welcome to the future of finance and social media.
           "Staking walkthrough",
           "Reward claiming",
           "Unstaking process"
-        ]
+        ],
+        content: `## Staking AXM: Step by Step
+
+Put your AXM to work earning rewards on Lumina.
+
+### Before You Start
+
+**Requirements**:
+- MetaMask connected to Arbitrum
+- AXM tokens in your wallet
+- Small amount of ETH for gas
+
+### The Staking Interface
+
+**Finding Staking**:
+1. Navigate to Lumina staking page
+2. Connect your wallet
+3. View current staking stats
+
+**Key Information Displayed**:
+- Current APY
+- Total AXM staked
+- Your staking balance
+- Pending rewards
+- Lock options
+
+### Staking Walkthrough
+
+**Step 1: Choose Lock Period**
+- Longer locks = higher multiplier
+- Consider your liquidity needs
+- No-lock option available
+
+**Step 2: Enter Amount**
+- Input AXM amount to stake
+- Or click "Max" for all
+- Leave some for gas
+
+**Step 3: Approve (First Time)**
+- Approve AXM spending
+- One-time per token
+- Confirm in MetaMask
+
+**Step 4: Stake**
+- Review transaction details
+- Click "Stake"
+- Confirm in MetaMask
+- Wait for confirmation
+
+### Reward Claiming
+
+**How Rewards Accrue**:
+- Rewards accumulate continuously
+- Claimable anytime
+- No minimum to claim
+
+**Claiming Process**:
+1. View pending rewards
+2. Click "Claim Rewards"
+3. Confirm transaction
+4. Rewards sent to wallet
+
+**Claiming Tips**:
+- Batch claims if rewards are small
+- Consider gas costs vs reward size
+- Compound by restaking
+
+### Unstaking Process
+
+**For No-Lock Stakes**:
+1. Click "Unstake"
+2. Enter amount
+3. Confirm transaction
+4. Tokens returned immediately
+
+**For Locked Stakes**:
+- Must wait until lock expires
+- Early unlock may have penalties
+- Plan your lock periods
+
+### Compounding Strategy
+
+**Manual Compounding**:
+1. Claim rewards
+2. Stake claimed tokens
+3. Repeat periodically
+
+**Optimal Frequency**:
+- Higher APY = compound more often
+- Consider gas costs
+- Weekly is often efficient
+
+### Common Issues
+
+**Transaction Stuck**:
+- Increase gas price
+- Wait or cancel/retry
+
+**Rewards Not Showing**:
+- Refresh the page
+- Check block explorer
+- Small delay is normal
+
+🔥 **Action Step**: Stake a small amount of AXM. Practice the full cycle: stake, earn, claim, unstake.`
       },
       {
         id: 5,
@@ -4418,7 +5693,106 @@ Welcome to the future of finance and social media.
           "Liquidity pools explained",
           "Adding/removing liquidity",
           "LP tokens"
-        ]
+        ],
+        content: `## Providing Liquidity
+
+Liquidity providers power DEXs. In return, they earn trading fees.
+
+### Liquidity Pools Explained
+
+**What is a Liquidity Pool?**:
+A smart contract holding paired tokens that enables trading.
+
+**Example: ETH/USDC Pool**:
+- Contains ETH and USDC
+- Traders swap between them
+- Pool maintains balance
+
+**How You Earn**:
+- Traders pay fees (0.3% typical)
+- Fees distributed to LPs
+- Proportional to your share
+
+### Adding Liquidity
+
+**The Process**:
+1. Choose a pool (e.g., AXM/ETH)
+2. Deposit both tokens in ratio
+3. Receive LP tokens
+4. Earn fees over time
+
+**Key Requirement**:
+You must deposit BOTH tokens in the pool's current ratio.
+
+**Example**:
+If pool is 50% AXM / 50% ETH by value:
+- Deposit $500 worth of AXM
+- AND $500 worth of ETH
+- Total = $1000 position
+
+### LP Tokens
+
+**What Are LP Tokens?**:
+Receipt tokens proving your pool share.
+
+**They Represent**:
+- Your portion of the pool
+- Your claim on deposited tokens
+- Your share of earned fees
+
+**Important**:
+- Keep LP tokens safe
+- Needed to withdraw liquidity
+- Can sometimes be staked for extra rewards
+
+### Removing Liquidity
+
+**The Process**:
+1. Select pool to exit
+2. Enter LP tokens to redeem
+3. Receive both tokens back
+4. (Plus accumulated fees)
+
+**What You Get Back**:
+- May differ from what you deposited
+- Due to price changes (impermanent loss)
+- Fees are included automatically
+
+### Choosing Pools
+
+**Factors to Consider**:
+- Trading volume (more volume = more fees)
+- TVL (Total Value Locked)
+- Token volatility
+- Fee tier (varies by pool)
+- Additional incentives
+
+**Higher Fee Pools**:
+- More volatile pairs
+- Higher risk, higher reward
+
+**Lower Fee Pools**:
+- Stable pairs (USDC/DAI)
+- Lower risk, lower reward
+
+### LP Risks
+
+**Main Risks**:
+1. Impermanent loss (next lesson)
+2. Smart contract risk
+3. Token price risk
+4. Low volume = low fees
+
+### Practical Example
+
+**$1000 into AXM/ETH Pool**:
+- Deposit $500 AXM + $500 ETH
+- Pool gives 0.3% per trade
+- If pool does $100k/day volume
+- Your daily share: ~$0.30 (depends on pool size)
+- Annualized: ~$100+ in fees
+
+🔥 **Action Step**: Explore the liquidity pools on Lumina's exchange. Compare APYs and volumes.`
       },
       {
         id: 6,
@@ -4429,7 +5803,109 @@ Welcome to the future of finance and social media.
           "How IL happens",
           "Calculating IL",
           "IL mitigation strategies"
-        ]
+        ],
+        content: `## Understanding Impermanent Loss
+
+Impermanent loss (IL) is the hidden cost of providing liquidity. Every LP must understand it.
+
+### How Impermanent Loss Happens
+
+**The Scenario**:
+You deposit equal values of two tokens.
+One token's price changes significantly.
+Your position is worth less than if you'd just held.
+
+**Why It Happens**:
+- AMMs maintain constant product
+- As prices change, pools rebalance
+- Arbitrageurs trade to restore prices
+- Your token ratios shift
+
+### Calculating IL
+
+**The Formula**:
+IL = 2 × √(price_ratio) / (1 + price_ratio) - 1
+
+**Quick Reference Table**:
+| Price Change | Impermanent Loss |
+|--------------|------------------|
+| 1.25x (25%) | 0.6% |
+| 1.5x (50%) | 2.0% |
+| 2x (100%) | 5.7% |
+| 3x (200%) | 13.4% |
+| 4x (300%) | 20.0% |
+| 5x (400%) | 25.5% |
+
+**Important Notes**:
+- Loss is the same whether price goes up OR down
+- Both tokens moving = different calculation
+- IL is "impermanent" until you withdraw
+
+### Why "Impermanent"?
+
+**If Prices Return**:
+- IL disappears
+- You're back to original value
+- Fees earned are pure profit
+
+**If You Withdraw**:
+- IL becomes permanent
+- Locked in the loss
+- Called "realized IL"
+
+### IL vs Holding
+
+**Example**:
+- Start: $500 ETH + $500 USDC = $1000
+- ETH doubles in price
+
+**If You Held**:
+$1000 ETH + $500 USDC = $1500
+
+**In LP**:
+Value ≈ $1414 (after IL)
+IL ≈ $86 (5.7%)
+
+**But Wait**:
+LP also earned trading fees!
+If fees > IL, you still profit.
+
+### IL Mitigation Strategies
+
+**Strategy 1: Similar-Price Tokens**
+- Stablecoin pairs (USDC/USDT)
+- Same-asset pairs (stETH/ETH)
+- Minimal price divergence
+
+**Strategy 2: High-Volume Pools**
+- More fees to offset IL
+- Active trading = active earning
+
+**Strategy 3: Concentrated Liquidity**
+- Some DEXs allow price ranges
+- Earn more fees in your range
+- But IL risk is higher if out of range
+
+**Strategy 4: Long-Term View**
+- Prices may revert
+- Fees compound over time
+- IL is only realized at withdrawal
+
+### When LP Still Makes Sense
+
+**Good Candidates**:
+- You believe both tokens long-term
+- Pool has high volume
+- Additional incentives (farming rewards)
+- You're happy with either token
+
+**Avoid**:
+- One token you expect to moon
+- Low volume pools
+- No additional incentives
+- Short time horizons
+
+🔥 **Action Step**: Use an IL calculator (search "impermanent loss calculator"). Model scenarios for tokens you hold.`
       },
       {
         id: 7,
@@ -4440,7 +5916,124 @@ Welcome to the future of finance and social media.
           "Farming vs staking",
           "Compounding strategies",
           "Risk-adjusted returns"
-        ]
+        ],
+        content: `## Maximizing DeFi Yields
+
+Yield farming combines DeFi strategies to maximize returns.
+
+### Farming vs Staking
+
+**Single-Asset Staking**:
+- Lock one token
+- Earn rewards in same or different token
+- Simpler, lower risk
+- Lower returns typically
+
+**Yield Farming**:
+- Multiple strategies combined
+- LP + staking + incentives
+- More complex
+- Higher potential returns
+- Higher risk
+
+### Basic Farming Strategy
+
+**The Flow**:
+1. Provide liquidity (get LP tokens)
+2. Stake LP tokens in farm
+3. Earn farming rewards
+4. Compound rewards
+5. Repeat
+
+**Example**:
+- Add AXM/ETH liquidity → Get LP tokens
+- Stake LP in farm → Earn AXM rewards
+- Stake earned AXM → Earn more AXM
+- Compound weekly
+
+### Compounding Strategies
+
+**Manual Compounding**:
+1. Claim rewards regularly
+2. Reinvest into position
+3. Grows exponentially
+
+**Auto-Compounding Vaults**:
+- Protocols compound for you
+- Small fee for convenience
+- More gas-efficient
+
+**Optimal Frequency**:
+- Higher APY = compound more often
+- Balance gas costs
+- Daily to weekly typical
+
+### Risk-Adjusted Returns
+
+**Don't Chase Highest APY**:
+High APY often means:
+- New, unproven protocol
+- Risky token pair
+- Unsustainable emissions
+- Hidden risks
+
+**Calculate Real Returns**:
+Advertised APY - IL - Gas - Fees - Risk = Real Return
+
+### Conservative Strategy
+
+**Approach**:
+- Blue-chip tokens only (ETH, BTC, stablecoins)
+- Established protocols (1+ year track record)
+- Lower APY (5-20%)
+- Minimal IL risk
+
+**Example Portfolio**:
+- 50% Stablecoin lending
+- 30% ETH staking
+- 20% Blue-chip LP
+
+### Moderate Strategy
+
+**Approach**:
+- Mix of stable and volatile
+- Established + newer protocols
+- Medium APY (20-50%)
+- Some IL exposure
+
+**Example Portfolio**:
+- 30% Stablecoins
+- 40% Single-asset staking
+- 30% Volatile LP with incentives
+
+### Aggressive Strategy
+
+**Approach**:
+- High-emission new protocols
+- Volatile pairs
+- High APY (50%+)
+- Significant IL exposure
+- Active management required
+
+**Warning**:
+- Higher APY = higher risk
+- Many farms go to zero
+- Not for beginners
+
+### Tracking Your Farm
+
+**What to Monitor**:
+- Position value over time
+- Rewards accumulated
+- Token prices (IL check)
+- Protocol health
+
+**Tools**:
+- DeBank (portfolio tracking)
+- Zapper (DeFi dashboard)
+- Protocol native interfaces
+
+🔥 **Action Step**: Design a farming strategy matching your risk tolerance. Start with one position to learn.`
       },
       {
         id: 8,
@@ -4451,7 +6044,125 @@ Welcome to the future of finance and social media.
           "Audit importance",
           "TVL and liquidity depth",
           "Team and track record"
-        ]
+        ],
+        content: `## Evaluating DeFi Safety
+
+Before depositing, assess the risks. Your money depends on it.
+
+### Smart Contract Audits
+
+**Why Audits Matter**:
+- Code can have bugs
+- Exploits can drain funds
+- Audits find vulnerabilities
+
+**What to Look For**:
+- Who audited? (Trail of Bits, OpenZeppelin, Consensys)
+- When? (Recent is better)
+- Findings? (Were issues fixed?)
+- Multiple audits better than one
+
+**Where to Find**:
+- Protocol docs/website
+- GitHub repositories
+- DeFi Safety scores
+
+**Red Flags**:
+- No audit
+- Unknown auditor
+- Unfixed critical issues
+
+### TVL and Liquidity
+
+**Total Value Locked (TVL)**:
+Total assets deposited in protocol.
+
+**What It Signals**:
+- Higher = more trust
+- Higher = battle tested
+- Higher = bigger target too
+
+**Considerations**:
+- New protocols have low TVL (chicken/egg)
+- Sudden TVL drops = warning
+- Check TVL trend over time
+
+**Liquidity Depth**:
+How easily can you exit?
+- Deep liquidity = easy exit
+- Shallow = slippage on exit
+- Important for larger positions
+
+### Team and Track Record
+
+**Known Team**:
+- Names and faces public
+- LinkedIn/Twitter presence
+- Past projects known
+- More accountable
+
+**Anonymous Team**:
+- Not automatically bad
+- But higher risk
+- Code should speak louder
+
+**Track Record**:
+- Previous successful projects?
+- How long in space?
+- Reputation in community?
+
+### Red Flags Checklist
+
+**Immediate Concerns**:
+- [ ] No audit
+- [ ] Anonymous team + new
+- [ ] Promises unrealistic returns (1000% APY)
+- [ ] Pressure to deposit quickly
+- [ ] Can't find source code
+- [ ] No documentation
+- [ ] Small Twitter/Discord
+- [ ] Recent contract deployment
+
+**Warning Signs**:
+- Copied code without attribution
+- Admin keys can drain funds
+- No timelock on upgrades
+- Single point of failure
+
+### Due Diligence Process
+
+**Before Depositing**:
+1. Read the documentation
+2. Check for audits
+3. Review TVL and trends
+4. Research team
+5. Check community sentiment
+6. Start with small amount
+7. Monitor regularly
+
+### Protocol Risk Tiers
+
+**Lower Risk**:
+- 2+ years operating
+- Multiple audits
+- Large TVL
+- Known team
+- Battle tested
+
+**Medium Risk**:
+- 6-24 months operating
+- Audited
+- Growing TVL
+- Some track record
+
+**Higher Risk**:
+- Less than 6 months
+- Single or no audit
+- Low TVL
+- New team
+- High APY
+
+🔥 **Action Step**: Pick a DeFi protocol you're considering. Research it using this checklist.`
       },
       {
         id: 9,
@@ -4462,7 +6173,129 @@ Welcome to the future of finance and social media.
           "Approval management",
           "Revoking permissions",
           "Transaction simulation"
-        ]
+        ],
+        content: `## Staying Safe in DeFi
+
+DeFi security requires active management. Protect your positions.
+
+### Understanding Approvals
+
+**What Are Token Approvals?**:
+Permission you give smart contracts to spend your tokens.
+
+**Types of Approvals**:
+- **Exact Amount**: Only approved amount
+- **Unlimited**: Any amount, forever
+
+**The Problem**:
+Unlimited approvals stay active.
+If contract is compromised, all approved tokens at risk.
+
+### Managing Approvals
+
+**Check Your Approvals**:
+- revoke.cash
+- Etherscan token approvals
+- DeBank approvals page
+
+**What You'll See**:
+- Which contracts you've approved
+- For which tokens
+- The approval amount
+- When it was granted
+
+### Revoking Permissions
+
+**When to Revoke**:
+- Done using a protocol
+- Protocol had security issue
+- Spring cleaning
+- Large, old approvals
+
+**How to Revoke**:
+1. Go to revoke.cash
+2. Connect wallet
+3. Find approval to remove
+4. Click "Revoke"
+5. Confirm transaction (costs gas)
+
+**Best Practice**:
+Review approvals monthly.
+Revoke anything you're not actively using.
+
+### Transaction Simulation
+
+**What It Does**:
+Shows you exactly what will happen before you sign.
+
+**Tools**:
+- Pocket Universe (browser extension)
+- Fire (wallet extension)
+- Tenderly (advanced)
+
+**What They Show**:
+- Token transfers
+- Approvals being granted
+- Contract interactions
+- Potential red flags
+
+### Security Best Practices
+
+**Wallet Hygiene**:
+- Dedicated DeFi wallet
+- Small amount for active use
+- Large holdings in cold storage
+- Never use "main" wallet for experiments
+
+**Before Every Transaction**:
+1. Verify URL is correct
+2. Check contract address
+3. Review approval amount
+4. Simulate if available
+5. Understand what you're signing
+
+### Common DeFi Attack Vectors
+
+**Phishing**:
+- Fake sites
+- Malicious token approvals
+- Look-alike protocols
+
+**Contract Exploits**:
+- Flash loan attacks
+- Reentrancy
+- Price manipulation
+
+**Rug Pulls**:
+- Team disappears with funds
+- Hidden admin functions
+- Usually in new protocols
+
+### Emergency Response
+
+**If You Think You're Compromised**:
+1. Revoke ALL approvals immediately
+2. Transfer funds to new wallet
+3. Don't interact with suspicious tokens
+4. Report to community
+5. Document everything
+
+### Building Good Habits
+
+**Daily**:
+- Check active positions
+- Verify no unexpected transactions
+
+**Weekly**:
+- Review any new approvals
+- Check protocol news
+
+**Monthly**:
+- Full approval audit
+- Portfolio review
+- Security checkup
+
+🔥 **Action Step**: Visit revoke.cash. Review and clean up your token approvals.`
       },
       {
         id: 10,
@@ -4473,7 +6306,141 @@ Welcome to the future of finance and social media.
           "Diversification principles",
           "Rebalancing strategies",
           "Tracking tools"
-        ]
+        ],
+        content: `## Creating Your DeFi Strategy
+
+Time to build a complete DeFi portfolio that matches your goals.
+
+### Diversification Principles
+
+**Protocol Diversification**:
+Don't put everything in one protocol.
+If it's exploited, you lose everything.
+
+**Strategy Diversification**:
+Mix different approaches:
+- Some staking
+- Some LP
+- Some lending
+- Some stable yields
+
+**Chain Diversification**:
+Consider multiple chains:
+- Arbitrum (where Lumina lives)
+- Ethereum mainnet
+- Other L2s
+
+### Sample Portfolios
+
+**Conservative Portfolio**:
+- 40% Stablecoin lending (5-10% APY)
+- 30% Blue-chip staking (5-15% APY)
+- 20% Stable LP (10-20% APY)
+- 10% Cash for opportunities
+
+**Balanced Portfolio**:
+- 25% Stablecoins
+- 25% Single-asset staking
+- 30% LP positions
+- 15% Yield farming
+- 5% Experimental
+
+**Aggressive Portfolio**:
+- 40% High-APY farming
+- 30% Volatile LP
+- 20% Leveraged positions
+- 10% New protocol incentives
+
+### Rebalancing Strategies
+
+**Why Rebalance?**:
+- Portfolios drift over time
+- Winners become too large
+- Risk profile changes
+- Lock in gains
+
+**When to Rebalance**:
+- Monthly (conservative)
+- Weekly (active)
+- When positions drift 10%+ from target
+- After major market moves
+
+**How to Rebalance**:
+1. Calculate current allocation
+2. Compare to target
+3. Sell overweight positions
+4. Buy underweight positions
+5. Account for gas costs
+
+### Tracking Tools
+
+**Portfolio Trackers**:
+- DeBank (comprehensive)
+- Zapper (nice UI)
+- Zerion (multi-chain)
+
+**Yield Trackers**:
+- DeFiLlama Yields
+- Vfat.tools
+- Coindix
+
+**Spreadsheet Method**:
+- Google Sheets
+- Manual tracking
+- Full control
+- More work
+
+### Managing Risk
+
+**Position Sizing**:
+Never put more than you can lose.
+- 10-20% max in any single protocol
+- 5% max in experimental
+- Size by conviction and risk
+
+**Stop Loss Thinking**:
+Mental exit points:
+- If TVL drops by X%
+- If team goes quiet
+- If bad news emerges
+- If APY becomes unsustainable
+
+### Your DeFi Journey
+
+**Beginner Phase** (Month 1-3):
+- Learn with small amounts
+- Single-asset staking first
+- One or two protocols
+- Focus on education
+
+**Growth Phase** (Month 3-6):
+- Expand to LP
+- Add more protocols
+- Develop strategies
+- Track performance
+
+**Mature Phase** (6+ months):
+- Sophisticated strategies
+- Multiple chains
+- Active management
+- Compound expertise
+
+### Congratulations!
+
+You've completed "Understanding DeFi"!
+
+You now know:
+- DeFi fundamentals
+- DEX trading
+- Staking mechanics
+- Liquidity provision
+- Impermanent loss
+- Yield farming
+- Risk assessment
+- Security practices
+- Portfolio building
+
+🔥 **Final Action Step**: Create your first DeFi portfolio plan. Start with one conservative position.`
       }
     ]
   },
