@@ -1145,6 +1145,109 @@ export function useAcademyContract() {
     }
   }, [isCorrectNetwork]);
 
+  const createCourse = useCallback(async (
+    title: string,
+    description: string,
+    imageURI: string,
+    level: number,
+    requiresVerification: boolean
+  ): Promise<{ txHash: string; courseId: number } | null> => {
+    if (!isCorrectNetwork) {
+      throw new Error('Please switch to Arbitrum One network');
+    }
+    const signer = await getSigner();
+    if (!signer) {
+      throw new Error('Please connect your wallet');
+    }
+    try {
+      const contractWithSigner = new ethers.Contract(CONTRACT_ADDRESSES.ACADEMY_HUB, ACADEMY_HUB_ABI, signer);
+      const tx = await contractWithSigner.createCourse(title, description, imageURI, level, requiresVerification);
+      const receipt = await tx.wait();
+      const event = receipt.logs.find((log: any) => {
+        try {
+          const parsed = contractWithSigner.interface.parseLog({ topics: log.topics, data: log.data });
+          return parsed?.name === 'CourseCreated';
+        } catch { return false; }
+      });
+      let courseId = 0;
+      if (event) {
+        const parsed = contractWithSigner.interface.parseLog({ topics: event.topics, data: event.data });
+        courseId = Number(parsed?.args?.courseId || 0);
+      }
+      return { txHash: tx.hash, courseId };
+    } catch (error) {
+      console.error('Create course failed:', error);
+      throw error;
+    }
+  }, [isCorrectNetwork]);
+
+  const addModule = useCallback(async (
+    courseId: number,
+    title: string,
+    description: string,
+    isRequired: boolean
+  ): Promise<{ txHash: string; moduleId: number } | null> => {
+    if (!isCorrectNetwork) {
+      throw new Error('Please switch to Arbitrum One network');
+    }
+    const signer = await getSigner();
+    if (!signer) {
+      throw new Error('Please connect your wallet');
+    }
+    try {
+      const contractWithSigner = new ethers.Contract(CONTRACT_ADDRESSES.ACADEMY_HUB, ACADEMY_HUB_ABI, signer);
+      const tx = await contractWithSigner.addModule(courseId, title, description, isRequired);
+      const receipt = await tx.wait();
+      return { txHash: tx.hash, moduleId: 0 };
+    } catch (error) {
+      console.error('Add module failed:', error);
+      throw error;
+    }
+  }, [isCorrectNetwork]);
+
+  const addLesson = useCallback(async (
+    moduleId: number,
+    title: string,
+    contentURI: string,
+    estimatedMinutes: number
+  ): Promise<{ txHash: string; lessonId: number } | null> => {
+    if (!isCorrectNetwork) {
+      throw new Error('Please switch to Arbitrum One network');
+    }
+    const signer = await getSigner();
+    if (!signer) {
+      throw new Error('Please connect your wallet');
+    }
+    try {
+      const contractWithSigner = new ethers.Contract(CONTRACT_ADDRESSES.ACADEMY_HUB, ACADEMY_HUB_ABI, signer);
+      const tx = await contractWithSigner.addLesson(moduleId, title, contentURI, estimatedMinutes);
+      const receipt = await tx.wait();
+      return { txHash: tx.hash, lessonId: 0 };
+    } catch (error) {
+      console.error('Add lesson failed:', error);
+      throw error;
+    }
+  }, [isCorrectNetwork]);
+
+  const publishCourse = useCallback(async (courseId: number): Promise<string | null> => {
+    if (!isCorrectNetwork) {
+      throw new Error('Please switch to Arbitrum One network');
+    }
+    const signer = await getSigner();
+    if (!signer) {
+      throw new Error('Please connect your wallet');
+    }
+    try {
+      const contractWithSigner = new ethers.Contract(CONTRACT_ADDRESSES.ACADEMY_HUB, ACADEMY_HUB_ABI, signer);
+      const tx = await contractWithSigner.publishCourse(courseId);
+      await tx.wait();
+      return tx.hash;
+    } catch (error) {
+      console.error('Publish course failed:', error);
+      throw error;
+    }
+  }, [isCorrectNetwork]);
+
   return {
     getTotalCourses,
     getTotalEnrollments,
@@ -1158,6 +1261,10 @@ export function useAcademyContract() {
     enrollInCourse,
     completeLesson,
     registerInstructor,
+    createCourse,
+    addModule,
+    addLesson,
+    publishCourse,
   };
 }
 

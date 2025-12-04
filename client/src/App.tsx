@@ -43,6 +43,7 @@ import Treasury from "@/pages/Treasury";
 import Bridge from "@/pages/Bridge";
 import Academy from "@/pages/Academy";
 import CourseDetail from "@/pages/CourseDetail";
+import AdminAcademy from "@/pages/AdminAcademy";
 import Exchange from "@/pages/Exchange";
 import Nodes from "@/pages/Nodes";
 
@@ -103,6 +104,7 @@ function Router() {
       <Route path="/bridge" component={Bridge} />
       <Route path="/academy" component={Academy} />
       <Route path="/academy/course/:id" component={CourseDetail} />
+      <Route path="/admin/academy" component={AdminAcademy} />
       <Route path="/exchange" component={Exchange} />
       <Route path="/nodes" component={Nodes} />
       <Route path="/business" component={() => <ProtectedRoute component={BusinessDashboard} />} />

@@ -268,16 +268,26 @@ export default function Academy() {
               Where creators are made. Learn, grow, and unlock your potential.
             </p>
           </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={fetchData}
-            disabled={isLoading}
-            data-testid="button-refresh"
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
+          <div className="flex items-center gap-2">
+            {address?.toLowerCase() === "0xdff9e47eb007bf02e47477d577de9ffa99791528" && (
+              <Link href="/admin/academy">
+                <Button variant="outline" size="sm" data-testid="button-admin">
+                  <Shield className="h-4 w-4 mr-2" />
+                  Admin
+                </Button>
+              </Link>
+            )}
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={fetchData}
+              disabled={isLoading}
+              data-testid="button-refresh"
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+          </div>
         </div>
 
         {/* Hero Section */}
