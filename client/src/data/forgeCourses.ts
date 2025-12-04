@@ -6470,7 +6470,96 @@ You now know:
           "DAO definition and types",
           "Smart contract governance",
           "Token-based voting"
-        ]
+        ],
+        content: `## Understanding DAOs
+
+DAOs are reinventing how organizations work. Welcome to governance without bosses.
+
+### What is a DAO?
+
+**DAO = Decentralized Autonomous Organization**
+
+**Decentralized**: No single point of control
+**Autonomous**: Rules enforced by code
+**Organization**: People coordinating toward goals
+
+**The Simple Version**:
+A DAO is a group of people who govern a project together using token-based voting.
+
+### Traditional vs DAO Structure
+
+**Traditional Company**:
+- CEO makes decisions
+- Board of directors
+- Employees follow orders
+- Shareholders have limited voice
+- Closed financial books
+
+**DAO Structure**:
+- Token holders vote on decisions
+- No central leadership (usually)
+- Contributors are rewarded
+- All holders can participate
+- Transparent treasury
+
+### Types of DAOs
+
+**Protocol DAOs**:
+- Govern DeFi protocols
+- Vote on upgrades, fees, parameters
+- Examples: Uniswap, Aave, Compound
+
+**Investment DAOs**:
+- Pool funds for investments
+- Members vote on deals
+- Share returns proportionally
+
+**Social DAOs**:
+- Community and membership focused
+- Access and experiences
+- Example: Friends with Benefits
+
+**Service DAOs**:
+- Collectives of professionals
+- Work for clients together
+- Share earnings
+
+**Media DAOs**:
+- Create content collectively
+- Share ownership of work
+- Example: BanklessDAO
+
+### Smart Contract Governance
+
+**How It Works**:
+- Proposals are on-chain
+- Votes are recorded on blockchain
+- Results automatically execute
+- No one can override the outcome
+
+**The Advantage**:
+- Trustless execution
+- Transparent process
+- Immutable records
+- Global participation
+
+### Token-Based Voting
+
+**Governance Tokens**:
+Tokens that grant voting power in a DAO.
+
+**Common Models**:
+- 1 token = 1 vote (most common)
+- Quadratic voting (reduces whale power)
+- Conviction voting (time-weighted)
+- Holographic consensus (prediction market)
+
+**AXM in Lumina**:
+- AXM token holders can vote on proposals
+- More AXM = more voting power
+- Participate in platform governance
+
+🔥 **Action Step**: Explore 3 DAOs. Note their type, governance token, and recent proposals.`
       },
       {
         id: 2,
@@ -6481,7 +6570,106 @@ You now know:
           "Voting power calculation",
           "Delegation options",
           "Token distribution models"
-        ]
+        ],
+        content: `## Tokens as Power
+
+Governance tokens are your voice in a DAO. Understand how they work.
+
+### Voting Power Calculation
+
+**Basic Model: 1 Token = 1 Vote**
+- 100 AXM = 100 votes
+- Simple and clear
+- Whales have more power
+
+**Variations**:
+- **Staked voting**: Only staked tokens count
+- **Time-weighted**: Longer holding = more power
+- **Capped voting**: Maximum per wallet
+- **Snapshot voting**: Power at specific block
+
+### The Snapshot Concept
+
+**What is a Snapshot?**:
+- Recording of all balances at a specific block
+- Your voting power is locked at that moment
+- Prevents last-minute token buying
+
+**Why It Matters**:
+- Buy tokens after snapshot = no votes
+- Sell tokens after snapshot = still can vote
+- Fair and predictable
+
+### Delegation
+
+**What is Delegation?**:
+Giving your voting power to someone else.
+
+**Why Delegate?**:
+- Too busy to vote on everything
+- Trust another person's judgment
+- Still participate without research
+
+**How Delegation Works**:
+1. Choose a delegate
+2. Assign your voting power
+3. They vote on your behalf
+4. You can change or revoke anytime
+
+**Lumina Delegation**:
+AXM holders can delegate voting power while keeping their tokens.
+
+### Token Distribution Models
+
+**Fair Launch**:
+- No pre-mine or team allocation
+- Everyone starts equal
+- Distributed through usage
+
+**Venture-Backed**:
+- Investors get large allocation
+- Team keeps significant portion
+- Users get smaller share
+- Watch for unlock schedules
+
+**Airdrop Model**:
+- Tokens given to early users
+- Rewards past participation
+- Builds community fast
+
+**Community-First**:
+- Majority to community
+- Small team allocation
+- Long-term alignment
+
+### Understanding Tokenomics
+
+**What to Research**:
+- Total supply
+- Circulating supply
+- Team/investor vesting
+- Emission schedule
+- Burn mechanics
+
+**Red Flags**:
+- 50%+ to team/investors
+- Short vesting periods
+- Ability to mint unlimited
+- Centralized control
+
+### Strategic Considerations
+
+**Building Voting Power**:
+- Accumulate before proposals you care about
+- Consider delegation to amplify voice
+- Join voting blocks/coalitions
+
+**Voter Responsibilities**:
+- Research before voting
+- Consider long-term health of DAO
+- Participate regularly
+
+🔥 **Action Step**: Check your AXM balance. Calculate your current voting power in Lumina governance.`
       },
       {
         id: 3,
@@ -6492,7 +6680,109 @@ You now know:
           "Proposal anatomy",
           "Impact assessment",
           "Hidden implications"
-        ]
+        ],
+        content: `## Analyzing Proposals
+
+Good governance requires informed voting. Learn to evaluate proposals critically.
+
+### Anatomy of a Proposal
+
+**Standard Components**:
+- **Title**: Clear, descriptive name
+- **Summary**: Brief overview
+- **Motivation**: Why this proposal?
+- **Specification**: Detailed description
+- **Implementation**: Technical details
+- **Timeline**: When would it happen?
+- **Budget**: Any costs involved?
+
+### Questions to Ask
+
+**About the Problem**:
+- Is this a real issue?
+- How urgent is it?
+- Who is affected?
+
+**About the Solution**:
+- Does this actually solve the problem?
+- Are there simpler alternatives?
+- What could go wrong?
+
+**About the Proposer**:
+- Who is behind this?
+- What's their track record?
+- Do they have conflicts of interest?
+
+### Impact Assessment
+
+**Consider All Stakeholders**:
+- Token holders
+- Users
+- Developers
+- Partners
+- Broader ecosystem
+
+**Types of Impact**:
+- **Financial**: Treasury, token value
+- **Technical**: Security, complexity
+- **Community**: Culture, inclusivity
+- **Reputation**: How outsiders perceive
+
+### Hidden Implications
+
+**Look for**:
+- Unintended consequences
+- Power shifts
+- Precedent setting
+- Long-term commitments
+
+**Common Issues**:
+- Vague language (open to interpretation)
+- Missing details
+- Irreversible decisions
+- Scope creep potential
+
+### Red Flags in Proposals
+
+**Concerning Signs**:
+- Rushed timeline
+- No discussion period
+- Significant treasury impact
+- Benefits small group
+- Unusual governance changes
+- Attack on other members
+
+### Discussion Phase
+
+**Before Voting**:
+- Read community comments
+- Check governance forums
+- Attend community calls
+- Ask questions directly
+
+**Valuable Perspectives**:
+- Technical reviewers
+- Long-term members
+- Subject matter experts
+- Devil's advocates
+
+### Your Voting Criteria
+
+**Develop Your Framework**:
+- What values guide your votes?
+- What's your risk tolerance?
+- Long-term vs short-term focus?
+- Active participation vs delegation?
+
+### When to Abstain
+
+**Valid Reasons**:
+- Insufficient understanding
+- Clear conflict of interest
+- Proposal is unclear
+- Need more information
+
+🔥 **Action Step**: Find an active proposal in any DAO. Analyze it using this framework.`
       },
       {
         id: 4,
@@ -6503,7 +6793,114 @@ You now know:
           "Voting interface walkthrough",
           "Gas-free voting options",
           "Vote delegation"
-        ]
+        ],
+        content: `## Voting Step by Step
+
+Time to make your voice heard. Here's how to vote in DAO governance.
+
+### Before You Vote
+
+**Requirements**:
+- Wallet with governance tokens
+- Tokens held before snapshot (if applicable)
+- Understanding of the proposal
+- Small amount of ETH for gas (on-chain voting)
+
+### Voting Interface Walkthrough
+
+**Common Voting Platforms**:
+- Snapshot (off-chain, gas-free)
+- Tally (on-chain)
+- Boardroom (aggregator)
+- Native DAO interfaces
+
+### Snapshot Voting (Gas-Free)
+
+**The Process**:
+1. Go to snapshot.org
+2. Find your DAO space
+3. Connect wallet
+4. Select active proposal
+5. Read proposal details
+6. Choose your vote (For/Against/Abstain)
+7. Sign message (no gas)
+8. Vote recorded
+
+**Benefits**:
+- No transaction fees
+- Simple interface
+- Off-chain but verifiable
+
+### On-Chain Voting
+
+**The Process**:
+1. Go to governance interface
+2. Connect wallet
+3. Select proposal
+4. Review your voting power
+5. Choose your vote
+6. Confirm transaction
+7. Pay gas fee
+8. Wait for confirmation
+
+**Benefits**:
+- Votes execute automatically
+- Maximum trustlessness
+- Permanent on-chain record
+
+### Vote Delegation
+
+**Delegating Your Vote**:
+1. Find delegation interface
+2. Search for delegate address
+3. Assign your voting power
+4. Confirm (may require transaction)
+5. Delegate votes on your behalf
+
+**Choosing a Delegate**:
+- Review their voting history
+- Check their stated positions
+- See their participation rate
+- Consider alignment with your values
+
+### After Voting
+
+**Track Results**:
+- Watch proposal progress
+- See current vote tally
+- Wait for voting period end
+- Monitor execution
+
+**Engage Further**:
+- Share your reasoning publicly
+- Encourage others to vote
+- Discuss outcomes
+
+### Voting Best Practices
+
+**Do**:
+- Vote on proposals you understand
+- Research before voting
+- Consider long-term implications
+- Delegate if too busy
+
+**Don't**:
+- Vote blindly
+- Follow others without thinking
+- Ignore small proposals
+- Forget to vote
+
+### Lumina Governance
+
+**How to Vote on Lumina**:
+1. Hold AXM tokens
+2. Navigate to Governance page
+3. View active proposals
+4. Connect wallet
+5. Cast your vote
+6. Sign with wallet
+
+🔥 **Action Step**: Find an active proposal in Lumina governance and cast your vote.`
       },
       {
         id: 5,
@@ -6514,7 +6911,117 @@ You now know:
           "Proposal writing best practices",
           "Building support before submission",
           "Responding to feedback"
-        ]
+        ],
+        content: `## Writing Winning Proposals
+
+Great ideas need great proposals. Learn to write proposals that pass.
+
+### Before You Write
+
+**Validate Your Idea**:
+- Is this a real problem?
+- Does the DAO care about this?
+- Has it been proposed before?
+- What happened to similar proposals?
+
+**Gather Information**:
+- Understand current state
+- Research alternatives
+- Know the objections
+- Calculate costs/benefits
+
+### Proposal Writing Best Practices
+
+**Title**:
+- Clear and descriptive
+- Action-oriented
+- Not clickbait
+
+**Summary** (Most Important):
+- 2-3 sentences maximum
+- State the problem
+- State the solution
+- State the ask
+
+**Motivation**:
+- Why does this matter?
+- Who benefits?
+- What's the cost of inaction?
+- Data and evidence
+
+**Specification**:
+- Detailed description
+- Technical requirements
+- Timeline
+- Success metrics
+
+**Budget** (if applicable):
+- Clear cost breakdown
+- Justification for amounts
+- Payment schedule
+- Milestones
+
+### Building Support Before Submission
+
+**Soft Launch**:
+1. Share idea in forums/Discord
+2. Gather initial feedback
+3. Find allies who support
+4. Address concerns early
+
+**Why This Matters**:
+- Avoid surprise opposition
+- Improve proposal quality
+- Build coalition
+- Higher pass rate
+
+### The Proposal Lifecycle
+
+1. **Idea Phase**: Informal discussion
+2. **Draft Phase**: Written proposal shared
+3. **Discussion Phase**: Community feedback
+4. **Revision Phase**: Incorporate feedback
+5. **Formal Submission**: On-chain or Snapshot
+6. **Voting Period**: Community votes
+7. **Execution**: If passed, implement
+
+### Responding to Feedback
+
+**Constructive Approach**:
+- Thank all commenters
+- Address concerns directly
+- Be willing to revise
+- Stay professional
+
+**Common Feedback Types**:
+- **Technical concerns**: Get expert input
+- **Scope questions**: Clarify boundaries
+- **Cost concerns**: Justify or reduce
+- **Opposition**: Understand and address
+
+### When Proposals Fail
+
+**It's Not the End**:
+- Learn from feedback
+- Revise and resubmit
+- Build more support
+- Try different approach
+
+**Analysis**:
+- Why did it fail?
+- Who opposed and why?
+- What would change votes?
+- Is the idea fundamentally flawed?
+
+### Templates and Resources
+
+**Use Existing Templates**:
+- Check DAO documentation
+- Look at passed proposals
+- Follow established format
+- Don't reinvent unnecessarily
+
+🔥 **Action Step**: Draft a proposal for something you'd like to see in Lumina. Share in community for feedback.`
       },
       {
         id: 6,
@@ -6525,7 +7032,136 @@ You now know:
           "Building reputation",
           "Finding allies",
           "Constructive disagreement"
-        ]
+        ],
+        content: `## Navigating DAO Politics
+
+DAOs are human organizations. Understanding social dynamics helps you be effective.
+
+### Building Reputation
+
+**How Reputation Works**:
+- No formal titles (usually)
+- Influence earned through contribution
+- Track record matters
+- Consistency over time
+
+**Ways to Build Reputation**:
+- Participate regularly in discussions
+- Vote consistently
+- Contribute work (not just votes)
+- Help other members
+- Follow through on commitments
+
+**Time Investment**:
+- Reputation takes months to build
+- Lost quickly through bad actions
+- Worth the long-term investment
+
+### Finding Allies
+
+**Why Alliances Matter**:
+- More voting power together
+- Diverse perspectives
+- Support for proposals
+- Shared workload
+
+**Finding Like-Minded Members**:
+- Review voting histories
+- Engage in discussions
+- Join working groups
+- Attend community calls
+
+**Building Coalitions**:
+- Find shared interests
+- Communicate openly
+- Compromise when needed
+- Maintain relationships even in disagreement
+
+### Constructive Disagreement
+
+**Healthy Conflict**:
+- Disagreement is normal
+- Leads to better outcomes
+- Tests ideas thoroughly
+- Prevents groupthink
+
+**How to Disagree Well**:
+- Focus on ideas, not people
+- Provide reasoning
+- Acknowledge valid points
+- Seek common ground
+- Know when to concede
+
+**Avoiding Toxicity**:
+- No personal attacks
+- Stay professional
+- Take breaks when heated
+- Assume good faith
+
+### DAO Communication Channels
+
+**Discord**:
+- Day-to-day discussion
+- Quick questions
+- Community building
+- Working group coordination
+
+**Forums** (Discourse, Commonwealth):
+- Long-form proposals
+- Structured debate
+- Searchable history
+- Serious governance
+
+**Governance Calls**:
+- Live discussion
+- Proposal presentations
+- Community updates
+- Voice and video
+
+### Common DAO Challenges
+
+**Voter Apathy**:
+- Low participation
+- Whales dominate
+- Solution: Delegation, incentives
+
+**Whale Dominance**:
+- Few wallets control votes
+- Minority voice drowned out
+- Solution: Quadratic voting, conviction voting
+
+**Coordination Failure**:
+- Can't agree on anything
+- Proposals stall
+- Solution: Clear processes, smaller working groups
+
+### Your Role in the Community
+
+**Active Participant**:
+- Vote regularly
+- Engage in discussions
+- Support good proposals
+- Call out bad ones
+
+**Contributor**:
+- Take on work
+- Lead initiatives
+- Help others
+- Build the DAO
+
+### Congratulations!
+
+You've completed "DAO Participation"!
+
+You now understand:
+- What DAOs are and how they work
+- Governance token mechanics
+- How to evaluate proposals
+- Voting processes
+- Creating your own proposals
+- Community dynamics
+
+🔥 **Final Action Step**: Join Lumina's governance community. Participate in at least one proposal discussion this week.`
       }
     ]
   },
@@ -6558,7 +7194,81 @@ You now know:
           "Reward pool mechanics",
           "Distribution schedules",
           "Earning multipliers"
-        ]
+        ],
+        content: `## How Lumina Rewards Work
+
+Lumina rewards creators and participants with AXM tokens. Here's how the system works.
+
+### The Reward Pool
+
+**How Tokens Are Distributed**:
+- Daily reward pool allocated from protocol
+- Distributed based on activity and quality
+- Everyone competes for share of pool
+- More activity = more competition
+
+**Pool Mechanics**:
+- Fixed daily emissions
+- Split among all earners
+- Your share depends on contribution
+- Early activity matters
+
+### Distribution Categories
+
+**Content Rewards**: 40% of pool
+- Creating posts, videos, content
+- Quality and engagement based
+
+**Engagement Rewards**: 25% of pool
+- Likes, comments, shares
+- Community participation
+
+**Staking Rewards**: 20% of pool
+- Locking AXM tokens
+- Long-term commitment bonus
+
+**Special Rewards**: 15% of pool
+- Quests and achievements
+- Events and promotions
+
+### Earning Multipliers
+
+**Level Multiplier**:
+Higher level = higher multiplier on all earnings
+
+| Level | Multiplier |
+|-------|------------|
+| 1-5 | 1.0x |
+| 6-10 | 1.1x |
+| 11-20 | 1.2x |
+| 21-50 | 1.5x |
+| 51+ | 2.0x |
+
+**Streak Multiplier**:
+Consecutive daily activity
+
+| Streak | Bonus |
+|--------|-------|
+| 7 days | +10% |
+| 30 days | +25% |
+| 90 days | +50% |
+
+**Quality Multiplier**:
+Content that gets more engagement earns more
+
+### When Rewards Accumulate
+
+**Real-Time Accrual**:
+- Rewards accumulate continuously
+- Viewable in your dashboard
+- Claimable when you want
+
+**Snapshot Times**:
+- Daily snapshots for calculations
+- Activity before snapshot counts
+- Plan activity accordingly
+
+🔥 **Action Step**: Check your current multipliers. Identify one you can improve this week.`
       },
       {
         id: 2,
@@ -6569,7 +7279,90 @@ You now know:
           "Quality scoring factors",
           "Engagement bonuses",
           "Consistency rewards"
-        ]
+        ],
+        content: `## Earning Through Content Creation
+
+Creating content is the core way to earn on Lumina. Maximize your content rewards.
+
+### How Content Rewards Work
+
+**Basic Formula**:
+Base Reward × Quality Score × Engagement Multiplier × Level Bonus
+
+**What Gets Rewarded**:
+- Original content creation
+- Engagement your content receives
+- Consistency of posting
+- Content quality signals
+
+### Quality Scoring Factors
+
+**What Affects Quality Score**:
+- Originality (not copied)
+- Completion (not truncated)
+- Media quality (resolution, clarity)
+- Proper formatting
+- Appropriate length
+
+**Quality Tiers**:
+| Tier | Quality Score | Characteristics |
+|------|---------------|-----------------|
+| Bronze | 1.0x | Basic content |
+| Silver | 1.5x | Good quality |
+| Gold | 2.0x | High quality |
+| Diamond | 3.0x | Exceptional |
+
+### Engagement Bonuses
+
+**Engagement Metrics That Count**:
+- Likes received
+- Comments received
+- Shares/reposts
+- Watch time (for video)
+- Click-through rate
+
+**Engagement Tiers**:
+| Engagement Level | Bonus |
+|-----------------|-------|
+| Low | +0% |
+| Medium | +25% |
+| High | +50% |
+| Viral | +100% |
+
+### Consistency Rewards
+
+**Posting Streaks**:
+Regular posting builds earning power
+
+**Benefits of Consistency**:
+- Streak multipliers apply
+- Algorithm favors active creators
+- Audience expects content
+- Compounding engagement
+
+**Optimal Posting Frequency**:
+- Minimum: 3x per week
+- Good: Daily
+- Optimal: 1-2 quality posts/day
+- Warning: Quality over quantity
+
+### Content Type Rewards
+
+**Text Posts**: Base rewards
+**Image Posts**: 1.2x base
+**Video Posts**: 1.5x base
+**Live Streams**: 2.0x base (while live)
+
+### Maximizing Content Rewards
+
+**Strategy**:
+1. Focus on quality over quantity
+2. Post at optimal times
+3. Engage with comments
+4. Maintain consistency
+5. Diversify content types
+
+🔥 **Action Step**: Create one high-quality piece of content. Track its engagement and rewards.`
       },
       {
         id: 3,
@@ -6580,7 +7373,86 @@ You now know:
           "Engagement point system",
           "Daily earning limits",
           "Quality vs quantity"
-        ]
+        ],
+        content: `## Earning Through Engagement
+
+Even without creating content, you can earn by participating. Here's how.
+
+### The Engagement Point System
+
+**Actions That Earn Points**:
+| Action | Points |
+|--------|--------|
+| Like | 1 point |
+| Comment | 5 points |
+| Share | 3 points |
+| Reply to comment | 3 points |
+| Save post | 2 points |
+
+**Points to AXM Conversion**:
+Points accumulated → converted daily → AXM rewards
+
+### Daily Earning Limits
+
+**Why Limits Exist**:
+- Prevent spam
+- Ensure fair distribution
+- Maintain platform quality
+
+**Daily Caps**:
+| Action | Daily Cap |
+|--------|-----------|
+| Likes | 100 |
+| Comments | 50 |
+| Shares | 30 |
+| Total Points | 500 |
+
+**After Cap**:
+- Still counts for streaks
+- Doesn't earn additional points
+- Resets at midnight UTC
+
+### Quality vs Quantity
+
+**Quality Engagement**:
+- Thoughtful comments earn more
+- Comments that get liked earn bonuses
+- First to comment on viral content
+- Helpful responses valued
+
+**Spam Detection**:
+- Duplicate comments penalized
+- Too-short comments reduced
+- Suspicious patterns flagged
+- Quality filters active
+
+### Strategic Engagement
+
+**High-Value Actions**:
+1. Comment on rising content early
+2. Provide helpful responses
+3. Engage in discussions
+4. Support quality creators
+
+**Timing Matters**:
+- Early engagement rewards higher
+- Peak hours have more competition
+- Consistent timing builds habits
+
+### Building Engagement Habits
+
+**Daily Routine**:
+1. Morning: Quick scroll and likes
+2. Midday: Thoughtful comments
+3. Evening: Discussion participation
+4. Night: Save quality content
+
+**Weekly Goals**:
+- Hit daily caps most days
+- Maintain 7-day streak
+- Build relationships through comments
+
+🔥 **Action Step**: Track your engagement today. Note points earned and caps hit.`
       },
       {
         id: 4,
@@ -6591,7 +7463,96 @@ You now know:
           "Check-in bonuses",
           "Streak multipliers",
           "Recovery strategies"
-        ]
+        ],
+        content: `## The Power of Streaks
+
+Daily consistency compounds your earnings. Never underestimate streaks.
+
+### Daily Check-ins
+
+**How Check-ins Work**:
+- Visit Lumina each day
+- Perform qualifying action
+- Check-in registered
+- Bonus received
+
+**Qualifying Actions**:
+- Like a post
+- Create content
+- Comment on something
+- Complete a quest
+- Any meaningful activity
+
+**Check-in Bonuses**:
+- Base check-in reward
+- Increases with streak
+- Special milestone rewards
+
+### Streak Multipliers
+
+**How Streaks Compound**:
+
+| Streak Length | Total Multiplier |
+|---------------|-----------------|
+| 1-6 days | 1.0x |
+| 7 days | 1.1x |
+| 14 days | 1.15x |
+| 30 days | 1.25x |
+| 60 days | 1.4x |
+| 90 days | 1.5x |
+| 180 days | 1.75x |
+| 365 days | 2.0x |
+
+**The Math**:
+A 30-day streak means 25% more on ALL earnings.
+Over a month, that's significant AXM.
+
+### Streak Milestones
+
+**Special Rewards At**:
+- 7 days: Bronze streak badge
+- 30 days: Silver streak badge + bonus
+- 90 days: Gold streak badge + major bonus
+- 365 days: Diamond streak badge + huge bonus
+
+### Recovery Strategies
+
+**If You Miss a Day**:
+
+**Streak Freeze** (if available):
+- One free freeze per month
+- Preserves streak
+- Must activate before missing
+
+**Grace Period**:
+- Small window to recover
+- Reduced streak penalty
+- Check your settings
+
+### Protecting Your Streak
+
+**Best Practices**:
+- Set daily reminders
+- Morning routine check-in
+- Multiple device access
+- Travel plans considered
+
+**Minimum Activity**:
+Even a single like maintains your streak.
+Takes 10 seconds. Worth doing daily.
+
+### Streak Strategy
+
+**Starting Out**:
+Focus on building to 7 days first.
+
+**Intermediate**:
+Target 30-day milestone.
+
+**Advanced**:
+Protect long streaks at all costs.
+
+🔥 **Action Step**: Start a streak today. Set a daily reminder. Don't break it.`
       },
       {
         id: 5,
@@ -6602,7 +7563,106 @@ You now know:
           "Quest types and rewards",
           "Achievement badges",
           "Strategic quest completion"
-        ]
+        ],
+        content: `## Quests and Achievements
+
+Bonus rewards for completing specific objectives. Hunt achievements strategically.
+
+### Quest Types
+
+**Daily Quests**:
+- Reset every 24 hours
+- Smaller rewards
+- Easy to complete
+- Build streaks
+
+**Weekly Quests**:
+- Reset every 7 days
+- Medium rewards
+- Require more effort
+- Good ROI
+
+**Special Event Quests**:
+- Limited time
+- Larger rewards
+- Unique challenges
+- Don't miss these
+
+**Permanent Achievements**:
+- One-time completion
+- Large rewards
+- Badge unlocks
+- Status symbols
+
+### Daily Quest Examples
+
+- Create 1 post
+- Like 10 posts
+- Comment on 5 posts
+- Maintain streak
+- Share content
+
+**Typical Daily Rewards**: 10-50 AXM
+
+### Weekly Quest Examples
+
+- Create 5 pieces of content
+- Reach X engagement
+- Engage with 50 creators
+- Complete all daily quests
+- Grow followers
+
+**Typical Weekly Rewards**: 100-500 AXM
+
+### Achievement Categories
+
+**Content Achievements**:
+- First post
+- 100 posts
+- Viral content
+- Video milestones
+
+**Engagement Achievements**:
+- Comment milestones
+- Likes received
+- Shares achieved
+- Reply milestones
+
+**Community Achievements**:
+- Follower milestones
+- Group participation
+- Helping others
+- Referrals
+
+**Streak Achievements**:
+- 7-day streak
+- 30-day streak
+- 90-day streak
+- Year streak
+
+### Strategic Quest Completion
+
+**Efficiency Tips**:
+1. Check quests at day start
+2. Stack multiple quests
+3. Prioritize high-reward quests
+4. Don't miss weekly resets
+
+**Quest Stacking**:
+One action can complete multiple quests:
+- Post a video (content + video quest)
+- Get likes (engagement + content quest)
+- Maintain streak (streak + daily quest)
+
+### Badge Benefits
+
+**Beyond Bragging Rights**:
+- Profile visibility
+- Earning multipliers
+- Special access
+- Community recognition
+
+🔥 **Action Step**: Review all available quests. Create a plan to complete at least 3 today.`
       },
       {
         id: 6,
@@ -6613,7 +7673,97 @@ You now know:
           "Level bonus percentages",
           "XP optimization",
           "Long-term progression"
-        ]
+        ],
+        content: `## Leveling Up Your Earnings
+
+Your level directly impacts how much you earn. Understand the XP system.
+
+### The Level System
+
+**How Levels Work**:
+- Earn XP through activities
+- XP accumulates to level up
+- Higher levels = more earning power
+- Progress visible in profile
+
+### XP Sources
+
+| Activity | XP Earned |
+|----------|-----------|
+| Create content | 50-200 XP |
+| Get likes | 5 XP each |
+| Get comments | 10 XP each |
+| Complete daily | 100 XP |
+| Complete weekly | 500 XP |
+| Maintain streak | 50 XP/day |
+
+### Level Bonuses
+
+**Earning Multipliers**:
+
+| Level Range | Bonus |
+|-------------|-------|
+| 1-5 | Base (1.0x) |
+| 6-10 | +10% (1.1x) |
+| 11-20 | +20% (1.2x) |
+| 21-30 | +30% (1.3x) |
+| 31-50 | +50% (1.5x) |
+| 51-75 | +75% (1.75x) |
+| 76-100 | +100% (2.0x) |
+
+**The Impact**:
+Level 50 creator earns 50% more than level 1 for same activity.
+
+### Level Milestones
+
+**Unlocks**:
+- Level 5: Basic features
+- Level 10: Advanced posting
+- Level 20: Group creation
+- Level 30: Special features
+- Level 50: Creator tools
+- Level 100: Elite status
+
+### XP Optimization
+
+**High XP Activities**:
+1. Create quality content daily
+2. Maintain long streaks
+3. Complete all quests
+4. Get high engagement
+5. Participate actively
+
+**XP Multipliers**:
+- Streak bonus applies to XP
+- Quality content gives more XP
+- Viral content = XP jackpot
+
+### Leveling Strategy
+
+**New Users (1-10)**:
+- Focus on daily habits
+- Complete all daily quests
+- Build initial streak
+
+**Growing (10-30)**:
+- Increase content quality
+- Grow engagement
+- Complete weekly quests
+
+**Advanced (30+)**:
+- Optimize everything
+- Focus on viral potential
+- Maintain long streaks
+
+### Long-term Progression
+
+**Patience Required**:
+- Leveling takes time
+- Consistent activity compounds
+- Don't rush, build habits
+- Every action counts
+
+🔥 **Action Step**: Check your current level. Calculate how much more you'd earn at the next tier.`
       },
       {
         id: 7,
@@ -6624,7 +7774,109 @@ You now know:
           "Claim process walkthrough",
           "Gas cost considerations",
           "Optimal claim timing"
-        ]
+        ],
+        content: `## Getting Your Rewards
+
+Earned AXM needs to be claimed. Here's how to do it efficiently.
+
+### The Claiming Process
+
+**Step by Step**:
+1. Navigate to Rewards page
+2. View pending rewards
+3. Click "Claim" button
+4. Confirm in wallet
+5. Pay gas fee
+6. Receive AXM
+
+**What You Need**:
+- Pending rewards to claim
+- Connected wallet
+- Small ETH for gas (on Arbitrum)
+- Patience for confirmation
+
+### Understanding Pending Rewards
+
+**Reward States**:
+- **Accruing**: Still accumulating
+- **Pending**: Ready to claim
+- **Claimed**: In your wallet
+
+**Viewing Breakdown**:
+- Content rewards
+- Engagement rewards
+- Quest rewards
+- Streak bonuses
+
+### Gas Cost Considerations
+
+**On Arbitrum**:
+- Gas fees are low
+- Typically $0.01-0.10
+- Much cheaper than Ethereum
+
+**Gas Optimization**:
+- Wait for lower gas periods
+- Batch claims (wait for larger amount)
+- Don't claim tiny amounts
+
+### Optimal Claim Timing
+
+**When to Claim**:
+
+**Small Rewards ($1-10)**:
+Wait until $10+ accumulated
+Gas makes small claims inefficient
+
+**Medium Rewards ($10-100)**:
+Claim weekly or bi-weekly
+Good balance of frequency and efficiency
+
+**Large Rewards ($100+)**:
+Claim when convenient
+Gas is negligible at this scale
+
+### Claim Frequency Strategy
+
+**Daily Claimers**:
+- Lose to gas fees
+- Not recommended
+- Exception: Very high earners
+
+**Weekly Claimers**:
+- Good balance
+- Reasonable gas ratio
+- Regular cash flow
+
+**Monthly Claimers**:
+- Maximum efficiency
+- Large batches
+- Risk of price volatility
+
+### After Claiming
+
+**Options for Your AXM**:
+1. Hold for appreciation
+2. Stake for more rewards
+3. Provide liquidity
+4. Tip other creators
+5. Trade for other tokens
+
+### Tracking Your Earnings
+
+**Keep Records Of**:
+- Amount earned
+- Source breakdown
+- Claim dates
+- Gas paid
+- What you did with tokens
+
+**Why Track**:
+- Optimize strategy
+- Tax reporting
+- Progress monitoring
+
+🔥 **Action Step**: Check your pending rewards. Decide optimal claim timing based on amount.`
       },
       {
         id: 8,
@@ -6635,7 +7887,113 @@ You now know:
           "Time vs reward optimization",
           "Activity balance",
           "Long-term sustainability"
-        ]
+        ],
+        content: `## Sustainable Earning
+
+Burning out helps no one. Build a strategy that lasts.
+
+### Time vs Reward Optimization
+
+**The 80/20 Rule**:
+- 20% of activities = 80% of rewards
+- Identify high-value activities
+- Reduce low-value time sinks
+
+**High-Value Activities**:
+- Quality content creation
+- Strategic engagement
+- Streak maintenance
+- Quest completion
+
+**Low-Value Activities**:
+- Endless scrolling
+- Low-effort spam
+- Chasing every small reward
+
+### Finding Your Rhythm
+
+**Daily Time Budget**:
+
+| Time Available | Recommended Focus |
+|----------------|-------------------|
+| 15 min | Check-in + 1 quality action |
+| 30 min | + Some engagement |
+| 1 hour | + Content creation |
+| 2+ hours | Full earning potential |
+
+### Activity Balance
+
+**The Ideal Mix**:
+- 40% Content creation
+- 30% Quality engagement
+- 20% Community building
+- 10% Platform exploration
+
+**Avoid**:
+- All engagement, no creation
+- All creation, no engagement
+- Ignoring streaks
+- Skipping quests
+
+### Signs of Burnout
+
+**Watch For**:
+- Dreading platform use
+- Rushing through activities
+- Quality declining
+- Missing days frequently
+- Not enjoying the process
+
+**Prevention**:
+- Set boundaries
+- Take planned breaks
+- Vary your activities
+- Remember: this should be fun
+
+### Long-term Sustainability
+
+**Building Habits**:
+- Start small, grow gradually
+- Consistent beats intense
+- Link to existing routines
+- Celebrate milestones
+
+**The Compound Effect**:
+- Daily small actions
+- Build over weeks/months
+- Levels increase
+- Streaks compound
+- Earnings grow exponentially
+
+### Your Personal Strategy
+
+**Define Your Goals**:
+- How much time do you have?
+- What's your earning target?
+- What do you enjoy doing?
+- What's sustainable for you?
+
+**Create Your Plan**:
+1. Daily check-in time
+2. Content creation schedule
+3. Engagement routine
+4. Quest tracking system
+
+### Congratulations!
+
+You've completed "Earning AXM"!
+
+You now understand:
+- The reward system mechanics
+- Content creation rewards
+- Engagement earning
+- Streak power
+- Quest optimization
+- Level progression
+- Claim strategies
+- Sustainable approaches
+
+🔥 **Final Action Step**: Create your personal earning strategy. Set realistic daily and weekly goals.`
       }
     ]
   },
