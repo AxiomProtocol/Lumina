@@ -170,7 +170,7 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
                   <h3 className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     Account
                   </h3>
-                  <NavItem href={`/profile/${user.id}`} label="Profile" icon={User} />
+                  <NavItem href={`/profile/${user.username}`} label="Profile" icon={User} />
                   <NavItem href="/rewards" label="Rewards" icon={Trophy} />
                   <NavItem href="/analytics" label="Analytics" icon={BarChart3} />
                   {user.isBusinessAccount && (

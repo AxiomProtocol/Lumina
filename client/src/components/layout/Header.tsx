@@ -185,7 +185,7 @@ export function Header() {
                   <p className="text-xs text-muted-foreground">@{user.username}</p>
                 </div>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate(`/profile/${user.id}`)} data-testid="menu-profile">
+                <DropdownMenuItem onClick={() => navigate(`/profile/${user.username}`)} data-testid="menu-profile">
                   Profile
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate("/settings")} data-testid="menu-settings">

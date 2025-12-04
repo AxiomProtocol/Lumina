@@ -320,9 +320,19 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  app.get("/api/users/:id", async (req, res) => {
+  app.get("/api/users/:identifier", async (req, res) => {
     try {
-      const user = await storage.getUser(req.params.id);
+      const identifier = req.params.identifier;
+      // Check if identifier is a UUID (user ID) or a username
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(identifier);
+      
+      let user;
+      if (isUUID) {
+        user = await storage.getUser(identifier);
+      } else {
+        user = await storage.getUserByUsername(identifier);
+      }
+      
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }

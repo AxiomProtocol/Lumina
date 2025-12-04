@@ -165,7 +165,7 @@ export default function Analytics() {
                 </div>
               </div>
               {user && (
-                <Link href={`/profile/${user.id}`}>
+                <Link href={`/profile/${user.username}`}>
                   <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-background/50 border border-primary/20 backdrop-blur-sm">
                     <Avatar className="h-10 w-10">
                       <AvatarImage src={user.avatarUrl || undefined} />

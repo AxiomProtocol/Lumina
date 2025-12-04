@@ -21,7 +21,7 @@ interface SearchResults {
 
 function UserCard({ user }: { user: User }) {
   return (
-    <Link href={`/profile/${user.id}`}>
+    <Link href={`/profile/${user.username}`}>
       <Card className="hover-elevate cursor-pointer transition-all">
         <CardContent className="flex items-center gap-4 p-4">
           <Avatar className="h-12 w-12">
@@ -81,7 +81,7 @@ function GroupCard({ group }: { group: GroupWithCreator }) {
 
 function TrendingCreator({ user, rank }: { user: User; rank: number }) {
   return (
-    <Link href={`/profile/${user.id}`}>
+    <Link href={`/profile/${user.username}`}>
       <div className="flex items-center gap-3 p-3 rounded-lg hover-elevate cursor-pointer transition-all" data-testid={`creator-${user.id}`}>
         <span className="w-6 text-center font-bold text-muted-foreground">{rank}</span>
         <Avatar className="h-10 w-10">

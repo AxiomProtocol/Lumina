@@ -205,7 +205,7 @@ function VideoCard({
         )}
 
         <div className="absolute bottom-0 left-0 right-20 p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
-          <Link href={`/profile/${post.author.id}`}>
+          <Link href={`/profile/${post.author.username}`}>
             <div className="flex items-center gap-3 mb-3">
               <Avatar className="h-11 w-11 border-2 border-primary/50 ring-2 ring-primary/20">
                 <AvatarImage src={post.author.avatarUrl || undefined} alt={post.author.displayName || post.author.username} />
@@ -260,7 +260,7 @@ function VideoCard({
         </div>
 
         <div className="absolute right-3 bottom-28 flex flex-col items-center gap-5">
-          <Link href={`/profile/${post.author.id}`}>
+          <Link href={`/profile/${post.author.username}`}>
             <div className="relative group">
               <Avatar className="h-12 w-12 border-2 border-white ring-2 ring-primary/30 transition-all group-hover:ring-primary/50">
                 <AvatarImage src={post.author.avatarUrl || undefined} alt={post.author.displayName || post.author.username} />

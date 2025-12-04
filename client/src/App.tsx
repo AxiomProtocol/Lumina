@@ -79,7 +79,7 @@ function Router() {
         {() => <ProtectedRoute component={Feed} />}
       </Route>
       <Route path="/foryou" component={ForYou} />
-      <Route path="/profile/:id" component={Profile} />
+      <Route path="/profile/:username" component={Profile} />
       <Route path="/groups" component={Groups} />
       <Route path="/groups/:id" component={GroupDetail} />
       <Route path="/compose" component={Compose} />

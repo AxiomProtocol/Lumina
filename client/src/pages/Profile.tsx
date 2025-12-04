@@ -97,24 +97,27 @@ export default function Profile() {
   const [showTipModal, setShowTipModal] = useState(false);
   const [activeTab, setActiveTab] = useState("posts");
 
-  const userId = params.id;
-  const isOwnProfile = currentUser?.id === userId;
+  const username = params.username;
+  // isOwnProfile is determined after profile data loads (comparing currentUser.username)
 
   const { data: profile, isLoading, isError } = useQuery<ProfileData>({
-    queryKey: ["/api/users", userId],
-    enabled: !!userId,
+    queryKey: ["/api/users", username],
+    enabled: !!username,
   });
+
+  const isOwnProfile = currentUser?.username === username;
+  const profileUserId = profile?.user?.id;
 
   const followMutation = useMutation({
     mutationFn: async () => {
       if (profile?.isFollowing) {
-        await apiRequest("DELETE", `/api/users/${userId}/follow`, {});
+        await apiRequest("DELETE", `/api/users/${profileUserId}/follow`, {});
       } else {
-        await apiRequest("POST", `/api/users/${userId}/follow`, {});
+        await apiRequest("POST", `/api/users/${profileUserId}/follow`, {});
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/users", userId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users", username] });
     },
   });
 

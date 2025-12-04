@@ -394,7 +394,7 @@ export default function GroupDetail() {
                           className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors"
                           data-testid={`member-row-${member.id}`}
                         >
-                          <Link href={`/profile/${member.id}`} className="flex items-center gap-3">
+                          <Link href={`/profile/${member.username}`} className="flex items-center gap-3">
                             <Avatar>
                               <AvatarImage src={member.avatarUrl || undefined} />
                               <AvatarFallback>

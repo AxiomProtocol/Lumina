@@ -105,7 +105,7 @@ export function Sidebar({ className }: SidebarProps) {
         
         {user && (
           <>
-            <Link href={`/profile/${user.id}`}>
+            <Link href={`/profile/${user.username}`}>
               <Button
                 variant={location.startsWith("/profile") ? "secondary" : "ghost"}
                 className={cn(

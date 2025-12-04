@@ -54,7 +54,7 @@ export function MobileNav() {
           );
         })}
         
-        <Link href={`/profile/${user.id}`}>
+        <Link href={`/profile/${user.username}`}>
           <button
             className={cn(
               "flex flex-col items-center justify-center gap-1 w-16 py-2",

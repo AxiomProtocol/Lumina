@@ -193,7 +193,7 @@ export function PostCard({ post, onLike, onComment, onShare, onRepost }: PostCar
       <Card className="overflow-hidden hover-elevate" data-testid={`post-card-${post.id}`}>
         <CardContent className="p-4 sm:p-6">
           <div className="flex gap-3 sm:gap-4">
-            <Link href={`/profile/${post.author.id}`}>
+            <Link href={`/profile/${post.author.username}`}>
               <Avatar className="h-10 w-10 sm:h-12 sm:w-12 shrink-0">
                 <AvatarImage src={post.author.avatarUrl || undefined} alt={post.author.displayName || post.author.username} />
                 <AvatarFallback className="bg-primary/20 text-primary">
@@ -205,7 +205,7 @@ export function PostCard({ post, onLike, onComment, onShare, onRepost }: PostCar
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <Link href={`/profile/${post.author.id}`} className="inline-flex items-center gap-2 group">
+                  <Link href={`/profile/${post.author.username}`} className="inline-flex items-center gap-2 group">
                     <span className="font-semibold truncate group-hover:text-primary transition-colors" data-testid="text-post-author">
                       {post.author.displayName || post.author.username}
                     </span>
