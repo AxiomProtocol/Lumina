@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { 
   Loader2, 
   User, 
@@ -26,7 +26,9 @@ import {
   X,
   ShieldAlert,
   MessageSquare,
-  Scale
+  Scale,
+  ChevronRight,
+  Crown
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -768,6 +770,31 @@ export default function Settings() {
             </div>
           </div>
         </div>
+
+        {/* Admin Dashboard Link - Only visible to admins */}
+        {user?.isAdmin && (
+          <Link href="/admin">
+            <Card className="group cursor-pointer border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-red-500/10 hover-elevate" data-testid="card-admin-link">
+              <CardContent className="flex items-center justify-between p-4">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+                    <Crown className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold flex items-center gap-2">
+                      Admin Dashboard
+                      <Badge variant="outline" className="text-xs border-amber-500/50 text-amber-500">Admin Only</Badge>
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Manage users, content moderation, platform settings & more
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-amber-500 transition-colors" />
+              </CardContent>
+            </Card>
+          </Link>
+        )}
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-5 lg:grid-cols-5">
