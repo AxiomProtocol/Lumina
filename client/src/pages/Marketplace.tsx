@@ -237,16 +237,16 @@ export default function Marketplace() {
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case "fashion": return "👕";
-      case "electronics": return "📱";
-      case "art": return "🎨";
-      case "digital": return "💿";
-      case "home": return "🏠";
-      case "beauty": return "💄";
-      case "sports": return "⚽";
-      case "food": return "🍕";
-      case "services": return "🛠️";
-      default: return "📦";
+      case "fashion": return <Tag className="h-4 w-4" />;
+      case "electronics": return <Zap className="h-4 w-4" />;
+      case "art": return <Sparkles className="h-4 w-4" />;
+      case "digital": return <Package className="h-4 w-4" />;
+      case "home": return <Store className="h-4 w-4" />;
+      case "beauty": return <Heart className="h-4 w-4" />;
+      case "sports": return <TrendingUp className="h-4 w-4" />;
+      case "food": return <Gift className="h-4 w-4" />;
+      case "services": return <Users className="h-4 w-4" />;
+      default: return <Package className="h-4 w-4" />;
     }
   };
 
