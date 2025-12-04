@@ -509,7 +509,13 @@ export default function Academy() {
                           </span>
                         </div>
                       </CardContent>
-                      <CardFooter className="pt-0">
+                      <CardFooter className="pt-0 flex-col gap-2">
+                        <Link href={`/academy/course/${course.id}`} className="w-full">
+                          <Button variant="outline" size="sm" className="w-full" data-testid={`button-view-${course.id}`}>
+                            <BookOpen className="h-4 w-4 mr-2" />
+                            View Course
+                          </Button>
+                        </Link>
                         {enrolledCourseIds.includes(course.id) ? (
                           <Button variant="secondary" size="sm" className="w-full" disabled>
                             <CheckCircle className="h-4 w-4 mr-2" />
@@ -594,28 +600,36 @@ export default function Academy() {
                               <Trophy className="h-4 w-4 text-amber-500" />
                               <span>Earns: <span className="font-medium">{course.badge}</span></span>
                             </div>
-                            {enrolledCourseIds.includes(course.id) ? (
-                              <Button variant="secondary" size="sm" disabled>
-                                <CheckCircle className="h-4 w-4 mr-2" />
-                                Enrolled
-                              </Button>
-                            ) : (
-                              <Button 
-                                size="sm"
-                                onClick={() => handleEnroll(course.id)}
-                                disabled={enrollingCourse === course.id || !isConnected}
-                                data-testid={`button-enroll-${course.id}`}
-                              >
-                                {enrollingCourse === course.id ? (
-                                  <RefreshCw className="h-4 w-4 animate-spin" />
-                                ) : (
-                                  <>
-                                    <Play className="h-4 w-4 mr-2" />
-                                    Start
-                                  </>
-                                )}
-                              </Button>
-                            )}
+                            <div className="flex items-center gap-2">
+                              <Link href={`/academy/course/${course.id}`}>
+                                <Button variant="outline" size="sm" data-testid={`button-view-${course.id}`}>
+                                  <BookOpen className="h-4 w-4 mr-1" />
+                                  View
+                                </Button>
+                              </Link>
+                              {enrolledCourseIds.includes(course.id) ? (
+                                <Button variant="secondary" size="sm" disabled>
+                                  <CheckCircle className="h-4 w-4 mr-2" />
+                                  Enrolled
+                                </Button>
+                              ) : (
+                                <Button 
+                                  size="sm"
+                                  onClick={() => handleEnroll(course.id)}
+                                  disabled={enrollingCourse === course.id || !isConnected}
+                                  data-testid={`button-enroll-${course.id}`}
+                                >
+                                  {enrollingCourse === course.id ? (
+                                    <RefreshCw className="h-4 w-4 animate-spin" />
+                                  ) : (
+                                    <>
+                                      <Play className="h-4 w-4 mr-2" />
+                                      Start
+                                    </>
+                                  )}
+                                </Button>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>

@@ -1,0 +1,1715 @@
+import { Video, Wallet, Coins, Heart, LucideIcon } from "lucide-react";
+
+export interface Lesson {
+  id: number;
+  title: string;
+  duration: string;
+  overview: string;
+  keyTakeaways: string[];
+}
+
+export interface CourseContent {
+  id: number;
+  title: string;
+  description: string;
+  longDescription: string;
+  lessons: Lesson[];
+  totalDuration: string;
+  level: number;
+  badge: string;
+  prerequisites: string[];
+  learningOutcomes: string[];
+  onchainId?: number;
+}
+
+export interface CourseCategory {
+  id: string;
+  name: string;
+  icon: LucideIcon;
+  color: string;
+  iconColor: string;
+  description: string;
+  courses: number[];
+}
+
+export const COURSE_LEVELS = ['Beginner', 'Intermediate', 'Advanced', 'Expert'];
+
+export const COURSE_CONTENT: Record<number, CourseContent> = {
+  // ============================================
+  // CREATOR FOUNDATIONS TRACK
+  // ============================================
+  101: {
+    id: 101,
+    title: "Content That Connects",
+    description: "Learn to create viral short-form videos that resonate with your audience",
+    longDescription: "Master the art of creating compelling short-form video content that captures attention, sparks emotion, and drives engagement. From ideation to execution, learn the secrets behind viral content that builds lasting connections with your audience.",
+    totalDuration: "2 hours",
+    level: 0,
+    badge: "Creator I",
+    prerequisites: [],
+    learningOutcomes: [
+      "Understand the psychology behind viral content",
+      "Master hook techniques that capture attention in the first 3 seconds",
+      "Create emotionally resonant stories that drive shares",
+      "Develop a consistent content creation workflow"
+    ],
+    lessons: [
+      {
+        id: 1,
+        title: "The Anatomy of Viral Content",
+        duration: "15 min",
+        overview: "Discover what makes content spread. We'll analyze successful viral videos and identify the common patterns that make people hit share.",
+        keyTakeaways: [
+          "The 5 emotional triggers that drive sharing",
+          "Pattern recognition in viral content",
+          "Understanding the algorithm's preferences"
+        ]
+      },
+      {
+        id: 2,
+        title: "Crafting the Perfect Hook",
+        duration: "15 min",
+        overview: "You have 3 seconds to capture attention. Learn proven hook formulas that stop the scroll and compel viewers to watch.",
+        keyTakeaways: [
+          "10 hook templates that work every time",
+          "Visual vs verbal hooks",
+          "Testing and iterating on hooks"
+        ]
+      },
+      {
+        id: 3,
+        title: "Storytelling in 60 Seconds",
+        duration: "20 min",
+        overview: "Master the micro-storytelling format. Learn to compress compelling narratives into bite-sized content that leaves impact.",
+        keyTakeaways: [
+          "The 3-act structure for short content",
+          "Creating tension and resolution quickly",
+          "Using visual storytelling techniques"
+        ]
+      },
+      {
+        id: 4,
+        title: "Emotional Resonance",
+        duration: "15 min",
+        overview: "Content that makes people feel gets shared. Understand how to authentically connect with your audience's emotions.",
+        keyTakeaways: [
+          "Mapping emotional journeys",
+          "Authenticity vs performance",
+          "Building parasocial connections"
+        ]
+      },
+      {
+        id: 5,
+        title: "Visual Excellence on Any Budget",
+        duration: "15 min",
+        overview: "You don't need expensive equipment to create stunning content. Learn smartphone filming techniques and free editing tools.",
+        keyTakeaways: [
+          "Lighting with natural light",
+          "Smartphone camera settings",
+          "Free editing apps and techniques"
+        ]
+      },
+      {
+        id: 6,
+        title: "Sound Design That Pops",
+        duration: "10 min",
+        overview: "Audio is 50% of your video. Learn to select music, record clear audio, and use sound effects to enhance your content.",
+        keyTakeaways: [
+          "Royalty-free music sources",
+          "Recording clean audio",
+          "Sound effects timing"
+        ]
+      },
+      {
+        id: 7,
+        title: "The Content Creation Workflow",
+        duration: "15 min",
+        overview: "Build a sustainable system for consistent content creation. From batch filming to editing pipelines.",
+        keyTakeaways: [
+          "Batch content creation",
+          "Content calendars",
+          "Editing efficiency tips"
+        ]
+      },
+      {
+        id: 8,
+        title: "Analyzing and Improving",
+        duration: "15 min",
+        overview: "Use analytics to understand what works. Learn to read metrics and iterate on your content strategy.",
+        keyTakeaways: [
+          "Key metrics that matter",
+          "A/B testing content",
+          "Continuous improvement mindset"
+        ]
+      }
+    ]
+  },
+
+  102: {
+    id: 102,
+    title: "Building Your Brand",
+    description: "Profile optimization, niche selection, and consistency strategies",
+    longDescription: "Your personal brand is your most valuable asset in the creator economy. Learn to define your unique voice, optimize your profile for discovery, and build a cohesive brand identity that attracts your ideal audience.",
+    totalDuration: "1.5 hours",
+    level: 0,
+    badge: "Brand Builder",
+    prerequisites: [],
+    learningOutcomes: [
+      "Define your unique value proposition as a creator",
+      "Optimize profiles for maximum discoverability",
+      "Create a cohesive visual and verbal brand identity",
+      "Develop a content strategy aligned with your brand"
+    ],
+    lessons: [
+      {
+        id: 1,
+        title: "Finding Your Niche",
+        duration: "15 min",
+        overview: "Discover the intersection of your passions, skills, and market demand. Learn to position yourself in a niche where you can thrive.",
+        keyTakeaways: [
+          "The passion-skill-demand framework",
+          "Niche vs micro-niche strategies",
+          "Competitive analysis techniques"
+        ]
+      },
+      {
+        id: 2,
+        title: "Defining Your Unique Voice",
+        duration: "15 min",
+        overview: "Stand out by being authentically you. Develop a distinct personality and communication style that resonates.",
+        keyTakeaways: [
+          "Voice and tone development",
+          "Authenticity in content creation",
+          "Signature phrases and catchphrases"
+        ]
+      },
+      {
+        id: 3,
+        title: "Visual Brand Identity",
+        duration: "15 min",
+        overview: "Create a recognizable visual style. From color palettes to thumbnails, build visual consistency across your content.",
+        keyTakeaways: [
+          "Color psychology for creators",
+          "Thumbnail design principles",
+          "Visual consistency across platforms"
+        ]
+      },
+      {
+        id: 4,
+        title: "Profile Optimization",
+        duration: "15 min",
+        overview: "Your profile is your storefront. Optimize every element from bio to profile picture to convert visitors into followers.",
+        keyTakeaways: [
+          "Bio writing formulas",
+          "Profile picture best practices",
+          "Link-in-bio strategies"
+        ]
+      },
+      {
+        id: 5,
+        title: "Content Pillars Strategy",
+        duration: "15 min",
+        overview: "Organize your content around key themes. Build content pillars that reinforce your brand and serve your audience.",
+        keyTakeaways: [
+          "Defining 3-5 content pillars",
+          "Balancing variety and consistency",
+          "Content pillar rotation strategies"
+        ]
+      },
+      {
+        id: 6,
+        title: "Brand Consistency Across Platforms",
+        duration: "15 min",
+        overview: "Maintain your brand identity while adapting to different platforms. Learn platform-specific optimization techniques.",
+        keyTakeaways: [
+          "Platform-specific adaptations",
+          "Cross-promotion strategies",
+          "Maintaining core brand elements"
+        ]
+      }
+    ]
+  },
+
+  103: {
+    id: 103,
+    title: "Engagement Secrets",
+    description: "Timing, hashtags, community building, and algorithm mastery",
+    longDescription: "Engagement is the lifeblood of content success. Go beyond views to build a community that actively participates. Learn the technical and psychological strategies that turn passive viewers into active fans.",
+    totalDuration: "3 hours",
+    level: 1,
+    badge: "Engagement Pro",
+    prerequisites: ["Content That Connects"],
+    learningOutcomes: [
+      "Master platform algorithms and optimize for reach",
+      "Build genuine community through engagement strategies",
+      "Use data to optimize posting times and content types",
+      "Create content that sparks conversation and shares"
+    ],
+    lessons: [
+      {
+        id: 1,
+        title: "Understanding the Algorithm",
+        duration: "20 min",
+        overview: "Demystify how content gets distributed. Learn the key signals algorithms use to decide what content to promote.",
+        keyTakeaways: [
+          "Key ranking factors",
+          "Watch time vs engagement",
+          "The velocity effect"
+        ]
+      },
+      {
+        id: 2,
+        title: "Optimal Posting Strategy",
+        duration: "15 min",
+        overview: "Timing matters. Learn to analyze your audience and find the perfect posting windows for maximum reach.",
+        keyTakeaways: [
+          "Analyzing audience activity",
+          "Time zone considerations",
+          "Posting frequency optimization"
+        ]
+      },
+      {
+        id: 3,
+        title: "Hashtag Mastery",
+        duration: "20 min",
+        overview: "Use hashtags strategically, not randomly. Learn research techniques and the perfect hashtag mix for discoverability.",
+        keyTakeaways: [
+          "Hashtag research tools",
+          "The 30/30/30/10 mix strategy",
+          "Branded hashtag creation"
+        ]
+      },
+      {
+        id: 4,
+        title: "Comments That Convert",
+        duration: "15 min",
+        overview: "Turn comments into community. Learn response strategies that build relationships and encourage more engagement.",
+        keyTakeaways: [
+          "Response timing and prioritization",
+          "Conversation starters",
+          "Handling negative comments"
+        ]
+      },
+      {
+        id: 5,
+        title: "Creating Shareable Content",
+        duration: "20 min",
+        overview: "Design content that people want to share. Understand the psychology of sharing and create for it.",
+        keyTakeaways: [
+          "Share triggers",
+          "Meme-able moments",
+          "Collaborative content ideas"
+        ]
+      },
+      {
+        id: 6,
+        title: "Building Community Rituals",
+        duration: "15 min",
+        overview: "Create recurring elements that your community looks forward to. Build traditions that strengthen bonds.",
+        keyTakeaways: [
+          "Weekly series concepts",
+          "Community challenges",
+          "Inside jokes and references"
+        ]
+      },
+      {
+        id: 7,
+        title: "Collaborations and Duets",
+        duration: "20 min",
+        overview: "Leverage other creators to grow. Learn collaboration etiquette and strategies that benefit everyone.",
+        keyTakeaways: [
+          "Finding collaboration partners",
+          "Pitch templates that work",
+          "Win-win collaboration structures"
+        ]
+      },
+      {
+        id: 8,
+        title: "Trend Surfing",
+        duration: "15 min",
+        overview: "Ride trends while maintaining authenticity. Learn to spot trends early and adapt them to your brand.",
+        keyTakeaways: [
+          "Trend discovery sources",
+          "Speed vs quality balance",
+          "Brand-aligned trend adaptation"
+        ]
+      },
+      {
+        id: 9,
+        title: "Analytics Deep Dive",
+        duration: "20 min",
+        overview: "Move beyond surface metrics. Learn to extract actionable insights from your analytics.",
+        keyTakeaways: [
+          "Advanced metric analysis",
+          "Cohort analysis",
+          "Predictive patterns"
+        ]
+      },
+      {
+        id: 10,
+        title: "Engagement Automation",
+        duration: "20 min",
+        overview: "Scale your engagement without losing authenticity. Tools and techniques for managing growing communities.",
+        keyTakeaways: [
+          "Engagement scheduling",
+          "Community management tools",
+          "Delegation strategies"
+        ]
+      }
+    ]
+  },
+
+  104: {
+    id: 104,
+    title: "Going Live",
+    description: "Streaming tips, audience interaction, and live monetization",
+    longDescription: "Live streaming creates unmatched connection with your audience. Master the art of going live, from technical setup to real-time audience engagement, and learn how to monetize your live presence effectively.",
+    totalDuration: "2 hours",
+    level: 1,
+    badge: "Live Expert",
+    prerequisites: ["Building Your Brand"],
+    learningOutcomes: [
+      "Set up professional-quality live streams on any budget",
+      "Engage audiences in real-time with confidence",
+      "Handle technical issues and challenging situations live",
+      "Monetize live content through multiple revenue streams"
+    ],
+    lessons: [
+      {
+        id: 1,
+        title: "Live Streaming Setup",
+        duration: "20 min",
+        overview: "Get your technical setup right. From lighting to audio to streaming software, build a professional stream.",
+        keyTakeaways: [
+          "Essential equipment checklist",
+          "Streaming software options",
+          "Optimal settings and bitrates"
+        ]
+      },
+      {
+        id: 2,
+        title: "Pre-Stream Preparation",
+        duration: "15 min",
+        overview: "Preparation prevents panic. Create checklists and routines that ensure smooth broadcasts every time.",
+        keyTakeaways: [
+          "Pre-stream checklist template",
+          "Content planning for lives",
+          "Energy and mindset preparation"
+        ]
+      },
+      {
+        id: 3,
+        title: "Real-Time Engagement",
+        duration: "20 min",
+        overview: "Keep viewers engaged and entertained. Master the skills of reading chat, shoutouts, and interactive elements.",
+        keyTakeaways: [
+          "Chat reading techniques",
+          "Shoutout strategies",
+          "Interactive games and polls"
+        ]
+      },
+      {
+        id: 4,
+        title: "Handling Live Challenges",
+        duration: "15 min",
+        overview: "Things go wrong. Learn to handle technical issues, trolls, and awkward moments with grace.",
+        keyTakeaways: [
+          "Technical troubleshooting live",
+          "Moderator management",
+          "Recovering from mistakes"
+        ]
+      },
+      {
+        id: 5,
+        title: "Building a Stream Schedule",
+        duration: "15 min",
+        overview: "Consistency builds audiences. Create a streaming schedule that works for you and your viewers.",
+        keyTakeaways: [
+          "Finding your time slots",
+          "Promoting upcoming streams",
+          "Handling schedule changes"
+        ]
+      },
+      {
+        id: 6,
+        title: "Live Monetization Strategies",
+        duration: "20 min",
+        overview: "Turn live viewers into revenue. From tips to sponsorships, learn multiple ways to monetize your streams.",
+        keyTakeaways: [
+          "Tip incentives and goals",
+          "Sponsor integration in lives",
+          "Exclusive live content"
+        ]
+      },
+      {
+        id: 7,
+        title: "Repurposing Live Content",
+        duration: "15 min",
+        overview: "Get more mileage from your streams. Turn live content into clips, highlights, and evergreen content.",
+        keyTakeaways: [
+          "Clip creation strategies",
+          "Highlight editing",
+          "Cross-platform distribution"
+        ]
+      }
+    ]
+  },
+
+  // ============================================
+  // WEB3 MASTERY TRACK
+  // ============================================
+  201: {
+    id: 201,
+    title: "Crypto 101",
+    description: "Wallets, transactions, gas fees, and blockchain basics explained simply",
+    longDescription: "Enter the world of cryptocurrency with confidence. This comprehensive introduction covers everything you need to know about blockchain technology, from how it works to how to safely manage your digital assets.",
+    totalDuration: "4 hours",
+    level: 0,
+    badge: "Crypto Novice",
+    prerequisites: [],
+    learningOutcomes: [
+      "Understand how blockchain technology works",
+      "Set up and secure a cryptocurrency wallet",
+      "Make transactions safely and understand gas fees",
+      "Recognize and avoid common crypto scams"
+    ],
+    lessons: [
+      {
+        id: 1,
+        title: "What is Blockchain?",
+        duration: "20 min",
+        overview: "Understand the revolutionary technology behind crypto. Learn how decentralized ledgers work in simple terms.",
+        keyTakeaways: [
+          "Decentralization explained",
+          "Blocks and chains",
+          "Consensus mechanisms basics"
+        ]
+      },
+      {
+        id: 2,
+        title: "Cryptocurrencies Explained",
+        duration: "20 min",
+        overview: "From Bitcoin to altcoins, understand different types of cryptocurrencies and their purposes.",
+        keyTakeaways: [
+          "Bitcoin vs Ethereum vs altcoins",
+          "Tokens vs coins",
+          "Use cases for different cryptos"
+        ]
+      },
+      {
+        id: 3,
+        title: "Setting Up Your First Wallet",
+        duration: "25 min",
+        overview: "Step-by-step guide to creating your crypto wallet. Choose between hot and cold wallets.",
+        keyTakeaways: [
+          "MetaMask installation",
+          "Seed phrase security",
+          "Hot vs cold wallet decision"
+        ]
+      },
+      {
+        id: 4,
+        title: "Wallet Security Essentials",
+        duration: "20 min",
+        overview: "Protect your assets. Learn the security practices that keep your crypto safe from hackers.",
+        keyTakeaways: [
+          "Never share your seed phrase",
+          "Recognizing phishing attempts",
+          "Hardware wallet benefits"
+        ]
+      },
+      {
+        id: 5,
+        title: "Understanding Gas Fees",
+        duration: "20 min",
+        overview: "Gas fees can be confusing. Learn what they are, why they exist, and how to optimize them.",
+        keyTakeaways: [
+          "What gas actually is",
+          "Gas price vs gas limit",
+          "Layer 2 solutions for lower fees"
+        ]
+      },
+      {
+        id: 6,
+        title: "Making Your First Transaction",
+        duration: "25 min",
+        overview: "Send and receive crypto safely. Practice transactions and understand confirmation times.",
+        keyTakeaways: [
+          "Sending transactions step-by-step",
+          "Confirmation times",
+          "Transaction troubleshooting"
+        ]
+      },
+      {
+        id: 7,
+        title: "Reading the Blockchain",
+        duration: "15 min",
+        overview: "Use block explorers to track transactions and verify information on the blockchain.",
+        keyTakeaways: [
+          "Using Etherscan/Arbiscan",
+          "Understanding transaction details",
+          "Verifying contract addresses"
+        ]
+      },
+      {
+        id: 8,
+        title: "Networks and Bridges",
+        duration: "20 min",
+        overview: "Navigate between different blockchain networks. Understand mainnet, testnet, and bridges.",
+        keyTakeaways: [
+          "Adding networks to wallet",
+          "Bridge basics",
+          "Network switching"
+        ]
+      },
+      {
+        id: 9,
+        title: "Common Scams and How to Avoid Them",
+        duration: "25 min",
+        overview: "Crypto has bad actors. Learn to recognize and avoid the most common scams targeting newcomers.",
+        keyTakeaways: [
+          "Phishing site recognition",
+          "Too-good-to-be-true offers",
+          "Safe practices checklist"
+        ]
+      },
+      {
+        id: 10,
+        title: "Buying Crypto Safely",
+        duration: "20 min",
+        overview: "From exchanges to on-ramps, learn the safest ways to acquire your first cryptocurrency.",
+        keyTakeaways: [
+          "Centralized vs decentralized exchanges",
+          "KYC requirements",
+          "Fiat on-ramp options"
+        ]
+      },
+      {
+        id: 11,
+        title: "Arbitrum and Layer 2",
+        duration: "20 min",
+        overview: "Understand Layer 2 scaling solutions and why Lumina uses Arbitrum for fast, cheap transactions.",
+        keyTakeaways: [
+          "What is Layer 2",
+          "Arbitrum advantages",
+          "Bridging to Arbitrum"
+        ]
+      },
+      {
+        id: 12,
+        title: "Your Crypto Journey Begins",
+        duration: "10 min",
+        overview: "Recap and next steps. Set yourself up for continued learning and safe exploration.",
+        keyTakeaways: [
+          "Key principles to remember",
+          "Resources for continued learning",
+          "Community support options"
+        ]
+      }
+    ]
+  },
+
+  202: {
+    id: 202,
+    title: "Your First NFT",
+    description: "Creating, minting, and selling digital art on the blockchain",
+    longDescription: "NFTs have revolutionized digital ownership. Learn the complete process of creating, minting, and selling your first NFT, whether you're an artist, musician, or content creator.",
+    totalDuration: "2.5 hours",
+    level: 1,
+    badge: "NFT Creator",
+    prerequisites: ["Crypto 101"],
+    learningOutcomes: [
+      "Understand what NFTs are and their value proposition",
+      "Create and mint your first NFT",
+      "List and sell NFTs on marketplaces",
+      "Build an NFT collection strategy"
+    ],
+    lessons: [
+      {
+        id: 1,
+        title: "NFTs Demystified",
+        duration: "20 min",
+        overview: "Cut through the hype. Understand what NFTs really are and why they matter for creators.",
+        keyTakeaways: [
+          "Digital ownership explained",
+          "NFT use cases beyond art",
+          "The creator economy angle"
+        ]
+      },
+      {
+        id: 2,
+        title: "Preparing Your Digital Asset",
+        duration: "20 min",
+        overview: "Get your artwork ready for the blockchain. File formats, sizes, and optimization.",
+        keyTakeaways: [
+          "Supported file formats",
+          "Resolution and size guidelines",
+          "Metadata preparation"
+        ]
+      },
+      {
+        id: 3,
+        title: "Choosing Your Marketplace",
+        duration: "15 min",
+        overview: "Different marketplaces serve different needs. Learn which platform fits your goals.",
+        keyTakeaways: [
+          "Marketplace comparison",
+          "Fee structures",
+          "Audience considerations"
+        ]
+      },
+      {
+        id: 4,
+        title: "Minting Your First NFT",
+        duration: "25 min",
+        overview: "Step-by-step minting process. From connecting your wallet to completing your first mint.",
+        keyTakeaways: [
+          "Minting walkthrough",
+          "Gas fee management",
+          "Lazy minting options"
+        ]
+      },
+      {
+        id: 5,
+        title: "Pricing Strategies",
+        duration: "15 min",
+        overview: "How much is your NFT worth? Learn pricing strategies that balance value and sales.",
+        keyTakeaways: [
+          "Fixed price vs auction",
+          "Research-based pricing",
+          "Edition sizes"
+        ]
+      },
+      {
+        id: 6,
+        title: "Marketing Your NFTs",
+        duration: "20 min",
+        overview: "NFTs don't sell themselves. Learn promotion strategies that attract collectors.",
+        keyTakeaways: [
+          "Building collector relationships",
+          "Social media promotion",
+          "Community engagement"
+        ]
+      },
+      {
+        id: 7,
+        title: "Royalties and Ongoing Revenue",
+        duration: "15 min",
+        overview: "Set up royalties for passive income. Understand secondary sales and their potential.",
+        keyTakeaways: [
+          "Royalty percentages",
+          "Marketplace royalty support",
+          "Long-term revenue planning"
+        ]
+      },
+      {
+        id: 8,
+        title: "Building a Collection",
+        duration: "20 min",
+        overview: "Think beyond single pieces. Plan and launch a cohesive NFT collection.",
+        keyTakeaways: [
+          "Collection themes",
+          "Release strategies",
+          "Roadmap planning"
+        ]
+      }
+    ]
+  },
+
+  203: {
+    id: 203,
+    title: "Understanding DeFi",
+    description: "Staking, liquidity provision, yield farming, and DEX fundamentals",
+    longDescription: "Decentralized Finance (DeFi) offers financial opportunities without traditional intermediaries. Master the concepts and safely participate in staking, liquidity provision, and yield strategies.",
+    totalDuration: "3.5 hours",
+    level: 2,
+    badge: "DeFi Expert",
+    prerequisites: ["Crypto 101"],
+    learningOutcomes: [
+      "Navigate decentralized exchanges confidently",
+      "Understand and participate in staking",
+      "Provide liquidity and understand impermanent loss",
+      "Evaluate DeFi opportunities and risks"
+    ],
+    lessons: [
+      {
+        id: 1,
+        title: "DeFi Fundamentals",
+        duration: "20 min",
+        overview: "What makes finance 'decentralized'? Understand the philosophy and mechanics of DeFi.",
+        keyTakeaways: [
+          "Traditional vs decentralized finance",
+          "Smart contracts in finance",
+          "Key DeFi principles"
+        ]
+      },
+      {
+        id: 2,
+        title: "Decentralized Exchanges (DEXs)",
+        duration: "25 min",
+        overview: "Trade without intermediaries. Learn to use DEXs like a pro.",
+        keyTakeaways: [
+          "AMM mechanics",
+          "Swapping tokens",
+          "Slippage and price impact"
+        ]
+      },
+      {
+        id: 3,
+        title: "Understanding Staking",
+        duration: "20 min",
+        overview: "Earn rewards by locking your tokens. Learn staking mechanics and strategies.",
+        keyTakeaways: [
+          "How staking works",
+          "APY calculations",
+          "Lock periods and risks"
+        ]
+      },
+      {
+        id: 4,
+        title: "Staking AXM on Lumina",
+        duration: "20 min",
+        overview: "Practical guide to staking AXM tokens. Step-by-step through the Lumina staking interface.",
+        keyTakeaways: [
+          "Staking walkthrough",
+          "Reward claiming",
+          "Unstaking process"
+        ]
+      },
+      {
+        id: 5,
+        title: "Liquidity Provision Basics",
+        duration: "25 min",
+        overview: "Become a liquidity provider. Understand how LPs work and earn trading fees.",
+        keyTakeaways: [
+          "Liquidity pools explained",
+          "Adding/removing liquidity",
+          "LP tokens"
+        ]
+      },
+      {
+        id: 6,
+        title: "Impermanent Loss Explained",
+        duration: "20 min",
+        overview: "The main risk of LP. Understand impermanent loss and strategies to mitigate it.",
+        keyTakeaways: [
+          "How IL happens",
+          "Calculating IL",
+          "IL mitigation strategies"
+        ]
+      },
+      {
+        id: 7,
+        title: "Yield Farming Strategies",
+        duration: "25 min",
+        overview: "Maximize your returns. Learn yield farming strategies from conservative to aggressive.",
+        keyTakeaways: [
+          "Farming vs staking",
+          "Compounding strategies",
+          "Risk-adjusted returns"
+        ]
+      },
+      {
+        id: 8,
+        title: "DeFi Risk Assessment",
+        duration: "20 min",
+        overview: "Not all protocols are safe. Learn to evaluate DeFi projects before depositing.",
+        keyTakeaways: [
+          "Audit importance",
+          "TVL and liquidity depth",
+          "Team and track record"
+        ]
+      },
+      {
+        id: 9,
+        title: "DeFi Security Practices",
+        duration: "20 min",
+        overview: "Protect yourself in DeFi. Security practices specific to decentralized finance.",
+        keyTakeaways: [
+          "Approval management",
+          "Revoking permissions",
+          "Transaction simulation"
+        ]
+      },
+      {
+        id: 10,
+        title: "Building Your DeFi Portfolio",
+        duration: "15 min",
+        overview: "Putting it all together. Create a balanced DeFi strategy aligned with your goals.",
+        keyTakeaways: [
+          "Diversification principles",
+          "Rebalancing strategies",
+          "Tracking tools"
+        ]
+      }
+    ]
+  },
+
+  204: {
+    id: 204,
+    title: "DAO Participation",
+    description: "How to vote, create proposals, and govern decentralized organizations",
+    longDescription: "DAOs represent a new form of organization. Learn to actively participate in decentralized governance, from voting on proposals to creating your own and understanding the dynamics of collective decision-making.",
+    totalDuration: "2 hours",
+    level: 1,
+    badge: "DAO Citizen",
+    prerequisites: ["Crypto 101"],
+    learningOutcomes: [
+      "Understand DAO structures and governance models",
+      "Participate effectively in DAO voting",
+      "Create and champion proposals",
+      "Navigate DAO politics and community dynamics"
+    ],
+    lessons: [
+      {
+        id: 1,
+        title: "What is a DAO?",
+        duration: "20 min",
+        overview: "Decentralized Autonomous Organizations explained. Understand this new organizational paradigm.",
+        keyTakeaways: [
+          "DAO definition and types",
+          "Smart contract governance",
+          "Token-based voting"
+        ]
+      },
+      {
+        id: 2,
+        title: "Governance Token Mechanics",
+        duration: "15 min",
+        overview: "Understand how tokens translate to voting power and influence in DAOs.",
+        keyTakeaways: [
+          "Voting power calculation",
+          "Delegation options",
+          "Token distribution models"
+        ]
+      },
+      {
+        id: 3,
+        title: "Reading and Evaluating Proposals",
+        duration: "20 min",
+        overview: "Not all proposals deserve your vote. Learn to analyze proposals critically.",
+        keyTakeaways: [
+          "Proposal anatomy",
+          "Impact assessment",
+          "Hidden implications"
+        ]
+      },
+      {
+        id: 4,
+        title: "Casting Your Vote",
+        duration: "15 min",
+        overview: "Step-by-step guide to voting in DAO governance. From connecting wallet to confirming votes.",
+        keyTakeaways: [
+          "Voting interface walkthrough",
+          "Gas-free voting options",
+          "Vote delegation"
+        ]
+      },
+      {
+        id: 5,
+        title: "Creating Proposals",
+        duration: "20 min",
+        overview: "Have an idea? Learn to create proposals that gain support and pass.",
+        keyTakeaways: [
+          "Proposal writing best practices",
+          "Building support before submission",
+          "Responding to feedback"
+        ]
+      },
+      {
+        id: 6,
+        title: "DAO Community Dynamics",
+        duration: "15 min",
+        overview: "DAOs are communities. Navigate the social dynamics of decentralized organizations.",
+        keyTakeaways: [
+          "Building reputation",
+          "Finding allies",
+          "Constructive disagreement"
+        ]
+      }
+    ]
+  },
+
+  // ============================================
+  // MONETIZATION & GROWTH TRACK
+  // ============================================
+  301: {
+    id: 301,
+    title: "Earning AXM",
+    description: "All the ways to earn tokens on Lumina through content and engagement",
+    longDescription: "Lumina rewards creators and participants with AXM tokens. Discover all the ways to earn on the platform, from content creation to engagement activities, and maximize your token earnings.",
+    totalDuration: "2 hours",
+    level: 0,
+    badge: "Token Earner",
+    prerequisites: [],
+    learningOutcomes: [
+      "Understand all AXM earning opportunities on Lumina",
+      "Optimize your activities for maximum rewards",
+      "Track and manage your earnings effectively",
+      "Plan a sustainable earning strategy"
+    ],
+    lessons: [
+      {
+        id: 1,
+        title: "The Lumina Rewards System",
+        duration: "15 min",
+        overview: "How Lumina distributes rewards. Understand the tokenomics behind your earnings.",
+        keyTakeaways: [
+          "Reward pool mechanics",
+          "Distribution schedules",
+          "Earning multipliers"
+        ]
+      },
+      {
+        id: 2,
+        title: "Content Creation Rewards",
+        duration: "20 min",
+        overview: "Earn by creating. Learn how content performance translates to AXM rewards.",
+        keyTakeaways: [
+          "Quality scoring factors",
+          "Engagement bonuses",
+          "Consistency rewards"
+        ]
+      },
+      {
+        id: 3,
+        title: "Engagement Rewards",
+        duration: "15 min",
+        overview: "Active participation pays. Earn through likes, comments, and community engagement.",
+        keyTakeaways: [
+          "Engagement point system",
+          "Daily earning limits",
+          "Quality vs quantity"
+        ]
+      },
+      {
+        id: 4,
+        title: "Daily Check-ins and Streaks",
+        duration: "15 min",
+        overview: "Consistency is rewarded. Maximize earnings through daily activities and streaks.",
+        keyTakeaways: [
+          "Check-in bonuses",
+          "Streak multipliers",
+          "Recovery strategies"
+        ]
+      },
+      {
+        id: 5,
+        title: "Quest and Achievement Rewards",
+        duration: "15 min",
+        overview: "Complete quests for bonus earnings. Track and optimize your achievement hunting.",
+        keyTakeaways: [
+          "Quest types and rewards",
+          "Achievement badges",
+          "Strategic quest completion"
+        ]
+      },
+      {
+        id: 6,
+        title: "Level-Based Earning Bonuses",
+        duration: "15 min",
+        overview: "Higher levels mean higher earnings. Understand how XP translates to earning power.",
+        keyTakeaways: [
+          "Level bonus percentages",
+          "XP optimization",
+          "Long-term progression"
+        ]
+      },
+      {
+        id: 7,
+        title: "Claiming and Managing Rewards",
+        duration: "15 min",
+        overview: "Get your earnings into your wallet. Learn the claiming process and gas optimization.",
+        keyTakeaways: [
+          "Claim process walkthrough",
+          "Gas cost considerations",
+          "Optimal claim timing"
+        ]
+      },
+      {
+        id: 8,
+        title: "Building a Sustainable Strategy",
+        duration: "10 min",
+        overview: "Avoid burnout while maximizing earnings. Create a balanced earning strategy.",
+        keyTakeaways: [
+          "Time vs reward optimization",
+          "Activity balance",
+          "Long-term sustainability"
+        ]
+      }
+    ]
+  },
+
+  302: {
+    id: 302,
+    title: "Tipping Economy",
+    description: "How to receive and give tips effectively, building supporter relationships",
+    longDescription: "Tips are direct support from your community. Learn to cultivate a tipping culture around your content, build relationships with supporters, and create content that inspires generosity.",
+    totalDuration: "1.5 hours",
+    level: 0,
+    badge: "Tip Master",
+    prerequisites: [],
+    learningOutcomes: [
+      "Create content that inspires tips",
+      "Build genuine relationships with tippers",
+      "Set up and manage tip receiving",
+      "Develop a culture of reciprocal support"
+    ],
+    lessons: [
+      {
+        id: 1,
+        title: "The Psychology of Tipping",
+        duration: "15 min",
+        overview: "Why do people tip? Understand the motivations that drive supporters to give.",
+        keyTakeaways: [
+          "Tipping motivations",
+          "Emotional triggers",
+          "Value exchange mindset"
+        ]
+      },
+      {
+        id: 2,
+        title: "Setting Up Tip Receiving",
+        duration: "15 min",
+        overview: "Technical setup for receiving tips. Configure your wallet and profile for tips.",
+        keyTakeaways: [
+          "Wallet configuration",
+          "Profile tip settings",
+          "Payment visibility"
+        ]
+      },
+      {
+        id: 3,
+        title: "Content That Inspires Support",
+        duration: "20 min",
+        overview: "Create content people want to support. Learn what makes viewers reach for their wallets.",
+        keyTakeaways: [
+          "Value-first content",
+          "Vulnerability and authenticity",
+          "Call-to-action placement"
+        ]
+      },
+      {
+        id: 4,
+        title: "Building Supporter Relationships",
+        duration: "20 min",
+        overview: "Tips are relationships. Nurture your supporters and turn one-time tippers into regulars.",
+        keyTakeaways: [
+          "Thank you best practices",
+          "Exclusive recognition",
+          "Community building with supporters"
+        ]
+      },
+      {
+        id: 5,
+        title: "Strategic Tipping as a Creator",
+        duration: "15 min",
+        overview: "Give to receive. How strategic tipping to others builds your own community.",
+        keyTakeaways: [
+          "Reciprocity dynamics",
+          "Networking through tips",
+          "Budget allocation"
+        ]
+      }
+    ]
+  },
+
+  303: {
+    id: 303,
+    title: "Building Paid Communities",
+    description: "Premium content strategies, subscriptions, and exclusive access",
+    longDescription: "Transform followers into paying members. Learn to create premium content tiers, exclusive communities, and subscription models that provide real value to your most dedicated fans.",
+    totalDuration: "3 hours",
+    level: 2,
+    badge: "Community Leader",
+    prerequisites: ["Engagement Secrets", "Earning AXM"],
+    learningOutcomes: [
+      "Design compelling premium content offerings",
+      "Price and structure subscription tiers",
+      "Deliver ongoing value to paying members",
+      "Scale community management effectively"
+    ],
+    lessons: [
+      {
+        id: 1,
+        title: "The Premium Community Model",
+        duration: "20 min",
+        overview: "Why paid communities work. Understand the business model and value proposition.",
+        keyTakeaways: [
+          "Free vs paid content balance",
+          "Community value proposition",
+          "Sustainable creator income"
+        ]
+      },
+      {
+        id: 2,
+        title: "Designing Your Offer",
+        duration: "25 min",
+        overview: "What will members pay for? Create an irresistible premium offer.",
+        keyTakeaways: [
+          "Exclusive content ideas",
+          "Access and community benefits",
+          "Unique experiences"
+        ]
+      },
+      {
+        id: 3,
+        title: "Tier Structure and Pricing",
+        duration: "20 min",
+        overview: "Multiple tiers serve different fans. Learn to structure and price your offerings.",
+        keyTakeaways: [
+          "Tier design principles",
+          "Pricing psychology",
+          "Upgrade paths"
+        ]
+      },
+      {
+        id: 4,
+        title: "Launching Your Paid Community",
+        duration: "20 min",
+        overview: "Launch with impact. Strategies for a successful paid community launch.",
+        keyTakeaways: [
+          "Pre-launch buildup",
+          "Founding member incentives",
+          "Launch day execution"
+        ]
+      },
+      {
+        id: 5,
+        title: "Delivering Consistent Value",
+        duration: "20 min",
+        overview: "Retention requires ongoing value. Create systems for consistent member satisfaction.",
+        keyTakeaways: [
+          "Content calendars for members",
+          "Surprise and delight moments",
+          "Feedback loops"
+        ]
+      },
+      {
+        id: 6,
+        title: "Managing Member Expectations",
+        duration: "15 min",
+        overview: "Clear expectations prevent churn. Set and manage what members expect from you.",
+        keyTakeaways: [
+          "Onboarding processes",
+          "Communication standards",
+          "Handling disappointment"
+        ]
+      },
+      {
+        id: 7,
+        title: "Community Moderation at Scale",
+        duration: "20 min",
+        overview: "As communities grow, moderation matters more. Systems for healthy paid communities.",
+        keyTakeaways: [
+          "Rules and guidelines",
+          "Moderator recruitment",
+          "Conflict resolution"
+        ]
+      },
+      {
+        id: 8,
+        title: "Reducing Churn",
+        duration: "15 min",
+        overview: "Keep members longer. Strategies to reduce cancellations and increase lifetime value.",
+        keyTakeaways: [
+          "Churn warning signs",
+          "Re-engagement campaigns",
+          "Exit interviews"
+        ]
+      },
+      {
+        id: 9,
+        title: "Scaling Your Community",
+        duration: "20 min",
+        overview: "Grow without losing quality. Scale your paid community sustainably.",
+        keyTakeaways: [
+          "Automation opportunities",
+          "Team building",
+          "Maintaining intimacy at scale"
+        ]
+      },
+      {
+        id: 10,
+        title: "Advanced Monetization",
+        duration: "15 min",
+        overview: "Beyond subscriptions. Additional revenue streams within your community.",
+        keyTakeaways: [
+          "One-time purchases",
+          "Live events and workshops",
+          "Merchandise and products"
+        ]
+      }
+    ]
+  },
+
+  304: {
+    id: 304,
+    title: "Referral Mastery",
+    description: "Growing your network for rewards and building viral loops",
+    longDescription: "Turn your network into a growth engine. Master referral strategies that reward you while genuinely helping others discover the platform.",
+    totalDuration: "2 hours",
+    level: 1,
+    badge: "Growth Hacker",
+    prerequisites: ["Building Your Brand"],
+    learningOutcomes: [
+      "Understand referral program mechanics and rewards",
+      "Create authentic referral content",
+      "Build viral loops that compound growth",
+      "Track and optimize referral performance"
+    ],
+    lessons: [
+      {
+        id: 1,
+        title: "Referral Program Fundamentals",
+        duration: "15 min",
+        overview: "How the Lumina referral program works. Understand the rewards and mechanics.",
+        keyTakeaways: [
+          "Reward structure",
+          "Tracking and attribution",
+          "Tier bonuses"
+        ]
+      },
+      {
+        id: 2,
+        title: "Finding Your Referral Audience",
+        duration: "20 min",
+        overview: "Who should you refer? Identify and reach people who will thrive on the platform.",
+        keyTakeaways: [
+          "Ideal referral profiles",
+          "Where to find them",
+          "Qualification strategies"
+        ]
+      },
+      {
+        id: 3,
+        title: "Authentic Referral Messaging",
+        duration: "20 min",
+        overview: "Avoid being spammy. Create referral content that's genuinely helpful.",
+        keyTakeaways: [
+          "Value-first messaging",
+          "Storytelling approaches",
+          "Avoiding common pitfalls"
+        ]
+      },
+      {
+        id: 4,
+        title: "Referral Content Strategies",
+        duration: "20 min",
+        overview: "Create content that naturally drives referrals. Integrate referrals into your content strategy.",
+        keyTakeaways: [
+          "Tutorial content",
+          "Success story sharing",
+          "Platform showcase videos"
+        ]
+      },
+      {
+        id: 5,
+        title: "Building Viral Loops",
+        duration: "20 min",
+        overview: "Create systems where referrals generate more referrals. Compound your growth.",
+        keyTakeaways: [
+          "Network effect design",
+          "Incentive alignment",
+          "Gamification elements"
+        ]
+      },
+      {
+        id: 6,
+        title: "Tracking and Optimizing",
+        duration: "15 min",
+        overview: "Measure what works. Use data to improve your referral strategy.",
+        keyTakeaways: [
+          "Key metrics to track",
+          "A/B testing approaches",
+          "Continuous improvement"
+        ]
+      }
+    ]
+  },
+
+  // ============================================
+  // COMMUNITY & ADVOCACY TRACK
+  // ============================================
+  401: {
+    id: 401,
+    title: "Leading Groups",
+    description: "How to create, grow, and moderate thriving communities",
+    longDescription: "Great communities don't happen by accident. Learn the skills to create, nurture, and lead groups that bring people together around shared interests and values.",
+    totalDuration: "2.5 hours",
+    level: 1,
+    badge: "Group Leader",
+    prerequisites: ["Engagement Secrets"],
+    learningOutcomes: [
+      "Create groups with clear purpose and identity",
+      "Grow membership organically",
+      "Moderate effectively and fairly",
+      "Build a self-sustaining community culture"
+    ],
+    lessons: [
+      {
+        id: 1,
+        title: "The Purpose-Driven Group",
+        duration: "20 min",
+        overview: "Start with why. Define a compelling purpose that attracts and retains members.",
+        keyTakeaways: [
+          "Purpose statement crafting",
+          "Niche vs broad focus",
+          "Differentiating your group"
+        ]
+      },
+      {
+        id: 2,
+        title: "Setting Up for Success",
+        duration: "15 min",
+        overview: "First impressions matter. Set up your group to welcome and onboard new members effectively.",
+        keyTakeaways: [
+          "Group settings optimization",
+          "Welcome message creation",
+          "Initial content seeding"
+        ]
+      },
+      {
+        id: 3,
+        title: "Establishing Group Culture",
+        duration: "20 min",
+        overview: "Culture is what happens when you're not looking. Deliberately build the culture you want.",
+        keyTakeaways: [
+          "Cultural values definition",
+          "Modeling behavior",
+          "Ritual and tradition creation"
+        ]
+      },
+      {
+        id: 4,
+        title: "Growing Your Membership",
+        duration: "20 min",
+        overview: "Quality over quantity. Grow your group with the right members.",
+        keyTakeaways: [
+          "Promotion strategies",
+          "Member vetting",
+          "Referral encouragement"
+        ]
+      },
+      {
+        id: 5,
+        title: "Driving Engagement",
+        duration: "20 min",
+        overview: "Active groups thrive. Create content and activities that keep members engaged.",
+        keyTakeaways: [
+          "Discussion prompts",
+          "Regular events",
+          "Member spotlights"
+        ]
+      },
+      {
+        id: 6,
+        title: "Moderation Best Practices",
+        duration: "20 min",
+        overview: "Fair, consistent moderation builds trust. Learn to moderate effectively.",
+        keyTakeaways: [
+          "Rules and enforcement",
+          "Warning systems",
+          "Ban decisions"
+        ]
+      },
+      {
+        id: 7,
+        title: "Building a Mod Team",
+        duration: "15 min",
+        overview: "You can't do it alone. Build and manage a moderation team.",
+        keyTakeaways: [
+          "Mod recruitment",
+          "Training and guidelines",
+          "Mod communication"
+        ]
+      },
+      {
+        id: 8,
+        title: "Sustaining Long-Term Growth",
+        duration: "20 min",
+        overview: "Keep the momentum going. Strategies for long-term community health.",
+        keyTakeaways: [
+          "Preventing stagnation",
+          "Evolving with members",
+          "Leadership succession"
+        ]
+      }
+    ]
+  },
+
+  402: {
+    id: 402,
+    title: "Positive Impact",
+    description: "Creating content for social good and meaningful change",
+    longDescription: "Use your platform for good. Learn to create content that raises awareness, drives action, and creates meaningful positive change in the world.",
+    totalDuration: "2 hours",
+    level: 0,
+    badge: "Change Maker",
+    prerequisites: [],
+    learningOutcomes: [
+      "Identify causes aligned with your values and audience",
+      "Create compelling advocacy content",
+      "Mobilize your community for action",
+      "Measure and communicate impact"
+    ],
+    lessons: [
+      {
+        id: 1,
+        title: "Finding Your Cause",
+        duration: "20 min",
+        overview: "Authenticity matters. Find causes that genuinely resonate with you and your audience.",
+        keyTakeaways: [
+          "Values alignment",
+          "Audience interest mapping",
+          "Cause research"
+        ]
+      },
+      {
+        id: 2,
+        title: "Advocacy Content Creation",
+        duration: "25 min",
+        overview: "Move hearts and minds. Create content that educates and inspires action.",
+        keyTakeaways: [
+          "Storytelling for impact",
+          "Facts and emotion balance",
+          "Call to action design"
+        ]
+      },
+      {
+        id: 3,
+        title: "Partnering with Organizations",
+        duration: "15 min",
+        overview: "Amplify impact through partnerships. Work with nonprofits and social enterprises.",
+        keyTakeaways: [
+          "Finding partners",
+          "Collaboration structures",
+          "Maintaining authenticity"
+        ]
+      },
+      {
+        id: 4,
+        title: "Fundraising Through Content",
+        duration: "20 min",
+        overview: "Turn views into donations. Create fundraising campaigns that succeed.",
+        keyTakeaways: [
+          "Campaign design",
+          "Goal setting",
+          "Transparency and trust"
+        ]
+      },
+      {
+        id: 5,
+        title: "Handling Sensitive Topics",
+        duration: "20 min",
+        overview: "Some topics require extra care. Navigate sensitive issues responsibly.",
+        keyTakeaways: [
+          "Trigger warnings and sensitivity",
+          "Fact-checking importance",
+          "Avoiding harm"
+        ]
+      },
+      {
+        id: 6,
+        title: "Measuring and Sharing Impact",
+        duration: "20 min",
+        overview: "Show the difference you've made. Track and communicate your impact.",
+        keyTakeaways: [
+          "Impact metrics",
+          "Reporting to supporters",
+          "Celebrating wins"
+        ]
+      }
+    ]
+  },
+
+  403: {
+    id: 403,
+    title: "Volunteer Training",
+    description: "Become a platform ambassador and help others succeed",
+    longDescription: "Give back to the community that supports you. Learn to become a platform ambassador who welcomes newcomers, answers questions, and helps others succeed.",
+    totalDuration: "1.5 hours",
+    level: 0,
+    badge: "Ambassador",
+    prerequisites: [],
+    learningOutcomes: [
+      "Understand the ambassador role and responsibilities",
+      "Help newcomers navigate the platform",
+      "Answer common questions effectively",
+      "Represent the community positively"
+    ],
+    lessons: [
+      {
+        id: 1,
+        title: "The Ambassador Role",
+        duration: "15 min",
+        overview: "What ambassadors do and why it matters. Understand your role in the community.",
+        keyTakeaways: [
+          "Ambassador responsibilities",
+          "Impact of good ambassadors",
+          "Recognition and rewards"
+        ]
+      },
+      {
+        id: 2,
+        title: "Welcoming Newcomers",
+        duration: "20 min",
+        overview: "First impressions count. Learn to welcome new members warmly and helpfully.",
+        keyTakeaways: [
+          "Welcome message templates",
+          "Orientation guidance",
+          "Common new user struggles"
+        ]
+      },
+      {
+        id: 3,
+        title: "Answering Questions",
+        duration: "20 min",
+        overview: "Be a helpful resource. Learn to answer questions accurately and kindly.",
+        keyTakeaways: [
+          "Common questions database",
+          "When to escalate",
+          "Teaching vs telling"
+        ]
+      },
+      {
+        id: 4,
+        title: "De-escalation Skills",
+        duration: "20 min",
+        overview: "Handle difficult situations gracefully. Learn de-escalation techniques.",
+        keyTakeaways: [
+          "Staying calm",
+          "Empathetic responses",
+          "When to step back"
+        ]
+      },
+      {
+        id: 5,
+        title: "Representing the Community",
+        duration: "15 min",
+        overview: "You're a face of the community. Represent it positively while being authentic.",
+        keyTakeaways: [
+          "Brand alignment",
+          "Constructive feedback",
+          "Public vs private communication"
+        ]
+      }
+    ]
+  },
+
+  404: {
+    id: 404,
+    title: "Safety & Guidelines",
+    description: "Understanding content moderation and community standards",
+    longDescription: "A safe platform benefits everyone. Understand the community guidelines, learn to recognize violations, and contribute to a positive, safe environment for all users.",
+    totalDuration: "1 hour",
+    level: 0,
+    badge: "Safety Champion",
+    prerequisites: [],
+    learningOutcomes: [
+      "Understand community guidelines thoroughly",
+      "Recognize guideline violations",
+      "Report issues appropriately",
+      "Model safe behavior for others"
+    ],
+    lessons: [
+      {
+        id: 1,
+        title: "Community Guidelines Overview",
+        duration: "15 min",
+        overview: "Know the rules. Comprehensive overview of Lumina's community guidelines.",
+        keyTakeaways: [
+          "Core guidelines",
+          "Prohibited content types",
+          "Consequence tiers"
+        ]
+      },
+      {
+        id: 2,
+        title: "Recognizing Violations",
+        duration: "15 min",
+        overview: "See something, say something. Learn to identify content that violates guidelines.",
+        keyTakeaways: [
+          "Common violation types",
+          "Gray area navigation",
+          "Context consideration"
+        ]
+      },
+      {
+        id: 3,
+        title: "Reporting Effectively",
+        duration: "15 min",
+        overview: "Reports that help. Learn to submit reports that enable effective moderation.",
+        keyTakeaways: [
+          "Reporting process",
+          "Providing context",
+          "Follow-up expectations"
+        ]
+      },
+      {
+        id: 4,
+        title: "Being a Safety Role Model",
+        duration: "15 min",
+        overview: "Lead by example. Model safe, positive behavior that others can follow.",
+        keyTakeaways: [
+          "Positive content creation",
+          "Constructive interactions",
+          "Supporting others"
+        ]
+      }
+    ]
+  }
+};
+
+export const COURSE_CATEGORIES_DETAIL: CourseCategory[] = [
+  {
+    id: 'creator',
+    name: 'Creator Foundations',
+    icon: Video,
+    color: 'from-pink-500/20 to-rose-500/10',
+    iconColor: 'text-pink-500',
+    description: 'Master content creation and grow your audience',
+    courses: [101, 102, 103, 104]
+  },
+  {
+    id: 'web3',
+    name: 'Web3 Mastery',
+    icon: Wallet,
+    color: 'from-blue-500/20 to-cyan-500/10',
+    iconColor: 'text-blue-500',
+    description: 'Understand blockchain, crypto, and decentralized tech',
+    courses: [201, 202, 203, 204]
+  },
+  {
+    id: 'monetization',
+    name: 'Monetization & Growth',
+    icon: Coins,
+    color: 'from-amber-500/20 to-yellow-500/10',
+    iconColor: 'text-amber-500',
+    description: 'Turn your passion into sustainable income',
+    courses: [301, 302, 303, 304]
+  },
+  {
+    id: 'community',
+    name: 'Community & Advocacy',
+    icon: Heart,
+    color: 'from-emerald-500/20 to-green-500/10',
+    iconColor: 'text-emerald-500',
+    description: 'Lead and inspire positive change',
+    courses: [401, 402, 403, 404]
+  }
+];
+
+export function getCourseById(id: number): CourseContent | undefined {
+  return COURSE_CONTENT[id];
+}
+
+export function getCoursesByCategory(categoryId: string): CourseContent[] {
+  const category = COURSE_CATEGORIES_DETAIL.find(c => c.id === categoryId);
+  if (!category) return [];
+  return category.courses.map(id => COURSE_CONTENT[id]).filter(Boolean);
+}
+
+export function getCategoryForCourse(courseId: number): CourseCategory | undefined {
+  return COURSE_CATEGORIES_DETAIL.find(cat => cat.courses.includes(courseId));
+}
