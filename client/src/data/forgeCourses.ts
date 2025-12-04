@@ -2271,7 +2271,76 @@ You now understand:
           "Essential equipment checklist",
           "Streaming software options",
           "Optimal settings and bitrates"
-        ]
+        ],
+        content: `## Building Your Live Stream Setup
+
+A good stream setup doesn't require expensive equipment. It requires smart choices and proper configuration.
+
+### Essential Equipment Checklist
+
+**Minimum Viable Setup (Phone)**:
+- Smartphone with good camera
+- Ring light or window light
+- Phone mount/tripod
+- Earbuds with microphone
+- Stable internet connection
+
+**Upgraded Setup (Webcam)**:
+- HD webcam (Logitech C920 or similar)
+- USB microphone (Blue Yeti, Audio-Technica)
+- Key light + fill light
+- Green screen (optional)
+- Second monitor for chat
+
+**Pro Setup**:
+- DSLR/mirrorless as webcam
+- XLR microphone with interface
+- 3-point lighting
+- Stream deck
+- Capture card
+
+### Streaming Software Options
+
+**Mobile Streaming**:
+- Platform native apps (simplest)
+- Streamlabs mobile
+- Prism Live
+
+**Desktop Streaming**:
+- OBS Studio (free, powerful)
+- Streamlabs Desktop (beginner-friendly)
+- XSplit (Windows only)
+
+### OBS Quick Start
+
+1. Download OBS Studio (free)
+2. Run auto-configuration wizard
+3. Add video source (webcam)
+4. Add audio source (microphone)
+5. Test before going live
+
+### Optimal Settings
+
+**Resolution**: 1080p if internet allows, 720p for stability
+**Bitrate**: 4500-6000 kbps for 1080p, 2500-4000 for 720p
+**Frame Rate**: 30fps (60fps for gaming)
+**Encoder**: Hardware if available (NVENC, AMD VCE)
+
+### Internet Requirements
+
+**Minimum**: 10 Mbps upload
+**Recommended**: 20+ Mbps upload
+**Best Practice**: Use ethernet, not WiFi
+
+### Audio Is Critical
+
+Poor audio kills streams faster than poor video:
+- Position mic 6-12 inches from mouth
+- Use noise gate to cut background noise
+- Add slight compression for consistent levels
+- Test recording before going live
+
+🔥 **Action Step**: Set up OBS and do a 5-minute test stream (private). Record it and review for issues.`
       },
       {
         id: 2,
@@ -2282,7 +2351,85 @@ You now understand:
           "Pre-stream checklist template",
           "Content planning for lives",
           "Energy and mindset preparation"
-        ]
+        ],
+        content: `## The Pre-Stream Ritual
+
+Consistent preparation leads to consistent quality. Build routines that make every stream smooth.
+
+### Pre-Stream Checklist Template
+
+**1 Hour Before**:
+- [ ] Check internet speed
+- [ ] Close unnecessary programs
+- [ ] Test camera and lighting
+- [ ] Test audio levels
+- [ ] Review content outline
+- [ ] Hydrate and snack
+
+**15 Minutes Before**:
+- [ ] Open OBS/streaming software
+- [ ] Check all scenes work
+- [ ] Load overlays and alerts
+- [ ] Open chat window
+- [ ] Phone on silent
+- [ ] "Going live soon" post
+
+**At Go-Live**:
+- [ ] Final audio check
+- [ ] Camera positioned
+- [ ] Energy check (smile!)
+- [ ] Hit "Start Streaming"
+
+### Content Planning for Lives
+
+**Have a Structure**:
+- Opening hook (first 2-3 minutes)
+- Main content segments
+- Interactive breaks
+- Closing and call-to-action
+
+**Prepare Talking Points**:
+- Not a full script (too rigid)
+- Bullet points to hit
+- Questions to ask audience
+- Backup topics if needed
+
+**Visual Preparation**:
+- Graphics/overlays ready
+- Any demos prepped
+- Links you'll share
+
+### Energy and Mindset
+
+**Physical Prep**:
+- Eat something (not too heavy)
+- Avoid caffeine crash timing
+- Quick stretch/movement
+- Vocal warmup
+
+**Mental Prep**:
+- Clear your head (quick meditation)
+- Review goals for the stream
+- Positive visualization
+- Remember: mistakes are okay
+
+### The "Buffer"
+
+Start your stream 5 minutes early:
+- Greet early arrivers
+- Let late joiners settle in
+- Build energy naturally
+- Test everything one more time
+
+### Common Pre-Stream Mistakes
+
+- Not testing audio (sounds terrible)
+- Cluttered background (distracting)
+- Poor lighting (unflattering)
+- No water nearby (voice cracks)
+- Phone notifications on (embarrassing)
+
+🔥 **Action Step**: Create your personal pre-stream checklist. Laminate it or keep it visible.`
       },
       {
         id: 3,
@@ -2293,7 +2440,89 @@ You now understand:
           "Chat reading techniques",
           "Shoutout strategies",
           "Interactive games and polls"
-        ]
+        ],
+        content: `## Mastering Live Engagement
+
+The magic of live content is real-time interaction. Make every viewer feel seen.
+
+### Chat Reading Techniques
+
+**The Scan Method**:
+- Glance at chat every 30-60 seconds
+- Pick 2-3 messages to respond to
+- Acknowledge others with quick reactions
+- Don't try to read everything
+
+**Prioritization**:
+1. Questions about your topic
+2. New viewers saying hello
+3. Regular supporters
+4. General comments
+
+**Reading Out Loud**:
+- Always repeat the question/comment before answering
+- Use the person's name
+- Make eye contact with camera while responding
+
+### Shoutout Strategies
+
+**New Viewers**:
+"Welcome [name]! Great to have you here!"
+
+**Regulars**:
+"Hey [name], good to see you again! How's [something you remember about them]?"
+
+**Tippers/Supporters**:
+"Thank you so much [name] for the support! Really appreciate you."
+
+**Avoid**:
+- Over-thanking (gets awkward)
+- Ignoring messages (feels exclusive)
+- Playing favorites too obviously
+
+### Interactive Elements
+
+**Polls**:
+- Ask opinions on topics
+- Let audience choose what happens next
+- Use platform native poll features
+
+**Q&A Sessions**:
+- Dedicated segments for questions
+- Use question queuing
+- Circle back to unanswered questions
+
+**Games**:
+- Trivia about your topic
+- Guessing games
+- Chat challenges
+
+**Call-and-Response**:
+- "Type [X] if you agree!"
+- "Drop your [question] in chat"
+- "Who here has experienced [thing]?"
+
+### Maintaining Energy
+
+**Pace Yourself**:
+- High energy ≠ constant screaming
+- Vary your intensity
+- Have calm moments too
+
+**Camera Presence**:
+- Look at the camera (not yourself)
+- Use hand gestures
+- Express with your face
+- Move naturally
+
+### When Chat Is Slow
+
+- Ask open-ended questions
+- Tell a story
+- Share behind-the-scenes info
+- Address the quiet directly: "Chat's quiet—what are you all up to today?"
+
+🔥 **Action Step**: Practice reading chat while talking. Have someone send you messages while you record a practice video.`
       },
       {
         id: 4,
@@ -2304,7 +2533,94 @@ You now understand:
           "Technical troubleshooting live",
           "Moderator management",
           "Recovering from mistakes"
-        ]
+        ],
+        content: `## Graceful Problem Solving
+
+Every streamer faces challenges. How you handle them defines your professionalism.
+
+### Technical Troubleshooting Live
+
+**Audio Issues**:
+- Check if muted (common mistake)
+- Switch audio sources
+- Ask chat "Can you hear me?"
+- Have backup mic ready
+
+**Video Issues**:
+- Check camera connection
+- Adjust lighting on the fly
+- Switch to backup camera/phone
+- Go audio-only briefly if needed
+
+**Connection Issues**:
+- Have "Technical Difficulties" scene ready
+- Acknowledge and apologize briefly
+- Don't over-explain
+- Restart stream if necessary
+
+**The Magic Phrase**:
+"We're having some technical difficulties. Give me just a moment..."
+(Use this time to troubleshoot)
+
+### Managing Moderators
+
+**Why You Need Mods**:
+- Can't watch chat while engaging
+- Remove toxic comments quickly
+- Answer basic questions
+- Enforce rules consistently
+
+**How to Find Mods**:
+- Loyal community members
+- Friends who watch regularly
+- Experienced mods from other channels
+
+**Mod Guidelines**:
+- What to delete immediately
+- What to timeout
+- What to ban
+- When to escalate to you
+
+### Handling Trolls
+
+**Ignore First**:
+Many trolls leave when not fed attention
+
+**Timeout/Ban**:
+Have mods handle quietly when possible
+
+**Address Directly** (rarely):
+Only if it's affecting other viewers. Be brief and move on.
+
+**The Calm Response**:
+"That's not the vibe we're going for here. Moving on..."
+
+### Recovering From Mistakes
+
+**You Said Something Wrong**:
+- Correct yourself simply
+- Don't over-apologize
+- Move on quickly
+
+**Awkward Silence**:
+- Acknowledge it with humor
+- "Well that was a moment..."
+- Have backup topics ready
+
+**Equipment Failure**:
+- Stay calm (viewers feel your energy)
+- Be honest about what's happening
+- Either fix it or end gracefully
+
+### The "Never Do" List
+
+- Never argue with trolls extensively
+- Never show personal information
+- Never panic visibly
+- Never badmouth other creators
+- Never promise what you can't deliver
+
+🔥 **Action Step**: Create a "Technical Issues" scene in OBS with a "We'll be right back" message.`
       },
       {
         id: 5,
@@ -2315,7 +2631,99 @@ You now understand:
           "Finding your time slots",
           "Promoting upcoming streams",
           "Handling schedule changes"
-        ]
+        ],
+        content: `## Consistency is Key
+
+Regular streaming schedules train your audience to show up. Inconsistency loses them.
+
+### Finding Your Time Slots
+
+**Consider Your Life**:
+- When can you consistently be available?
+- What times work with your energy levels?
+- What commitments are non-negotiable?
+
+**Consider Your Audience**:
+- When are they active?
+- Time zones of your core viewers
+- Competition at different times
+
+**Consider the Platform**:
+- When is the platform busiest?
+- When is competition lowest?
+- Discovery opportunities
+
+**Start Simple**:
+- Begin with 1-2 streams per week
+- Same days and times
+- Build up gradually
+
+### Promoting Upcoming Streams
+
+**On-Platform**:
+- Schedule announcements
+- Go-live notifications
+- "See you tomorrow" at end of streams
+
+**Off-Platform**:
+- Social media posts
+- Community Discord
+- Email newsletter
+- Calendar invites for VIPs
+
+**Promotion Timeline**:
+- 1 week before: Initial announcement
+- 1 day before: Reminder
+- 1 hour before: Final push
+- At stream start: "We're live!" posts
+
+### Creating a Schedule Graphic
+
+Visual schedules work:
+- Clear days and times
+- Your time zone specified
+- What type of content each day
+- Shareable format
+
+### Handling Schedule Changes
+
+**Planned Changes**:
+- Announce early (1 week+)
+- Explain briefly
+- Offer alternative if possible
+
+**Emergency Cancellations**:
+- Communicate ASAP
+- Don't over-explain
+- Reschedule if possible
+
+**Vacation/Breaks**:
+- Announce in advance
+- Give return date
+- Consider pre-recorded content
+
+### The Sustainable Schedule
+
+**Avoid Burnout**:
+- Don't stream every day (at first)
+- Quality over quantity
+- Have buffer between streams
+- Take planned breaks
+
+**Ramp Up Gradually**:
+- Month 1-2: 2 streams/week
+- Month 3-4: 3 streams/week
+- Month 6+: Evaluate what's sustainable
+
+### Dealing With Low Viewership
+
+Early streams may have few viewers:
+- Stream as if 1000 people are watching
+- Focus on building habit
+- Every viewer is valuable
+- Content gets better with practice
+
+🔥 **Action Step**: Block out your ideal streaming times for the next month. Commit to at least 8 streams.`
       },
       {
         id: 6,
@@ -2326,7 +2734,104 @@ You now understand:
           "Tip incentives and goals",
           "Sponsor integration in lives",
           "Exclusive live content"
-        ]
+        ],
+        content: `## Making Money While Live
+
+Live content offers unique monetization opportunities. Real-time interaction = real-time revenue.
+
+### Direct Viewer Support
+
+**Tips/Donations**:
+- Platform built-in (varies by platform)
+- Third-party (StreamElements, Streamlabs)
+- Crypto tips (on Lumina!)
+
+**Making Tips Flow**:
+- Acknowledge every tip genuinely
+- Don't beg or guilt-trip
+- Create tip incentives (see below)
+- Set transparent goals
+
+### Tip Incentives and Goals
+
+**Stream Goals**:
+- "At $X, I'll do [special thing]"
+- Visible progress bar
+- Celebrate milestones
+
+**Tip Menu**:
+- $5: Answer a question
+- $10: Do a challenge
+- $25: Shoutout on social media
+- $50: Song/game request
+
+**Wheel Spins**:
+- Tips unlock wheel spins
+- Random outcomes/challenges
+- Creates excitement
+
+### Subscriptions and Memberships
+
+**Platform Subscriptions**:
+- Monthly recurring support
+- Offer subscriber-only perks
+- Exclusive emotes/badges
+
+**Member Benefits**:
+- Ad-free viewing
+- Subscriber-only chat
+- Exclusive streams
+- Discord access
+
+### Sponsor Integration in Lives
+
+**Types of Sponsorships**:
+- Product placements
+- Sponsored segments
+- Affiliate promotions
+- Brand partnerships
+
+**Natural Integration**:
+- "Speaking of [topic], our sponsor..."
+- Actually use the product
+- Be honest about sponsorship
+- Don't oversell
+
+**Finding Sponsors**:
+- Reach out to brands you use
+- Influencer platforms
+- Industry connections
+- Let sponsors come to you (quality signals)
+
+### Exclusive Live Content
+
+**Premium Streams**:
+- Subscriber-only Q&As
+- Behind-the-scenes content
+- Early access to announcements
+- Exclusive tutorials
+
+**Limited Availability**:
+- Create urgency
+- "Only for the next hour"
+- Special event streams
+
+### Merchandise During Streams
+
+- Wear your merch
+- Announce new products live
+- Limited "stream only" drops
+- Flash sales for viewers
+
+### Tracking Revenue
+
+Know your numbers:
+- Revenue per stream
+- Revenue per viewer
+- Which streams earn most
+- What incentives work
+
+🔥 **Action Step**: Set up one monetization method for your next stream. Create a simple tip incentive.`
       },
       {
         id: 7,
@@ -2337,7 +2842,107 @@ You now understand:
           "Clip creation strategies",
           "Highlight editing",
           "Cross-platform distribution"
-        ]
+        ],
+        content: `## Maximize Every Stream
+
+One stream can become dozens of pieces of content. Work smarter, not harder.
+
+### Why Repurpose?
+
+**Efficiency**: Hours of streaming = multiple pieces of content
+**Discovery**: Different formats reach different audiences
+**Evergreen**: Live moments can live forever
+**Algorithm Friendly**: More content = more chances to be seen
+
+### Clip Creation Strategies
+
+**Clip-Worthy Moments**:
+- Funny reactions
+- Key insights/tips
+- Emotional moments
+- Controversial takes
+- Impressive gameplay/skills
+
+**Clip Length**:
+- TikTok/Reels: 15-60 seconds
+- YouTube Shorts: 60 seconds
+- Twitter: 30-60 seconds
+- Stories: 15 seconds
+
+**Mark While Live**:
+- Note timestamps of good moments
+- Use stream markers if available
+- Have mod track highlights
+
+### Highlight Editing
+
+**The Highlight Reel**:
+- Best 5-15 minutes from stream
+- Uploaded as standalone video
+- Good for YouTube
+
+**Editing Approach**:
+- Cut dead air and boring parts
+- Keep pacing tight
+- Add subtitles for accessibility
+- Include brief intro/outro
+
+**Software Options**:
+- CapCut (free, easy)
+- Adobe Premiere
+- DaVinci Resolve (free)
+- Descript (AI-powered)
+
+### Cross-Platform Distribution
+
+**Platform Matching**:
+- Long-form → YouTube
+- Clips → TikTok, Reels, Shorts
+- Quotes → Twitter, Threads
+- Behind-scenes → Stories
+- Announcements → All platforms
+
+**Optimization Per Platform**:
+- Adjust aspect ratios
+- Platform-native captions
+- Optimized thumbnails
+- Platform-specific hashtags
+
+### The Repurposing Workflow
+
+1. **Stream** → Record everything
+2. **Review** → Watch back at 2x speed
+3. **Identify** → Mark 5-10 clip-worthy moments
+4. **Clip** → Create short-form content
+5. **Edit** → Compile highlights
+6. **Distribute** → Post across platforms
+7. **Schedule** → Space out releases
+
+### Content Calendar From One Stream
+
+**Example: 2-Hour Stream**:
+- 1 YouTube highlight (10 min)
+- 3-5 TikToks/Reels (15-60 sec)
+- 2-3 Twitter clips
+- 5 story moments
+- Quotes for text posts
+
+That's 2+ weeks of content from one stream!
+
+### Congratulations!
+
+You've completed "Going Live"!
+
+You now know how to:
+- Set up a professional stream
+- Prepare effectively
+- Engage audiences in real-time
+- Handle challenges gracefully
+- Build a sustainable schedule
+- Monetize your live content
+- Repurpose into multiple formats
+
+🔥 **Final Action Step**: Schedule your first (or next) stream. Apply at least 3 techniques from this course.`
       }
     ]
   },
@@ -2370,7 +2975,77 @@ You now understand:
           "Decentralization explained",
           "Blocks and chains",
           "Consensus mechanisms basics"
-        ]
+        ],
+        content: `## Understanding Blockchain Technology
+
+Blockchain is the foundation of all cryptocurrency. Understanding it unlocks everything else.
+
+### What is Decentralization?
+
+**Traditional Systems (Centralized)**:
+- One company controls the database
+- Single point of failure
+- Trust required in that company
+- They can change rules anytime
+
+**Blockchain (Decentralized)**:
+- Thousands of computers share the database
+- No single point of failure
+- Trust in code, not companies
+- Rules enforced by mathematics
+
+### How Blocks and Chains Work
+
+**A Block Contains**:
+- A list of transactions
+- A timestamp
+- A reference to the previous block
+- A unique "fingerprint" (hash)
+
+**The Chain**:
+- Each block links to the previous one
+- Changing old data breaks the chain
+- This makes history immutable
+- Everyone can verify the chain
+
+**Simple Analogy**:
+Imagine a notebook where:
+- Every page references the previous page
+- Thousands of people have copies
+- Any change is instantly visible to all
+- Unanimous agreement required for changes
+
+### Consensus Mechanisms
+
+How do thousands of computers agree on what's true?
+
+**Proof of Work (Bitcoin)**:
+- Computers solve complex puzzles
+- First to solve adds the block
+- Very secure but uses lots of energy
+
+**Proof of Stake (Ethereum, Arbitrum)**:
+- Validators stake their crypto
+- Random selection to add blocks
+- Energy efficient
+- Bad actors lose their stake
+
+### Why This Matters
+
+Blockchain enables:
+- **Trustless transactions**: No middleman needed
+- **Transparency**: Anyone can verify
+- **Immutability**: History can't be changed
+- **Programmability**: Smart contracts automate agreements
+
+### Key Takeaways
+
+- Decentralization = no single point of control
+- Blocks are linked, creating an unbreakable chain
+- Consensus mechanisms keep everyone honest
+- This technology enables digital ownership
+
+🔥 **Action Step**: Visit a block explorer (etherscan.io) and look at recent blocks. See the transactions inside.`
       },
       {
         id: 2,
@@ -2381,7 +3056,95 @@ You now understand:
           "Bitcoin vs Ethereum vs altcoins",
           "Tokens vs coins",
           "Use cases for different cryptos"
-        ]
+        ],
+        content: `## The Crypto Landscape
+
+Not all cryptocurrencies are the same. Understanding the differences helps you navigate the space.
+
+### Bitcoin: The Original
+
+**What It Is**:
+- First cryptocurrency (2009)
+- Digital gold / store of value
+- Limited supply (21 million ever)
+- Most recognized and liquid
+
+**Best For**:
+- Long-term value storage
+- Protection against inflation
+- Entry point to crypto
+
+### Ethereum: The Platform
+
+**What It Is**:
+- Programmable blockchain
+- Runs smart contracts
+- Hosts thousands of applications
+- Second largest by market cap
+
+**Best For**:
+- Interacting with DeFi
+- NFTs and digital art
+- Building decentralized apps
+
+### Altcoins: Everything Else
+
+**Categories**:
+- **Layer 1s**: Alternative blockchains (Solana, Avalanche)
+- **Layer 2s**: Scale existing chains (Arbitrum, Optimism)
+- **DeFi Tokens**: Governance of protocols (UNI, AAVE)
+- **Utility Tokens**: Power specific platforms (AXM on Lumina)
+- **Memecoins**: Community-driven, high risk (DOGE, SHIB)
+
+### Coins vs Tokens
+
+**Coins**:
+- Native to their own blockchain
+- Examples: BTC, ETH, SOL
+- Pay for network transactions
+
+**Tokens**:
+- Built on existing blockchains
+- Examples: USDC, UNI, AXM
+- Use the host chain for transactions
+
+**AXM (AXIOM)** is a token on Arbitrum (which uses ETH for gas).
+
+### Understanding Use Cases
+
+**Store of Value**: Bitcoin, some altcoins
+**Smart Contract Platforms**: Ethereum, Solana
+**Stablecoins**: USDC, USDT, DAI (pegged to $1)
+**Governance**: Voting in DAOs
+**Utility**: Access to specific platforms
+
+### Market Cap and Ranking
+
+**Market Cap** = Price × Supply
+
+Helps compare relative size:
+- Bitcoin: ~$1T+ (largest)
+- Ethereum: ~$300B+ (second)
+- Everything else: varies widely
+
+Higher market cap generally means:
+- More liquidity
+- Less volatility
+- More established
+
+### Stablecoins: Crypto Dollars
+
+**What They Are**:
+- Cryptocurrencies pegged to $1
+- Bridge between crypto and fiat
+- Useful for trading and savings
+
+**Types**:
+- **Fiat-backed**: USDC, USDT (dollars in bank)
+- **Crypto-backed**: DAI (overcollateralized crypto)
+- **Algorithmic**: Various (higher risk)
+
+🔥 **Action Step**: Look up the top 20 cryptocurrencies by market cap. Categorize each by type.`
       },
       {
         id: 3,
@@ -2392,7 +3155,94 @@ You now understand:
           "MetaMask installation",
           "Seed phrase security",
           "Hot vs cold wallet decision"
-        ]
+        ],
+        content: `## Your Crypto Wallet
+
+A wallet is your gateway to crypto. Set it up correctly from the start.
+
+### What is a Crypto Wallet?
+
+**Not Actually a Wallet**:
+Your crypto isn't "in" the wallet. It's on the blockchain.
+
+**What It Really Is**:
+- A key manager
+- Holds your private keys
+- Signs transactions on your behalf
+- Interface to interact with blockchain
+
+### Hot vs Cold Wallets
+
+**Hot Wallets** (Connected to Internet):
+- Browser extensions (MetaMask)
+- Mobile apps (Trust Wallet)
+- Desktop apps
+- Convenient for daily use
+- More vulnerable to hacks
+
+**Cold Wallets** (Offline):
+- Hardware devices (Ledger, Trezor)
+- Paper wallets
+- Air-gapped computers
+- Maximum security
+- Less convenient
+
+**Recommendation**: Start with a hot wallet, add cold storage as you accumulate more crypto.
+
+### Setting Up MetaMask
+
+**Step 1: Install**
+- Go to metamask.io (verify URL!)
+- Download browser extension
+- Available for Chrome, Firefox, Brave, Edge
+
+**Step 2: Create Wallet**
+- Click "Create a Wallet"
+- Set a strong password
+- This password is for the browser extension only
+
+**Step 3: Secure Your Seed Phrase**
+- Write down all 12 words in order
+- Store in a safe place (not digital!)
+- Never share with anyone
+- This is your master key
+
+**Step 4: Verify**
+- Confirm your seed phrase in order
+- Complete the setup
+
+### Understanding Your Seed Phrase
+
+**What It Is**:
+- 12-24 words in a specific order
+- Generates all your private keys
+- Can recover your wallet on any device
+
+**Critical Rules**:
+- NEVER share it with anyone
+- NEVER enter it on websites
+- NEVER store it digitally (photos, cloud, email)
+- NEVER lose it
+
+**Safe Storage**:
+- Write on paper, store securely
+- Metal backup for fire/water protection
+- Multiple secure locations
+- Consider a safety deposit box
+
+### Your Wallet Address
+
+**What It Is**:
+- Your public identifier (like an email address)
+- Starts with 0x followed by 40 characters
+- Example: 0x742d35Cc6634C0532925a3b844Bc9e7595f...
+
+**Safe to Share**:
+- Give to others to receive crypto
+- Used to track your transactions
+- Cannot be used to steal funds
+
+🔥 **Action Step**: Install MetaMask. Write down your seed phrase securely. Send your wallet address to yourself.`
       },
       {
         id: 4,
@@ -2403,7 +3253,93 @@ You now understand:
           "Never share your seed phrase",
           "Recognizing phishing attempts",
           "Hardware wallet benefits"
-        ]
+        ],
+        content: `## Protecting Your Crypto
+
+Security is paramount. Once crypto is stolen, it's usually gone forever.
+
+### The #1 Rule: Seed Phrase Protection
+
+**NEVER share your seed phrase**:
+- No legitimate service will ever ask for it
+- MetaMask support will NEVER ask for it
+- No airdrop requires it
+- No "wallet verification" needs it
+
+**If Anyone Asks**: It's a scam. 100% of the time.
+
+### Recognizing Phishing Attempts
+
+**Common Tactics**:
+- Fake MetaMask popups
+- Impersonation on social media
+- "Support" reaching out first
+- Urgent "security alerts"
+- Too-good-to-be-true offers
+
+**Red Flags**:
+- Slightly misspelled URLs (metamask[dot]co instead of .io)
+- DMs from "support" or "admins"
+- Requests for seed phrase or private keys
+- Pressure to act immediately
+- Promises of free crypto
+
+### Transaction Safety
+
+**Before Signing**:
+- Read what you're approving
+- Check the contract address
+- Understand unlimited approvals
+- Verify the site is legitimate
+
+**Simulation Tools**:
+- Pocket Universe
+- Fire (wallet extension)
+- Show you what will happen before you sign
+
+### Hardware Wallet Benefits
+
+**Why Consider One**:
+- Private keys never touch the internet
+- Physical confirmation required
+- Protection from malware
+- Worth it for $500+ in crypto
+
+**Popular Options**:
+- Ledger Nano (S Plus or X)
+- Trezor (Model One or T)
+- GridPlus Lattice1
+
+**How They Work**:
+- Store keys on secure chip
+- Connect to computer/phone when needed
+- Physically press button to confirm
+- Even if computer is compromised, funds are safe
+
+### Operational Security
+
+**Basic Practices**:
+- Use a dedicated browser for crypto
+- Bookmark official sites
+- Enable 2FA on exchanges
+- Use unique, strong passwords
+- Keep software updated
+
+**Advanced Practices**:
+- Separate wallets for different purposes
+- Small "hot wallet" for daily use
+- Large holdings in cold storage
+- Revoke old token approvals
+
+### What To Do If Compromised
+
+1. Don't panic (but act fast)
+2. Transfer remaining funds to new wallet
+3. Revoke all token approvals
+4. Report the scam (but don't expect recovery)
+5. Learn from the experience
+
+🔥 **Action Step**: Review your seed phrase storage. Is it truly secure? Make improvements if needed.`
       },
       {
         id: 5,
@@ -2414,7 +3350,97 @@ You now understand:
           "What gas actually is",
           "Gas price vs gas limit",
           "Layer 2 solutions for lower fees"
-        ]
+        ],
+        content: `## Demystifying Gas Fees
+
+Gas fees confuse many newcomers. Understanding them helps you save money.
+
+### What is Gas?
+
+**Simple Explanation**:
+Gas is the fee you pay to use the blockchain. Like paying for:
+- Postage to send a letter
+- Fuel to drive a car
+- Electricity to run a computer
+
+**Why It Exists**:
+- Prevents spam transactions
+- Compensates validators/miners
+- Prioritizes important transactions
+- Keeps the network running
+
+### Gas Components
+
+**Gas Limit**:
+- Maximum units of gas you'll use
+- Set by the type of transaction
+- Simple transfer: ~21,000
+- Complex DeFi: 100,000+
+- Don't set too low or transaction fails
+
+**Gas Price (Gwei)**:
+- Price per unit of gas
+- Fluctuates based on network demand
+- Higher price = faster confirmation
+- Measured in Gwei (1 ETH = 1 billion Gwei)
+
+**Total Fee**: Gas Limit × Gas Price
+
+### Why Fees Change
+
+**High Fees When**:
+- Popular NFT mint happening
+- Market volatility (everyone trading)
+- Network congested
+- Peak usage hours
+
+**Lower Fees When**:
+- Weekends (sometimes)
+- Early morning/late night
+- Low market activity
+- Using Layer 2
+
+### Layer 2 Solutions
+
+**The Problem**:
+Ethereum Layer 1 can be expensive ($5-100+ per transaction)
+
+**The Solution**:
+Layer 2 networks (like Arbitrum) bundle transactions:
+- Same security as Ethereum
+- Fraction of the cost ($0.10-1.00)
+- Faster confirmations
+
+**Lumina uses Arbitrum** because:
+- Low fees for social interactions
+- Fast transaction times
+- Ethereum's security
+
+### Optimizing Gas Costs
+
+**Timing**:
+- Use gas trackers (etherscan.io/gastracker)
+- Transact during low-demand periods
+- Set alerts for low gas prices
+
+**Layer 2**:
+- Bridge to Arbitrum, Optimism, etc.
+- Conduct most activity there
+- Only use L1 when necessary
+
+**Transaction Settings**:
+- Use "slow" for non-urgent transactions
+- Understand what you're paying for
+- Don't overpay for gas limit
+
+### Reading Gas Estimates
+
+When MetaMask shows a transaction:
+- **Estimated fee**: What you'll likely pay
+- **Max fee**: Maximum possible (rarely reached)
+- **Likely time**: Expected confirmation
+
+🔥 **Action Step**: Check current gas prices on etherscan.io/gastracker. Note the difference between slow, average, and fast.`
       },
       {
         id: 6,
@@ -2425,7 +3451,106 @@ You now understand:
           "Sending transactions step-by-step",
           "Confirmation times",
           "Transaction troubleshooting"
-        ]
+        ],
+        content: `## Your First Crypto Transaction
+
+Sending crypto is permanent. Learn to do it correctly the first time.
+
+### Before You Send
+
+**Double-Check Everything**:
+- Correct wallet address
+- Correct network (Ethereum vs Arbitrum vs etc.)
+- Correct token/coin
+- Amount is right
+- You have enough for gas
+
+**The Golden Rule**:
+Send a small test amount first for large transfers.
+
+### Sending Step-by-Step
+
+**Step 1: Open Your Wallet**
+- Open MetaMask or your wallet
+- Ensure you're on the correct network
+
+**Step 2: Click Send**
+- Select the asset to send
+- Enter the recipient address
+
+**Step 3: Verify the Address**
+- Check first and last few characters
+- Better: copy/paste, never type manually
+- Best: use address book for frequent recipients
+
+**Step 4: Enter Amount**
+- Input how much to send
+- Leave enough for gas fees
+
+**Step 5: Review Gas**
+- Check estimated fee
+- Adjust if needed (faster/slower)
+
+**Step 6: Confirm**
+- Triple-check everything
+- Click confirm
+- Wait for processing
+
+### Understanding Confirmations
+
+**What They Mean**:
+- Each confirmation = another block added
+- More confirmations = more final
+- Different platforms require different amounts
+
+**Typical Requirements**:
+- Casual use: 1 confirmation
+- Exchanges: 12-35 confirmations
+- Large amounts: Wait for more
+
+**Confirmation Times**:
+- Arbitrum: Seconds to minutes
+- Ethereum: 12-15 seconds per block
+- Bitcoin: ~10 minutes per block
+
+### Receiving Crypto
+
+**The Process**:
+1. Share your wallet address
+2. Verify the sender has the right address
+3. Wait for the transaction
+4. Check on block explorer
+
+**Finding Your Address**:
+- Click your account name in MetaMask
+- Click "Copy address"
+- Share this with the sender
+
+### Transaction Troubleshooting
+
+**Pending Transaction**:
+- Gas price might be too low
+- Wait or "speed up" with more gas
+- Can "cancel" by sending 0 to yourself with same nonce
+
+**Failed Transaction**:
+- You still pay gas (computation happened)
+- Check error message
+- Common: insufficient gas, contract error
+
+**Sent to Wrong Address**:
+- Unfortunately, usually unrecoverable
+- Some lucky exceptions (helpful recipient)
+- Prevention is the only solution
+
+### Transaction Status
+
+Check your transaction on block explorer:
+- **Pending**: Still processing
+- **Success**: Completed
+- **Failed**: Error occurred (gas still charged)
+
+🔥 **Action Step**: Practice by sending a tiny amount to another wallet you control (or a friend). Watch it confirm.`
       },
       {
         id: 7,
@@ -2436,7 +3561,98 @@ You now understand:
           "Using Etherscan/Arbiscan",
           "Understanding transaction details",
           "Verifying contract addresses"
-        ]
+        ],
+        content: `## Block Explorers: Your Blockchain Microscope
+
+Block explorers let you see everything happening on the blockchain. Learn to read them.
+
+### What is a Block Explorer?
+
+**Purpose**:
+- View all blockchain activity
+- Track transactions
+- Verify addresses and contracts
+- Check token balances
+- Research before interacting
+
+**Popular Explorers**:
+- Etherscan.io (Ethereum)
+- Arbiscan.io (Arbitrum)
+- Polygonscan.com (Polygon)
+- Most chains have their own
+
+### Reading a Transaction
+
+**Key Fields**:
+- **Transaction Hash**: Unique ID
+- **Status**: Success/Failed/Pending
+- **Block**: Which block includes it
+- **From**: Sender address
+- **To**: Recipient address
+- **Value**: Amount transferred
+- **Gas Used**: Computation cost
+- **Gas Price**: Price per unit
+
+**What to Look For**:
+- Status: Did it succeed?
+- Value: Is the amount correct?
+- From/To: Are addresses right?
+
+### Checking Wallet Balances
+
+**Search by Address**:
+1. Go to the block explorer
+2. Paste wallet address in search
+3. See all holdings and history
+
+**What You'll See**:
+- Native token balance (ETH, MATIC, etc.)
+- All token holdings
+- NFT holdings
+- Transaction history
+- Token transfers
+
+### Verifying Contracts
+
+**Before Interacting**:
+1. Find the contract address
+2. Search on block explorer
+3. Check if it's verified
+4. Look for audit information
+
+**Verified Contract Benefits**:
+- Source code is visible
+- Anyone can audit
+- More trustworthy
+
+**Red Flags**:
+- Unverified contracts
+- Recent creation (very new)
+- No activity
+- Suspicious code comments
+
+### Checking Token Legitimacy
+
+**Official vs Scam Tokens**:
+- Verify contract address matches official sources
+- Check holder count
+- Check transaction volume
+- Look for verified checkmark
+
+**Example**:
+If you're looking for USDC on Arbitrum:
+1. Google "USDC Arbitrum contract address"
+2. Find official Circle documentation
+3. Verify it matches what you see
+
+### Useful Block Explorer Features
+
+**Watchlist**: Track addresses you care about
+**Token Approvals**: See what you've approved
+**Contract Interaction**: Use contracts directly
+**Gas Tracker**: Current fee estimates
+
+🔥 **Action Step**: Look up your wallet address on the appropriate block explorer. Explore your transaction history.`
       },
       {
         id: 8,
@@ -2447,7 +3663,107 @@ You now understand:
           "Adding networks to wallet",
           "Bridge basics",
           "Network switching"
-        ]
+        ],
+        content: `## Navigating the Multi-Chain World
+
+Crypto exists across many networks. Learn to move between them safely.
+
+### Understanding Networks
+
+**Mainnet vs Testnet**:
+- **Mainnet**: Real network, real money
+- **Testnet**: Practice network, fake money
+- Always verify you're on the right one
+
+**Layer 1 Networks**:
+- Ethereum
+- Bitcoin
+- Solana
+- Avalanche
+Each is independent with its own tokens
+
+**Layer 2 Networks**:
+- Arbitrum, Optimism (for Ethereum)
+- Lightning (for Bitcoin)
+- Use the security of L1 with lower costs
+
+### Adding Networks to MetaMask
+
+**Automatic Method**:
+1. Visit Chainlist.org
+2. Search for network
+3. Click "Add to MetaMask"
+4. Approve in popup
+
+**Manual Method**:
+Settings → Networks → Add Network
+Enter:
+- Network Name
+- RPC URL
+- Chain ID
+- Currency Symbol
+- Block Explorer URL
+
+**Important Networks for Lumina**:
+- Arbitrum One (Chain ID: 42161)
+- Ethereum Mainnet (Chain ID: 1)
+
+### What are Bridges?
+
+**Purpose**:
+Move assets between different networks
+
+**How They Work**:
+1. Lock tokens on source network
+2. Mint equivalent on destination
+3. (Reverse when bridging back)
+
+**Important Bridges**:
+- Arbitrum Bridge (official)
+- Hop Protocol
+- Across Protocol
+- Stargate
+
+### Safe Bridging Practices
+
+**Before Bridging**:
+- Use official bridges when possible
+- Check fees and time estimates
+- Verify you have gas on both sides
+- Start with small test amounts
+
+**Bridging to Arbitrum**:
+1. Visit bridge.arbitrum.io
+2. Connect wallet
+3. Select asset and amount
+4. Approve and confirm
+5. Wait for confirmation (can take time)
+
+### Common Network Mistakes
+
+**Wrong Network Transaction**:
+- Sending to same address but wrong network
+- Funds may be recoverable (same address)
+- Or permanently lost (different address format)
+
+**Prevention**:
+- Always verify network before sending
+- Double-check in wallet UI
+- Test with small amount
+
+### Network Switching
+
+**In MetaMask**:
+- Click network dropdown (top)
+- Select desired network
+- Wallet updates to show that network's balances
+
+**When Sites Request**:
+- DApps may ask to switch networks
+- Verify it's the right network
+- Approve the switch
+
+🔥 **Action Step**: Add Arbitrum One to your MetaMask via Chainlist.org. Practice switching between networks.`
       },
       {
         id: 9,
@@ -2458,7 +3774,106 @@ You now understand:
           "Phishing site recognition",
           "Too-good-to-be-true offers",
           "Safe practices checklist"
-        ]
+        ],
+        content: `## Protecting Yourself from Scams
+
+Knowledge is your best defense. Learn what scammers use and how to avoid them.
+
+### Phishing Scams
+
+**How They Work**:
+- Fake websites that look real
+- Trick you into entering seed phrase
+- Or signing malicious transactions
+
+**Recognition**:
+- Check URL carefully (metamask.io vs metamask.com)
+- Bookmark official sites
+- Never click links from DMs
+- Google search can lead to fake sponsored ads
+
+**Protection**:
+- Type URLs directly
+- Use bookmarks
+- Verify before connecting wallet
+- Use simulation tools
+
+### Fake Token Scams
+
+**How They Work**:
+- Airdrop worthless tokens to your wallet
+- Token appears valuable
+- Interacting triggers malicious contract
+
+**Recognition**:
+- Random tokens appearing in wallet
+- Tokens you never bought
+- "Visit site to claim" messages
+
+**Protection**:
+- Never interact with unknown tokens
+- Don't try to sell suspicious airdrops
+- Hide or ignore them
+
+### Social Engineering
+
+**How They Work**:
+- Impersonate support, admins, celebrities
+- Build trust then steal
+- Create urgency to cloud judgment
+
+**Common Scenarios**:
+- "MetaMask support" in DMs
+- "Verified" celebrity giving away crypto
+- "Admin" asking you to verify wallet
+- "Winner" of a contest you didn't enter
+
+**Protection**:
+- Real support never DMs first
+- No one gives away free money
+- Take time, never rush
+- Verify through official channels
+
+### Too-Good-to-Be-True Offers
+
+**Red Flags**:
+- Guaranteed high returns (100%+ APY)
+- "Risk-free" investments
+- Secret opportunities
+- Time pressure to invest
+
+**Common Schemes**:
+- Ponzi schemes (pay old investors with new money)
+- Rug pulls (project disappears with funds)
+- Pump and dumps (artificially inflate then sell)
+
+**Protection**:
+- If it sounds too good, it is
+- Research thoroughly
+- Check how long project has existed
+- Ask: "Where does yield come from?"
+
+### Safe Practices Checklist
+
+**Daily Habits**:
+- [ ] Verify URLs before connecting
+- [ ] Read what you're signing
+- [ ] Keep seed phrase offline
+- [ ] Question unexpected messages
+
+**Before Interacting**:
+- [ ] Research the project
+- [ ] Check contract verification
+- [ ] Look for audits
+- [ ] Start with small amounts
+
+**Regular Maintenance**:
+- [ ] Review token approvals
+- [ ] Revoke old approvals
+- [ ] Update wallet software
+- [ ] Backup seed phrase
+
+🔥 **Action Step**: Install a phishing protection extension. Review your current token approvals at revoke.cash.`
       },
       {
         id: 10,
@@ -2469,7 +3884,122 @@ You now understand:
           "Centralized vs decentralized exchanges",
           "KYC requirements",
           "Fiat on-ramp options"
-        ]
+        ],
+        content: `## Getting Your First Crypto
+
+There are many ways to buy crypto. Understand your options and choose wisely.
+
+### Centralized Exchanges (CEX)
+
+**What They Are**:
+- Companies that facilitate trading
+- Hold your crypto in custody
+- Similar to traditional stock brokers
+
+**Popular Options**:
+- Coinbase (beginner-friendly)
+- Kraken (good security reputation)
+- Binance (large selection)
+- Gemini (regulated, trusted)
+
+**Pros**:
+- Easy for beginners
+- Fiat on/off ramps
+- Customer support
+- Insurance on some funds
+
+**Cons**:
+- "Not your keys, not your crypto"
+- Can freeze accounts
+- Require identity verification
+- Potential for hacks
+
+### Decentralized Exchanges (DEX)
+
+**What They Are**:
+- Smart contract-based trading
+- No middleman
+- You control your funds
+
+**Popular Options**:
+- Uniswap (Ethereum/Arbitrum)
+- SushiSwap
+- Camelot (Arbitrum native)
+
+**Pros**:
+- Full control of funds
+- No account needed
+- Privacy (no KYC)
+- Access to more tokens
+
+**Cons**:
+- More complex for beginners
+- Need crypto to pay gas
+- No customer support
+- Slippage and price impact
+
+### KYC Requirements
+
+**What is KYC?**:
+Know Your Customer - identity verification
+
+**Typically Requires**:
+- Government ID
+- Proof of address
+- Selfie/photo
+- Sometimes video verification
+
+**Why It Exists**:
+- Regulatory compliance
+- Anti-money laundering
+- Fraud prevention
+
+**Privacy Considerations**:
+- Your data is stored by exchange
+- Some prefer DEXs to avoid
+- Trade-off between convenience and privacy
+
+### Fiat On-Ramp Options
+
+**Credit/Debit Card**:
+- Fastest option
+- Higher fees (3-5%)
+- Lower limits
+- Available on most exchanges
+
+**Bank Transfer**:
+- Lower fees
+- Higher limits
+- Takes 1-5 days
+- ACH, Wire, SEPA
+
+**Third-Party Services**:
+- Moonpay, Ramp, Transak
+- Built into many wallets
+- Convenient but fees vary
+
+**Peer-to-Peer**:
+- Buy directly from others
+- Platforms like Paxful
+- Variable rates and risks
+
+### Your First Purchase Flow
+
+1. **Choose an exchange** based on your needs
+2. **Complete KYC** (if required)
+3. **Add payment method**
+4. **Buy crypto** (start small)
+5. **Transfer to personal wallet** (don't leave on exchange long-term)
+
+### Tips for First-Time Buyers
+
+- Start with Bitcoin or Ethereum
+- Don't invest more than you can lose
+- Use dollar-cost averaging
+- Keep records for taxes
+- Transfer to personal wallet
+
+🔥 **Action Step**: Create an account on a reputable exchange. Complete KYC. Practice buying a small amount of crypto.`
       },
       {
         id: 11,
@@ -2480,7 +4010,112 @@ You now understand:
           "What is Layer 2",
           "Arbitrum advantages",
           "Bridging to Arbitrum"
-        ]
+        ],
+        content: `## Understanding Layer 2 and Arbitrum
+
+Layer 2 makes blockchain practical for everyday use. Lumina runs on Arbitrum for this reason.
+
+### The Scaling Problem
+
+**Ethereum's Limitation**:
+- Can process ~15-30 transactions/second
+- High demand = high fees
+- $50+ for simple transactions during peaks
+
+**The Need**:
+- Millions of users want to transact
+- Fees must be affordable
+- Speed must be acceptable
+
+### What is Layer 2?
+
+**The Concept**:
+- Build on top of Ethereum
+- Process transactions off-chain
+- Settle security on-chain
+- Get Ethereum's security at lower cost
+
+**Analogy**:
+Like express lanes on a highway:
+- Same destination (Ethereum security)
+- Faster journey
+- Less congestion
+- Lower tolls
+
+### Types of Layer 2
+
+**Rollups** (Most Common):
+- Bundle many transactions
+- Post summary to Ethereum
+- Two types: Optimistic and ZK
+
+**Optimistic Rollups**:
+- Assume transactions are valid
+- Challenge period for disputes
+- Arbitrum and Optimism use this
+
+**ZK Rollups**:
+- Prove validity cryptographically
+- Faster finality
+- More complex technology
+
+### Arbitrum Advantages
+
+**Why Lumina Uses Arbitrum**:
+
+**Low Fees**:
+- Transactions cost cents, not dollars
+- Makes social interactions affordable
+- Tipping, posting, engaging all cheap
+
+**Fast**:
+- Near-instant confirmations
+- No waiting for blocks
+- Smooth user experience
+
+**Ethereum Security**:
+- Inherits Ethereum's security
+- Your assets are protected
+- Decentralized validation
+
+**Ecosystem**:
+- Many DeFi protocols available
+- Growing developer community
+- Strong infrastructure
+
+### Bridging to Arbitrum
+
+**Official Bridge** (bridge.arbitrum.io):
+1. Connect wallet
+2. Choose asset
+3. Enter amount
+4. Approve and wait
+
+**Bridging Time**:
+- To Arbitrum: ~10-15 minutes
+- From Arbitrum: ~7 days (security period)
+
+**Alternative Bridges**:
+- Hop Protocol (faster)
+- Across (fast, low fees)
+- Synapse (multi-chain)
+
+These third-party bridges are faster for withdrawals but charge fees.
+
+### Using Lumina on Arbitrum
+
+**Requirements**:
+- MetaMask with Arbitrum network
+- Some ETH on Arbitrum (for gas)
+- AXM tokens (for participation)
+
+**Getting Started**:
+1. Bridge ETH to Arbitrum
+2. Connect wallet to Lumina
+3. Get AXM tokens (earn or swap)
+4. Start participating!
+
+🔥 **Action Step**: Add Arbitrum to MetaMask. Bridge a small amount of ETH for gas fees.`
       },
       {
         id: 12,
@@ -2491,7 +4126,118 @@ You now understand:
           "Key principles to remember",
           "Resources for continued learning",
           "Community support options"
-        ]
+        ],
+        content: `## You're Ready to Explore
+
+Congratulations! You now have the foundation for your crypto journey.
+
+### Key Principles to Remember
+
+**Security First**:
+- Never share your seed phrase
+- Verify before you sign
+- Start small with new things
+- If it's too good to be true, it is
+
+**Understanding Before Acting**:
+- Research before investing
+- Understand gas before transacting
+- Know the risks before participating
+- Ask questions in communities
+
+**Patience and Learning**:
+- You won't understand everything immediately
+- Mistakes are learning opportunities
+- The space evolves constantly
+- Stay curious and humble
+
+### What You've Learned
+
+**Technical Foundations**:
+- How blockchain works
+- Different cryptocurrencies
+- Wallet setup and security
+- Gas fees and transactions
+
+**Practical Skills**:
+- Navigating networks
+- Using block explorers
+- Avoiding scams
+- Bridging assets
+
+**Lumina Specific**:
+- Why Arbitrum
+- How to get started
+- The AXM ecosystem
+
+### Continued Learning Resources
+
+**Official Documentation**:
+- Ethereum.org (comprehensive)
+- Arbitrum docs
+- Lumina help center
+
+**Educational Platforms**:
+- The Forge (you're here!)
+- Bankless
+- Finematics (YouTube)
+- Whiteboard Crypto (YouTube)
+
+**Stay Informed**:
+- Follow reputable crypto Twitter accounts
+- Join Discord communities
+- Read crypto news sites
+
+### Community Support
+
+**Lumina Community**:
+- Discord server for help
+- Community forums
+- Experienced members willing to help
+
+**General Crypto**:
+- r/cryptocurrency
+- r/ethereum
+- Project-specific Discords
+
+**Getting Help**:
+- Ask in community channels
+- Describe your issue clearly
+- Be patient—volunteers help
+- Never trust DMs offering "help"
+
+### Your Next Steps
+
+**Immediate**:
+1. Secure your wallet properly
+2. Bridge to Arbitrum
+3. Explore Lumina features
+
+**Short-term**:
+4. Complete more Forge courses
+5. Start earning AXM
+6. Join the community
+
+**Ongoing**:
+7. Stay educated
+8. Practice safe habits
+9. Help others learn
+
+### Congratulations!
+
+You've completed Crypto 101!
+
+You now understand:
+- Blockchain fundamentals
+- Wallet management
+- Transaction mechanics
+- Network navigation
+- Security best practices
+- The Arbitrum advantage
+
+Welcome to the future of finance and social media.
+
+🔥 **Final Action Step**: Make your first transaction on Arbitrum. Explore Lumina and introduce yourself in the community!`
       }
     ]
   },
