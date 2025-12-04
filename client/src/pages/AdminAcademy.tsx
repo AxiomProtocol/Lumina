@@ -704,14 +704,30 @@ export default function AdminAcademy() {
                             <div>
                               <p className="font-medium">#{course.courseId}: {course.title}</p>
                               <p className="text-sm text-muted-foreground">
-                                Level: {COURSE_LEVELS[course.level]} • {course.totalLessons} lessons • {course.enrollmentCount} enrolled
+                                Level: {COURSE_LEVELS[course.level]} • {course.moduleCount} modules • {course.enrollmentCount} enrolled
                               </p>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
+                            {course.status === 0 && course.moduleCount === 0 && (
+                              <Badge variant="outline" className="text-yellow-500 border-yellow-500/30">
+                                Needs Module
+                              </Badge>
+                            )}
                             <Badge variant={course.status === 1 ? "default" : "secondary"}>
                               {course.status === 0 ? "Draft" : course.status === 1 ? "Published" : "Archived"}
                             </Badge>
+                            {course.status === 0 && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setCreatedCourseId(course.courseId)}
+                                data-testid={`button-select-course-${course.courseId}`}
+                              >
+                                <Plus className="h-3 w-3 mr-1" />
+                                Add Module
+                              </Button>
+                            )}
                           </div>
                         </div>
                       ))}
@@ -720,6 +736,68 @@ export default function AdminAcademy() {
                 )}
               </CardContent>
             </Card>
+
+            {createdCourseId && (
+              <Card className="border-primary/20">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BookOpen className="h-5 w-5" />
+                    Add Module to Course #{createdCourseId}
+                  </CardTitle>
+                  <CardDescription>
+                    Each course must have at least one module before it can be published.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="moduleTitle2">Module Title *</Label>
+                    <Input
+                      id="moduleTitle2"
+                      value={moduleTitle}
+                      onChange={(e) => setModuleTitle(e.target.value)}
+                      placeholder="e.g., Getting Started, Introduction, Basics"
+                      data-testid="input-module-title-manage"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="moduleDesc2">Module Description</Label>
+                    <Textarea
+                      id="moduleDesc2"
+                      value={moduleDescription}
+                      onChange={(e) => setModuleDescription(e.target.value)}
+                      placeholder="What students will learn in this module"
+                      rows={2}
+                    />
+                  </div>
+                </CardContent>
+                <CardFooter className="flex gap-2">
+                  <Button 
+                    onClick={handleAddModule} 
+                    disabled={isAddingModule || !moduleTitle.trim()}
+                    data-testid="button-add-module-manage"
+                  >
+                    {isAddingModule ? (
+                      <>
+                        <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                        Adding...
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Module
+                      </>
+                    )}
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => setCreatedCourseId(null)}
+                  >
+                    Cancel
+                  </Button>
+                </CardFooter>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="publish" className="space-y-4">
@@ -734,6 +812,19 @@ export default function AdminAcademy() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20 mb-4">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium text-blue-500">Before Publishing</p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Courses must have <strong>at least one module</strong> before they can be published. 
+                        Go to "Manage Courses" tab to add modules to draft courses.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="publishId">Course ID to Publish</Label>
                   <Input
@@ -748,18 +839,22 @@ export default function AdminAcademy() {
 
                 {onChainCourses.filter(c => c.status === 0).length > 0 && (
                   <div className="p-3 rounded-lg bg-muted">
-                    <p className="text-sm font-medium mb-2">Draft Courses Available:</p>
+                    <p className="text-sm font-medium mb-2">Draft Courses:</p>
                     <div className="flex flex-wrap gap-2">
                       {onChainCourses
                         .filter(c => c.status === 0)
                         .map((course) => (
                           <Button
                             key={course.courseId}
-                            variant="outline"
+                            variant={course.moduleCount === 0 ? "secondary" : "outline"}
                             size="sm"
                             onClick={() => setPublishCourseId(course.courseId.toString())}
+                            className={course.moduleCount === 0 ? "opacity-50" : ""}
+                            data-testid={`button-draft-${course.courseId}`}
                           >
                             #{course.courseId}: {course.title}
+                            {course.moduleCount === 0 && " (No modules)"}
+                            {course.moduleCount > 0 && ` (${course.moduleCount} modules)`}
                           </Button>
                         ))}
                     </div>
