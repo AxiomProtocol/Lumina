@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Search, Plus, Menu, Moon, Sun, Wallet, AlertTriangle, ArrowLeftRight, GraduationCap, ArrowDownUp, Server } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,12 +17,10 @@ import { useWallet } from "@/lib/walletContext";
 import { truncateAddress } from "@/lib/web3Config";
 import { Badge } from "@/components/ui/badge";
 import { NotificationBell } from "./NotificationBell";
+import { MobileMenu } from "./MobileMenu";
 
-interface HeaderProps {
-  onMenuClick?: () => void;
-}
-
-export function Header({ onMenuClick }: HeaderProps) {
+export function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { address, isConnected, isCorrectNetwork, axmBalance, connect, disconnect, switchNetwork, isConnecting } = useWallet();
@@ -35,11 +34,13 @@ export function Header({ onMenuClick }: HeaderProps) {
             variant="ghost"
             size="icon"
             className="lg:hidden"
-            onClick={onMenuClick}
+            onClick={() => setMobileMenuOpen(true)}
             data-testid="button-menu"
           >
             <Menu className="h-5 w-5" />
           </Button>
+          
+          <MobileMenu open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} />
           
           <Link href="/" className="flex items-center gap-2 group" data-testid="link-home">
             <div className="relative w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-emerald-400 flex items-center justify-center shadow-lg shadow-primary/25 group-hover:shadow-primary/40 transition-shadow">

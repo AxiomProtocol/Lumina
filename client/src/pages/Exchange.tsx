@@ -40,7 +40,6 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Header } from "@/components/layout/Header";
-import { Web3FeatureNav } from "@/components/Web3FeatureNav";
 import { useWallet } from "@/lib/walletContext";
 import { useExchangeContract, useTokenContract, PoolInfo } from "@/lib/useContracts";
 import { CONTRACT_ADDRESSES, getExplorerUrl, formatTokenAmount, parseTokenAmount } from "@/lib/contracts";
@@ -156,8 +155,6 @@ export default function Exchange() {
       <Header />
       
       <main className="container mx-auto px-4 py-8 max-w-6xl">
-        {/* Web3 Feature Navigation */}
-        <Web3FeatureNav />
 
         <div className="flex items-center gap-4 mb-8">
           <Link href="/">
