@@ -167,11 +167,20 @@ export const ACADEMY_HUB_ABI = [
   "function getStudentCourses(address student) view returns (uint256[])",
   "function getCertification(uint256 certId) view returns (tuple(uint256 certificationId, address recipient, uint256 courseId, uint8 certificationType, string credentialURI, address certifier, uint256 issuedAt, bool isRevoked))",
   "function getStudentCertifications(address student) view returns (uint256[])",
+  "function hasRole(bytes32 role, address account) view returns (bool)",
+  "function getRoleAdmin(bytes32 role) view returns (bytes32)",
+  "function grantRole(bytes32 role, address account)",
+  "function revokeRole(bytes32 role, address account)",
+  "function renounceRole(bytes32 role, address account)",
+  "function DEFAULT_ADMIN_ROLE() view returns (bytes32)",
+  "function INSTRUCTOR_ROLE() view returns (bytes32)",
   "event CourseCreated(uint256 indexed courseId, address indexed instructor, string title, uint8 level)",
   "event StudentEnrolled(address indexed student, uint256 indexed courseId, uint256 timestamp)",
   "event LessonCompleted(address indexed student, uint256 indexed lessonId, uint256 timestamp)",
   "event CourseCompleted(address indexed student, uint256 indexed courseId, uint256 timestamp)",
   "event CertificationIssued(uint256 indexed certificationId, address indexed recipient, uint256 indexed courseId, uint8 certificationType)",
+  "event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender)",
+  "event RoleRevoked(bytes32 indexed role, address indexed account, address indexed sender)",
 ] as const;
 
 export const EXCHANGE_HUB_ABI = [

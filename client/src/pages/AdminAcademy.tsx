@@ -49,6 +49,11 @@ export default function AdminAcademy() {
   const [onChainCourses, setOnChainCourses] = useState<CourseInfo[]>([]);
   const [totalCourses, setTotalCourses] = useState(0);
 
+  const [hasAdminRole, setHasAdminRole] = useState(false);
+  const [hasInstructorRole, setHasInstructorRole] = useState(false);
+  const [instructorRoleBytes, setInstructorRoleBytes] = useState<string | null>(null);
+  const [isGrantingRole, setIsGrantingRole] = useState(false);
+
   const [isRegistering, setIsRegistering] = useState(false);
   const [instructorName, setInstructorName] = useState("");
   const [instructorBio, setInstructorBio] = useState("");
@@ -83,6 +88,17 @@ export default function AdminAcademy() {
         if (address) {
           const instructorStatus = await academy.isInstructor(address);
           setIsInstructor(instructorStatus);
+
+          const adminRole = await academy.getDefaultAdminRole();
+          const instRole = await academy.getInstructorRole();
+          setInstructorRoleBytes(instRole);
+
+          if (adminRole && instRole) {
+            const hasAdmin = await academy.hasRole(adminRole, address);
+            const hasInst = await academy.hasRole(instRole, address);
+            setHasAdminRole(hasAdmin);
+            setHasInstructorRole(hasInst);
+          }
         }
 
         const count = await academy.getTotalCourses();
@@ -132,6 +148,40 @@ export default function AdminAcademy() {
       });
     } finally {
       setIsRegistering(false);
+    }
+  };
+
+  const handleGrantInstructorRole = async () => {
+    if (!instructorRoleBytes || !address) {
+      toast({ title: "Role data not loaded", variant: "destructive" });
+      return;
+    }
+
+    setIsGrantingRole(true);
+    try {
+      const txHash = await academy.grantRole(instructorRoleBytes, address);
+      toast({
+        title: "Role Granted",
+        description: `INSTRUCTOR_ROLE granted successfully. TX: ${txHash?.slice(0, 10)}...`,
+      });
+      setHasInstructorRole(true);
+    } catch (error: any) {
+      const errMsg = error.message || "Failed to grant role";
+      if (errMsg.includes("AccessControl")) {
+        toast({
+          title: "Permission Denied",
+          description: "Your wallet doesn't have DEFAULT_ADMIN_ROLE. Contact the contract owner to grant you instructor access.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Grant Role Failed",
+          description: errMsg,
+          variant: "destructive",
+        });
+      }
+    } finally {
+      setIsGrantingRole(false);
     }
   };
 
@@ -329,6 +379,93 @@ export default function AdminAcademy() {
             )}
           </div>
         </div>
+
+        {/* Role Status & Management */}
+        <Card className="mb-8 border-orange-500/20">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Shield className="h-5 w-5 text-orange-500" />
+              Role Management
+            </CardTitle>
+            <CardDescription>
+              Contract access control status and role assignment
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="p-4 rounded-lg bg-muted/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <Shield className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">DEFAULT_ADMIN_ROLE</span>
+                </div>
+                <Badge variant={hasAdminRole ? "default" : "secondary"}>
+                  {hasAdminRole ? "Granted" : "Not Granted"}
+                </Badge>
+              </div>
+              <div className="p-4 rounded-lg bg-muted/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <Award className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">INSTRUCTOR_ROLE</span>
+                </div>
+                <Badge variant={hasInstructorRole ? "default" : "secondary"}>
+                  {hasInstructorRole ? "Granted" : "Not Granted"}
+                </Badge>
+              </div>
+              <div className="p-4 rounded-lg bg-muted/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Instructor Status</span>
+                </div>
+                <Badge variant={isInstructor ? "default" : "secondary"}>
+                  {isInstructor ? "Registered" : "Not Registered"}
+                </Badge>
+              </div>
+              <div className="p-4 rounded-lg bg-muted/50 flex flex-col justify-center">
+                {!hasInstructorRole ? (
+                  <Button
+                    size="sm"
+                    onClick={handleGrantInstructorRole}
+                    disabled={isGrantingRole || !hasAdminRole}
+                    data-testid="button-grant-role"
+                  >
+                    {isGrantingRole ? (
+                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Plus className="h-4 w-4 mr-2" />
+                    )}
+                    Grant Instructor Role
+                  </Button>
+                ) : (
+                  <Badge className="bg-green-500/10 text-green-500 justify-center">
+                    <CheckCircle className="h-3 w-3 mr-1" />
+                    Ready to Create
+                  </Badge>
+                )}
+                {!hasAdminRole && !hasInstructorRole && (
+                  <p className="text-xs text-muted-foreground mt-2 text-center">
+                    Need DEFAULT_ADMIN_ROLE to grant roles
+                  </p>
+                )}
+              </div>
+            </div>
+            {!hasInstructorRole && (
+              <div className="mt-4 p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-medium text-yellow-500">Instructor Role Required</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      To create courses, you need the INSTRUCTOR_ROLE on the AxiomAcademyHub contract. 
+                      {hasAdminRole 
+                        ? " Click 'Grant Instructor Role' above to assign it to yourself."
+                        : " The contract deployer needs to grant you this role via the contract's grantRole function."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         <div className="grid gap-4 md:grid-cols-3 mb-8">
           <Card>

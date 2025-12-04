@@ -1248,6 +1248,74 @@ export function useAcademyContract() {
     }
   }, [isCorrectNetwork]);
 
+  const getDefaultAdminRole = useCallback(async (): Promise<string | null> => {
+    if (!contract) return null;
+    try {
+      return await contract.DEFAULT_ADMIN_ROLE();
+    } catch (error) {
+      console.error('Failed to get DEFAULT_ADMIN_ROLE:', error);
+      return null;
+    }
+  }, [contract]);
+
+  const getInstructorRole = useCallback(async (): Promise<string | null> => {
+    if (!contract) return null;
+    try {
+      return await contract.INSTRUCTOR_ROLE();
+    } catch (error) {
+      console.error('Failed to get INSTRUCTOR_ROLE:', error);
+      return null;
+    }
+  }, [contract]);
+
+  const hasRole = useCallback(async (role: string, account: string): Promise<boolean> => {
+    if (!contract) return false;
+    try {
+      return await contract.hasRole(role, account);
+    } catch (error) {
+      console.error('Failed to check role:', error);
+      return false;
+    }
+  }, [contract]);
+
+  const grantRole = useCallback(async (role: string, account: string): Promise<string | null> => {
+    if (!isCorrectNetwork) {
+      throw new Error('Please switch to Arbitrum One network');
+    }
+    const signer = await getSigner();
+    if (!signer) {
+      throw new Error('Please connect your wallet');
+    }
+    try {
+      const contractWithSigner = new ethers.Contract(CONTRACT_ADDRESSES.ACADEMY_HUB, ACADEMY_HUB_ABI, signer);
+      const tx = await contractWithSigner.grantRole(role, account);
+      await tx.wait();
+      return tx.hash;
+    } catch (error) {
+      console.error('Grant role failed:', error);
+      throw error;
+    }
+  }, [isCorrectNetwork]);
+
+  const revokeRole = useCallback(async (role: string, account: string): Promise<string | null> => {
+    if (!isCorrectNetwork) {
+      throw new Error('Please switch to Arbitrum One network');
+    }
+    const signer = await getSigner();
+    if (!signer) {
+      throw new Error('Please connect your wallet');
+    }
+    try {
+      const contractWithSigner = new ethers.Contract(CONTRACT_ADDRESSES.ACADEMY_HUB, ACADEMY_HUB_ABI, signer);
+      const tx = await contractWithSigner.revokeRole(role, account);
+      await tx.wait();
+      return tx.hash;
+    } catch (error) {
+      console.error('Revoke role failed:', error);
+      throw error;
+    }
+  }, [isCorrectNetwork]);
+
   return {
     getTotalCourses,
     getTotalEnrollments,
@@ -1265,6 +1333,11 @@ export function useAcademyContract() {
     addModule,
     addLesson,
     publishCourse,
+    getDefaultAdminRole,
+    getInstructorRole,
+    hasRole,
+    grantRole,
+    revokeRole,
   };
 }
 
