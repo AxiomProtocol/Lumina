@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Settings, Link2, Wallet, Calendar, Loader2, Grid, Play, Activity, Coins, Building2, Mail, Phone, Globe, MapPin, Clock, BadgeCheck, Shield, Sparkles, Award, TrendingUp, Zap, ExternalLink } from "lucide-react";
@@ -107,6 +107,70 @@ export default function Profile() {
 
   const isOwnProfile = currentUser?.username === username;
   const profileUserId = profile?.user?.id;
+
+  // Update OG meta tags for social sharing
+  useEffect(() => {
+    if (profile?.user) {
+      const { user: profileUser } = profile;
+      const displayName = profileUser.displayName || profileUser.username;
+      const description = profileUser.bio || `Check out ${displayName}'s profile on Lumina`;
+      const profileUrl = `https://joinlumina.io/profile/${profileUser.username}`;
+      
+      // Build absolute avatar URL
+      let avatarUrl = profileUser.avatarUrl;
+      if (avatarUrl && !avatarUrl.startsWith('http')) {
+        avatarUrl = `https://joinlumina.io${avatarUrl}`;
+      }
+
+      // Update or create meta tags
+      const updateMetaTag = (property: string, content: string) => {
+        let meta = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement;
+        if (!meta) {
+          meta = document.createElement('meta');
+          meta.setAttribute('property', property);
+          document.head.appendChild(meta);
+        }
+        meta.setAttribute('content', content);
+      };
+
+      const updateMetaName = (name: string, content: string) => {
+        let meta = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement;
+        if (!meta) {
+          meta = document.createElement('meta');
+          meta.setAttribute('name', name);
+          document.head.appendChild(meta);
+        }
+        meta.setAttribute('content', content);
+      };
+
+      // Open Graph tags
+      updateMetaTag('og:title', `${displayName} | Lumina`);
+      updateMetaTag('og:description', description);
+      updateMetaTag('og:url', profileUrl);
+      updateMetaTag('og:type', 'profile');
+      if (avatarUrl) {
+        updateMetaTag('og:image', avatarUrl);
+        updateMetaTag('og:image:width', '400');
+        updateMetaTag('og:image:height', '400');
+      }
+
+      // Twitter Card tags
+      updateMetaName('twitter:card', 'summary');
+      updateMetaName('twitter:title', `${displayName} | Lumina`);
+      updateMetaName('twitter:description', description);
+      if (avatarUrl) {
+        updateMetaName('twitter:image', avatarUrl);
+      }
+
+      // Update page title
+      document.title = `${displayName} | Lumina`;
+
+      // Cleanup on unmount
+      return () => {
+        document.title = 'Lumina';
+      };
+    }
+  }, [profile]);
 
   const followMutation = useMutation({
     mutationFn: async () => {
