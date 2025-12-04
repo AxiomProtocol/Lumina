@@ -98,6 +98,8 @@ export default function Checkout() {
 
     const shopEntries = Array.from(shopGroups.entries());
     let completedCount = 0;
+    const successfulShopIds: number[] = [];
+    let localFailedCount = 0;
 
     // Helper to send AXM tokens
     const sendTokens = async (toAddress: string, amount: number): Promise<string> => {
@@ -135,28 +137,33 @@ export default function Checkout() {
         0
       );
       const shopPlatformFee = shopSubtotal * (platformFeePercent / 100);
+      // TODO: When affiliate links are integrated, deduct affiliate fee here
+      // affiliateFee = shopSubtotal * (MARKETPLACE_AFFILIATE_FEE_BPS / 10000) if affiliate link used
       const sellerAmount = shopSubtotal - shopPlatformFee;
 
       try {
-        // Transaction 1: Send seller share to seller wallet
-        const sellerTxHash = await sendTokens(shopWallet, sellerAmount);
-
-        // Transaction 2: Send platform fee to treasury wallet
+        // Transaction 1: Send platform fee to treasury FIRST (required before seller payment)
         let platformFeeTxHash = "";
-        let feeTransferFailed = false;
         if (shopPlatformFee > 0) {
           try {
             platformFeeTxHash = await sendTokens(PLATFORM_TREASURY_WALLET, shopPlatformFee);
           } catch (feeError: any) {
-            feeTransferFailed = true;
-            console.warn("Platform fee transfer failed:", feeError.message);
-            toast({
-              title: "Platform fee transfer failed",
-              description: "Order will be created but may require manual review",
-              variant: "destructive"
-            });
+            // Fee transfer failed - ABORT this shop's order entirely
+            // Don't pay seller if we can't collect our fee
+            console.error("Platform fee transfer failed:", feeError.message);
+            setFailedOrders(prev => [...prev, { 
+              shopName, 
+              error: `Platform fee transfer failed. No payment was made. Please try again.` 
+            }]);
+            localFailedCount++;
+            completedCount++;
+            setProcessingProgress((completedCount / totalShops) * 100);
+            continue; // Skip to next shop without paying seller
           }
         }
+
+        // Transaction 2: Send seller share to seller wallet (only after fee succeeded)
+        const sellerTxHash = await sendTokens(shopWallet, sellerAmount);
 
         const orderRes = await apiRequest("POST", "/api/marketplace/orders", {
           shopId,
@@ -175,12 +182,48 @@ export default function Checkout() {
 
         if (orderRes.ok) {
           const order = await orderRes.json();
-          setOrderResults(prev => [...prev, {
-            orderId: order.id,
-            txHash: sellerTxHash,
-            shopName,
-            itemCount: items.reduce((sum, item) => sum + item.quantity, 0)
-          }]);
+          
+          // Verify the transaction on-chain (required for order confirmation)
+          let verificationPassed = false;
+          let platformFeeVerified = true; // Default to true if no platform fee
+          try {
+            const verifyRes = await apiRequest("POST", `/api/marketplace/orders/${order.id}/verify`, {});
+            if (verifyRes.ok) {
+              const verification = await verifyRes.json();
+              verificationPassed = verification.verified && verification.sellerPaymentVerified;
+              platformFeeVerified = verification.platformFeeVerified ?? true;
+              if (!platformFeeVerified) {
+                console.warn("Platform fee verification failed:", verification.platformFeeError);
+              }
+            } else {
+              const errorData = await verifyRes.json();
+              console.error("Verification failed:", errorData.error);
+            }
+          } catch (verifyError) {
+            console.error("Transaction verification error:", verifyError);
+          }
+          
+          // Require both seller payment AND platform fee verification for full success
+          const fullSuccess = verificationPassed && 
+            (platformFeeTxHash ? platformFeeVerified : true);
+          
+          if (fullSuccess) {
+            setOrderResults(prev => [...prev, {
+              orderId: order.id,
+              txHash: sellerTxHash,
+              shopName,
+              itemCount: items.reduce((sum, item) => sum + item.quantity, 0)
+            }]);
+            // Mark this shop's items for removal from cart
+            successfulShopIds.push(shopId);
+          } else {
+            // Verification failed - add to failed list, don't remove from cart
+            setFailedOrders(prev => [...prev, { 
+              shopName, 
+              error: `Order #${order.orderNumber} payment verification pending. Please check your orders later.` 
+            }]);
+            localFailedCount++;
+          }
         } else {
           throw new Error("Failed to create order");
         }
@@ -190,15 +233,39 @@ export default function Checkout() {
           shopName, 
           error: error.message || "Transaction failed" 
         }]);
+        localFailedCount++;
       }
 
       completedCount++;
       setProcessingProgress((completedCount / totalShops) * 100);
     }
 
-    clearCart();
+    // Only remove items from cart for successful shops
+    if (successfulShopIds.length > 0) {
+      for (const successShopId of successfulShopIds) {
+        const shopItems = shopGroups.get(successShopId);
+        if (shopItems) {
+          for (const item of shopItems) {
+            removeFromCart(item.product.id);
+          }
+        }
+      }
+    }
+    
     queryClient.invalidateQueries({ queryKey: ["/api/marketplace/orders"] });
-    setStep("complete");
+    
+    // Only show complete step if at least one order succeeded
+    // If all failed, go back to cart for retry
+    if (successfulShopIds.length === 0 && localFailedCount > 0) {
+      toast({
+        title: "All orders failed",
+        description: "Please try again or contact support.",
+        variant: "destructive"
+      });
+      setStep("cart");
+    } else {
+      setStep("complete");
+    }
   };
 
   const handleCheckout = async () => {

@@ -162,6 +162,87 @@ import { eq, desc, and, or, sql } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { ethers } from "ethers";
 
+// Arbitrum One RPC configuration for transaction verification
+const ARBITRUM_RPC_URL = "https://arb1.arbitrum.io/rpc";
+const AXM_TOKEN_ADDRESS = "0x864F9c6f50dC5Bd244F5002F1B0873Cd80e2539D";
+const PLATFORM_TREASURY_WALLET = "0x7F455b4614E05820AAD52067Ef223f30b1936f93";
+const PLATFORM_FEE_BPS = 200; // 2%
+
+// ERC-20 Transfer event signature
+const TRANSFER_EVENT_SIGNATURE = ethers.id("Transfer(address,address,uint256)");
+
+interface TransferVerification {
+  verified: boolean;
+  from: string;
+  to: string;
+  amount: string;
+  error?: string;
+}
+
+async function verifyAXMTransfer(
+  txHash: string, 
+  expectedRecipient: string, 
+  expectedAmountWei: bigint
+): Promise<TransferVerification> {
+  try {
+    const provider = new ethers.JsonRpcProvider(ARBITRUM_RPC_URL);
+    const receipt = await provider.getTransactionReceipt(txHash);
+    
+    if (!receipt) {
+      return { verified: false, from: "", to: "", amount: "0", error: "Transaction not found or pending" };
+    }
+    
+    if (receipt.status !== 1) {
+      return { verified: false, from: "", to: "", amount: "0", error: "Transaction failed" };
+    }
+    
+    // Find Transfer event from AXM token
+    const transferLog = receipt.logs.find(log => 
+      log.address.toLowerCase() === AXM_TOKEN_ADDRESS.toLowerCase() &&
+      log.topics[0] === TRANSFER_EVENT_SIGNATURE
+    );
+    
+    if (!transferLog) {
+      return { verified: false, from: "", to: "", amount: "0", error: "No AXM transfer found in transaction" };
+    }
+    
+    // Decode the transfer event
+    const from = ethers.getAddress("0x" + transferLog.topics[1].slice(26));
+    const to = ethers.getAddress("0x" + transferLog.topics[2].slice(26));
+    const amount = BigInt(transferLog.data);
+    
+    // Verify recipient matches
+    if (to.toLowerCase() !== expectedRecipient.toLowerCase()) {
+      return { 
+        verified: false, 
+        from, 
+        to, 
+        amount: amount.toString(), 
+        error: `Wrong recipient. Expected ${expectedRecipient}, got ${to}` 
+      };
+    }
+    
+    // Allow 0.1% tolerance for rounding
+    const tolerance = expectedAmountWei / BigInt(1000);
+    const amountDiff = amount > expectedAmountWei ? amount - expectedAmountWei : expectedAmountWei - amount;
+    
+    if (amountDiff > tolerance) {
+      return { 
+        verified: false, 
+        from, 
+        to, 
+        amount: amount.toString(), 
+        error: `Amount mismatch. Expected ${expectedAmountWei.toString()}, got ${amount.toString()}` 
+      };
+    }
+    
+    return { verified: true, from, to, amount: amount.toString() };
+  } catch (error: any) {
+    console.error("Transaction verification error:", error);
+    return { verified: false, from: "", to: "", amount: "0", error: error.message || "Verification failed" };
+  }
+}
+
 declare module "express-session" {
   interface SessionData {
     userId?: string;
@@ -6790,6 +6871,105 @@ export async function registerRoutes(app: Express): Promise<void> {
     } catch (error) {
       console.error("Pay order error:", error);
       res.status(500).json({ error: "Failed to process payment" });
+    }
+  });
+
+  // Verify order payment on-chain
+  app.post("/api/marketplace/orders/:id/verify", requireAuth, async (req, res) => {
+    try {
+      const orderId = parseInt(req.params.id, 10);
+      if (isNaN(orderId)) {
+        return res.status(400).json({ error: "Invalid order ID" });
+      }
+      
+      const order = await storage.getShopOrder(orderId);
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+      
+      // Only buyer can verify their own order
+      if (order.buyerId !== req.session.userId) {
+        return res.status(403).json({ error: "Not authorized" });
+      }
+      
+      // Already verified
+      if (order.status !== 'pending') {
+        return res.json({ verified: true, order, message: "Order already verified" });
+      }
+      
+      if (!order.paymentTxHash) {
+        return res.status(400).json({ error: "No payment transaction to verify" });
+      }
+      
+      // Get shop wallet for seller payment verification
+      const shop = await storage.getShop(order.shopId);
+      if (!shop || !shop.walletAddress) {
+        return res.status(400).json({ error: "Shop wallet not configured" });
+      }
+      
+      // Calculate expected seller amount (sellerReceivesAxm in wei)
+      const sellerAmountAxm = parseFloat(order.sellerReceivesAxm);
+      const sellerAmountWei = BigInt(Math.floor(sellerAmountAxm * 1e18));
+      
+      // Verify seller payment
+      const sellerVerification = await verifyAXMTransfer(
+        order.paymentTxHash,
+        shop.walletAddress,
+        sellerAmountWei
+      );
+      
+      if (!sellerVerification.verified) {
+        return res.status(400).json({ 
+          error: "Seller payment verification failed", 
+          details: sellerVerification.error 
+        });
+      }
+      
+      // Verify platform fee if present
+      let platformFeeVerified = true;
+      let platformFeeError = null;
+      
+      if (order.platformFeeTxHash) {
+        const platformFeeAxm = parseFloat(order.platformFeeAxm || "0");
+        const platformFeeWei = BigInt(Math.floor(platformFeeAxm * 1e18));
+        
+        if (platformFeeWei > BigInt(0)) {
+          const feeVerification = await verifyAXMTransfer(
+            order.platformFeeTxHash,
+            PLATFORM_TREASURY_WALLET,
+            platformFeeWei
+          );
+          
+          if (!feeVerification.verified) {
+            platformFeeVerified = false;
+            platformFeeError = feeVerification.error;
+          }
+        }
+      }
+      
+      // Update order status
+      const updates: any = {
+        status: 'confirmed',
+        paymentConfirmedAt: new Date(),
+        paidAt: new Date(),
+      };
+      
+      const updated = await storage.updateShopOrder(orderId, updates);
+      
+      res.json({ 
+        verified: true, 
+        order: updated,
+        sellerPaymentVerified: true,
+        platformFeeVerified,
+        platformFeeError,
+        message: platformFeeVerified 
+          ? "Payment fully verified" 
+          : "Seller payment verified, platform fee verification failed"
+      });
+      
+    } catch (error) {
+      console.error("Verify order error:", error);
+      res.status(500).json({ error: "Failed to verify payment" });
     }
   });
 
