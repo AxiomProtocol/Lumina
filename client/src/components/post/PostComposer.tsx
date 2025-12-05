@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/authContext";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { apiRequest, queryClient, getCsrfToken } from "@/lib/queryClient";
 import { cn } from "@/lib/utils";
 
 interface PostComposerProps {
@@ -164,6 +164,9 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
 
   // Proxy upload for videos - goes through server to avoid browser CORS/timeout issues
   const uploadViaProxy = async (file: File): Promise<string> => {
+    // Get CSRF token before starting upload
+    const csrfToken = await getCsrfToken();
+    
     return new Promise((resolve, reject) => {
       const formData = new FormData();
       formData.append("file", file);
@@ -204,6 +207,10 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
       });
       
       xhr.open("POST", "/api/objects/upload-proxy");
+      xhr.withCredentials = true; // Include cookies
+      if (csrfToken) {
+        xhr.setRequestHeader("X-CSRF-Token", csrfToken);
+      }
       xhr.timeout = 600000; // 10 minutes timeout
       xhr.send(formData);
     });

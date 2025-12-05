@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Camera, Image, X, Loader2, Upload } from "lucide-react";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { apiRequest, queryClient, getCsrfToken } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
@@ -118,6 +118,9 @@ export function StoryCreator({ open, onOpenChange }: StoryCreatorProps) {
   
   // Proxy upload for videos - goes through server to avoid browser CORS/timeout issues
   const uploadViaProxy = async (file: File): Promise<string> => {
+    // Get CSRF token before starting upload
+    const csrfToken = await getCsrfToken();
+    
     return new Promise((resolve, reject) => {
       const formData = new FormData();
       formData.append("file", file);
@@ -158,6 +161,10 @@ export function StoryCreator({ open, onOpenChange }: StoryCreatorProps) {
       });
       
       xhr.open("POST", "/api/objects/upload-proxy");
+      xhr.withCredentials = true; // Include cookies
+      if (csrfToken) {
+        xhr.setRequestHeader("X-CSRF-Token", csrfToken);
+      }
       xhr.timeout = 600000; // 10 minutes timeout
       xhr.send(formData);
     });

@@ -33,8 +33,8 @@ async function fetchCsrfToken(): Promise<string> {
   return data.csrfToken;
 }
 
-// Get CSRF token - first from cookie, then fetch if needed
-async function getCsrfToken(): Promise<string | null> {
+// Get CSRF token - first from cookie, then fetch if needed (exported for XHR uploads)
+export async function getCsrfToken(): Promise<string | null> {
   // First try to get from cookie
   const cookieToken = getCsrfTokenFromCookie();
   if (cookieToken) {
