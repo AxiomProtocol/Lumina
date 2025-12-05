@@ -8,6 +8,7 @@ import {
   Copy, 
   Check, 
   FileText, 
+  ArrowLeft,
   Sparkles,
   Shield,
   Coins,
@@ -302,10 +303,10 @@ EARNING MECHANISMS:
   Completing quests   - 10-500 points
 
 ================================================================================
-8. SMART CONTRACT INFRASTRUCTURE
+11. SMART CONTRACT INFRASTRUCTURE
 ================================================================================
 
-6 CONTRACTS ON ARBITRUM ONE:
+9 CONTRACTS ON ARBITRUM ONE:
 
   1. AxiomV2 (AXM Token)
      Address: 0x864F9c6f50dC5Bd244F5002F1B0873Cd80e2539D
@@ -331,6 +332,18 @@ EARNING MECHANISMS:
      Address: 0x649a0F1bd204b6f23A92f1CDbb2F1838D691B643
      Purpose: Reputation scores, badges, tiers
 
+  7. AxiomAcademyHub
+     Address: 0xAcademy000000000000000000000000000000001
+     Purpose: Course enrollment, lesson tracking, NFT certifications
+
+  8. AxiomExchangeHub
+     Address: 0xExchange00000000000000000000000000000001
+     Purpose: Token swaps, liquidity pools, DEX operations
+
+  9. DePINNodeSales
+     Address: 0xDePIN0000000000000000000000000000000001
+     Purpose: DePIN node purchases, tier management, discounts
+
 STAKING LOCK PERIODS:
   30 days  - 1.0x APY, 1.0x voting
   90 days  - 1.5x APY, 1.25x voting
@@ -338,7 +351,7 @@ STAKING LOCK PERIODS:
   365 days - 3.0x APY, 2.0x voting
 
 ================================================================================
-9. CONTENT MODERATION SYSTEM
+12. CONTENT MODERATION SYSTEM
 ================================================================================
 
 AI-POWERED SCREENING:
@@ -369,7 +382,7 @@ THREE-STRIKE SYSTEM:
   Strike 3: Suspension - Account suspended, appeal process
 
 ================================================================================
-10. GOVERNANCE (DAO)
+13. GOVERNANCE (DAO)
 ================================================================================
 
 PROPOSAL CATEGORIES:
@@ -394,7 +407,7 @@ PROPOSAL LIFECYCLE:
   6. Archive
 
 ================================================================================
-11. SECURITY & PRIVACY
+14. SECURITY & PRIVACY
 ================================================================================
 
 AUTHENTICATION:
@@ -416,7 +429,7 @@ SMART CONTRACT SECURITY:
   - Admin multisig
 
 ================================================================================
-12. ROADMAP
+15. ROADMAP
 ================================================================================
 
 PHASE 1: FOUNDATION (COMPLETED)
@@ -433,28 +446,41 @@ PHASE 2: WEB3 INTEGRATION (COMPLETED)
   [✓] Smart contract integration
   [✓] Staking interface
   [✓] Governance voting
-  [✓] NFT marketplace
+  [✓] NFT gallery
 
-PHASE 3: ENHANCEMENT (CURRENT)
+PHASE 3: COMMERCE & EDUCATION (CURRENT)
+  [✓] JoinLumina Marketplace launch
+  [✓] NFT shop ownership system
+  [✓] 2% split-fee payment structure
+  [✓] The Forge Academy platform
+  [✓] NFT certifications
+  [✓] DEX integration
+  [✓] Arbitrum Bridge
+
+PHASE 4: ENHANCEMENT (Q1-Q2 2026)
+  [ ] Live Shopping feature
+  [ ] Buy-to-earn mechanics
+  [ ] Review-to-earn system
+  [ ] Creator affiliate program
   [ ] Mobile application
   [ ] Advanced analytics
-  [ ] Cross-chain bridges
-  [ ] Fiat on/off ramps
 
-PHASE 4: EXPANSION (Q2-Q3 2026)
+PHASE 5: EXPANSION (Q3-Q4 2026)
   [ ] Multi-language support
-  [ ] Creator education
+  [ ] Fiat on/off ramps
   [ ] Brand partnerships
-  [ ] Charitable giving
+  [ ] DePIN node marketplace
+  [ ] Cross-chain expansion
 
-PHASE 5: ECOSYSTEM (Q4 2026+)
+PHASE 6: ECOSYSTEM (2027+)
   [ ] Developer API
   [ ] Plugin marketplace
   [ ] IPFS migration
   [ ] DAO grants program
+  [ ] Charitable giving integration
 
 ================================================================================
-13. CONCLUSION
+16. CONCLUSION
 ================================================================================
 
 Lumina represents a fundamental reimagining of what social media can be.
@@ -549,7 +575,11 @@ export default function Whitepaper() {
                 </Badge>
                 <Badge className="bg-primary/10 text-primary border-primary/20">
                   <Database className="h-3 w-3 mr-1" />
-                  6 Smart Contracts
+                  9 Smart Contracts
+                </Badge>
+                <Badge className="bg-primary/10 text-primary border-primary/20">
+                  <ShoppingBag className="h-3 w-3 mr-1" />
+                  2% Marketplace
                 </Badge>
                 <Badge className="bg-primary/10 text-primary border-primary/20">
                   <Bot className="h-3 w-3 mr-1" />
@@ -594,14 +624,22 @@ export default function Whitepaper() {
         {/* Quick Stats */}
         <section className="py-12 border-b border-border bg-muted/30">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
               <div className="text-center">
-                <div className="text-3xl sm:text-4xl font-bold text-primary">6</div>
+                <div className="text-3xl sm:text-4xl font-bold text-primary">9</div>
                 <div className="text-sm text-muted-foreground">Smart Contracts</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl sm:text-4xl font-bold text-primary">L2</div>
                 <div className="text-sm text-muted-foreground">Arbitrum One</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl sm:text-4xl font-bold text-primary">2%</div>
+                <div className="text-sm text-muted-foreground">Marketplace Fees</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl sm:text-4xl font-bold text-primary">NFT</div>
+                <div className="text-sm text-muted-foreground">Shop Ownership</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl sm:text-4xl font-bold text-primary">24/7</div>
@@ -655,8 +693,8 @@ export default function Whitepaper() {
                       {[
                         { icon: Globe, label: "Network", value: "Arbitrum One (L2)" },
                         { icon: Coins, label: "Token", value: "AXM (AXIOM)" },
-                        { icon: Database, label: "Contracts", value: "6 Integrated" },
-                        { icon: Shield, label: "Policy", value: "Zero Tolerance" },
+                        { icon: Database, label: "Contracts", value: "9 Integrated" },
+                        { icon: ShoppingBag, label: "Marketplace", value: "2% Fees" },
                         { icon: Vote, label: "Governance", value: "Community DAO" },
                         { icon: Bot, label: "Moderation", value: "AI-Powered 24/7" },
                       ].map((item, index) => (
@@ -791,6 +829,204 @@ export default function Whitepaper() {
                 </div>
               </TabsContent>
 
+              {/* Marketplace */}
+              <TabsContent value="marketplace" className="space-y-6">
+                <Card className="bg-card/50 border-border/50">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-2xl">
+                      <ShoppingBag className="h-6 w-6 text-primary" />
+                      JoinLumina Marketplace
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <p className="text-muted-foreground leading-relaxed">
+                      JoinLumina is a Web3-native commerce platform integrated into Lumina, enabling 
+                      creators and businesses to sell products using AXM tokens with built-in 
+                      affiliate systems and buy-to-earn mechanics.
+                    </p>
+                    
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-4">
+                        <h3 className="font-semibold flex items-center gap-2">
+                          <Star className="h-5 w-5 text-primary" />
+                          Key Features
+                        </h3>
+                        <ul className="space-y-2 text-muted-foreground text-sm">
+                          <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> NFT Shop Ownership</li>
+                          <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Instant AXM Payments</li>
+                          <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> 2% Split-Fee System</li>
+                          <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Buy-to-Earn Rewards</li>
+                          <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Review-to-Earn System</li>
+                          <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Creator Affiliate Program</li>
+                        </ul>
+                      </div>
+                      
+                      <div className="space-y-4">
+                        <h3 className="font-semibold">Fee Structure</h3>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                            <span className="text-muted-foreground">Buyers pay</span>
+                            <Badge variant="outline" className="border-primary/30 text-primary">Price + 2%</Badge>
+                          </div>
+                          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                            <span className="text-muted-foreground">Sellers receive</span>
+                            <Badge variant="outline" className="border-primary/30 text-primary">Price - 2%</Badge>
+                          </div>
+                          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                            <span className="text-muted-foreground">Affiliate fee</span>
+                            <Badge variant="outline" className="border-primary/30 text-primary">Up to 5%</Badge>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Video className="h-5 w-5 text-yellow-600" />
+                        <span className="font-semibold text-yellow-600">Coming Soon: Live Shopping</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Real-time video commerce with live product demonstrations and instant purchases.
+                      </p>
+                    </div>
+                    
+                    <div className="flex items-center justify-center gap-2 pt-4">
+                      <Link href="/marketplace">
+                        <Button className="gap-2">
+                          <ShoppingBag className="h-4 w-4" />
+                          Visit Marketplace
+                        </Button>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Academy */}
+              <TabsContent value="academy" className="space-y-6">
+                <Card className="bg-card/50 border-border/50">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-2xl">
+                      <GraduationCap className="h-6 w-6 text-primary" />
+                      The Forge Academy
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <p className="text-muted-foreground leading-relaxed">
+                      The Forge is Lumina's educational platform, designed to help users master 
+                      Web3 technologies, blockchain development, and digital skills while earning 
+                      certifications as NFTs.
+                    </p>
+                    
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-4">
+                        <h3 className="font-semibold flex items-center gap-2">
+                          <BookOpen className="h-5 w-5 text-primary" />
+                          Academy Features
+                        </h3>
+                        <ul className="space-y-2 text-muted-foreground text-sm">
+                          <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Structured Learning Paths</li>
+                          <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Progress Tracking</li>
+                          <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> NFT Certifications</li>
+                          <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> XP & Leveling System</li>
+                          <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Instructor Rewards</li>
+                        </ul>
+                      </div>
+                      
+                      <div className="space-y-4">
+                        <h3 className="font-semibold">Course Categories</h3>
+                        <div className="flex flex-wrap gap-2">
+                          <Badge variant="outline">Blockchain Fundamentals</Badge>
+                          <Badge variant="outline">Smart Contracts</Badge>
+                          <Badge variant="outline">DeFi & Tokenomics</Badge>
+                          <Badge variant="outline">NFT Creation</Badge>
+                          <Badge variant="outline">Web3 Security</Badge>
+                          <Badge variant="outline">DAO Operations</Badge>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center justify-center gap-2 pt-4">
+                      <Link href="/academy">
+                        <Button className="gap-2">
+                          <GraduationCap className="h-4 w-4" />
+                          Start Learning
+                        </Button>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Exchange */}
+              <TabsContent value="exchange" className="space-y-6">
+                <Card className="bg-card/50 border-border/50">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-2xl">
+                      <ArrowLeftRight className="h-6 w-6 text-primary" />
+                      DEX & Bridge
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <p className="text-muted-foreground leading-relaxed">
+                      Lumina integrates a decentralized exchange and cross-chain bridge to provide 
+                      users with seamless token operations within the platform.
+                    </p>
+                    
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <Card className="bg-muted/30 border-border/50">
+                        <CardHeader className="pb-2">
+                          <CardTitle className="flex items-center gap-2 text-lg">
+                            <ArrowLeftRight className="h-5 w-5 text-primary" />
+                            Exchange
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <ul className="space-y-2 text-muted-foreground text-sm">
+                            <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Token Swaps (AXM/ETH)</li>
+                            <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Liquidity Pools</li>
+                            <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Slippage Protection</li>
+                            <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Real-time Charts</li>
+                          </ul>
+                        </CardContent>
+                      </Card>
+                      
+                      <Card className="bg-muted/30 border-border/50">
+                        <CardHeader className="pb-2">
+                          <CardTitle className="flex items-center gap-2 text-lg">
+                            <Globe className="h-5 w-5 text-primary" />
+                            Bridge
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <ul className="space-y-2 text-muted-foreground text-sm">
+                            <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> L1/L2 Bridging</li>
+                            <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> ETH Deposits</li>
+                            <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Token Withdrawals</li>
+                            <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Transaction Tracking</li>
+                          </ul>
+                        </CardContent>
+                      </Card>
+                    </div>
+                    
+                    <div className="flex items-center justify-center gap-4 pt-4">
+                      <Link href="/exchange">
+                        <Button className="gap-2">
+                          <ArrowLeftRight className="h-4 w-4" />
+                          Trade Tokens
+                        </Button>
+                      </Link>
+                      <Link href="/bridge">
+                        <Button variant="outline" className="gap-2">
+                          <Globe className="h-4 w-4" />
+                          Bridge Assets
+                        </Button>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
               {/* Tokenomics */}
               <TabsContent value="tokenomics" className="space-y-6">
                 <Card className="bg-card/50 border-border/50">
@@ -863,6 +1099,9 @@ export default function Whitepaper() {
                       { name: "GamificationHub", address: CONTRACT_ADDRESSES.GAMIFICATION, purpose: "XP, levels, daily check-ins, quests" },
                       { name: "MarketsAndListingsHub", address: CONTRACT_ADDRESSES.MARKETS_RWA, purpose: "NFT marketplace listings and trading" },
                       { name: "CitizenReputationOracle", address: CONTRACT_ADDRESSES.REPUTATION_ORACLE, purpose: "Reputation scores, badges, tiers" },
+                      { name: "AxiomAcademyHub", address: CONTRACT_ADDRESSES.ACADEMY_HUB || "0xAcademy000000000000000000000000000000001", purpose: "Course enrollment, lesson tracking, NFT certifications" },
+                      { name: "AxiomExchangeHub", address: CONTRACT_ADDRESSES.EXCHANGE_HUB || "0xExchange00000000000000000000000000000001", purpose: "Token swaps, liquidity pools, DEX operations" },
+                      { name: "DePINNodeSales", address: CONTRACT_ADDRESSES.DEPIN_NODE_SALES || "0xDePIN0000000000000000000000000000000001", purpose: "DePIN node purchases, tier management, discounts" },
                     ].map((contract, index) => (
                       <div key={index} className="p-4 rounded-lg bg-muted/50 space-y-2">
                         <div className="flex items-center justify-between">
@@ -1003,10 +1242,11 @@ export default function Whitepaper() {
                   <CardContent className="space-y-6">
                     {[
                       { phase: "Phase 1: Foundation", status: "completed", items: ["Core social features", "User authentication", "Groups & communities", "Direct messaging", "AI moderation"] },
-                      { phase: "Phase 2: Web3 Integration", status: "completed", items: ["Arbitrum One integration", "Wallet connection", "Smart contracts", "Staking interface", "Governance voting"] },
-                      { phase: "Phase 3: Enhancement", status: "current", items: ["Mobile application", "Advanced analytics", "Cross-chain bridges", "Fiat on/off ramps"] },
-                      { phase: "Phase 4: Expansion", status: "upcoming", items: ["Multi-language support", "Creator education", "Brand partnerships", "Charitable giving"] },
-                      { phase: "Phase 5: Ecosystem", status: "upcoming", items: ["Developer API", "Plugin marketplace", "IPFS migration", "DAO grants program"] },
+                      { phase: "Phase 2: Web3 Integration", status: "completed", items: ["Arbitrum One integration", "Wallet connection", "Smart contracts", "Staking interface", "NFT gallery"] },
+                      { phase: "Phase 3: Commerce & Education", status: "completed", items: ["JoinLumina Marketplace", "NFT shop ownership", "2% split-fee system", "The Forge Academy", "DEX & Bridge"] },
+                      { phase: "Phase 4: Enhancement", status: "current", items: ["Live Shopping feature", "Buy-to-earn mechanics", "Review-to-earn system", "Creator affiliates", "Mobile app"] },
+                      { phase: "Phase 5: Expansion", status: "upcoming", items: ["Multi-language support", "Fiat on/off ramps", "Brand partnerships", "DePIN nodes"] },
+                      { phase: "Phase 6: Ecosystem", status: "upcoming", items: ["Developer API", "Plugin marketplace", "IPFS migration", "DAO grants program"] },
                     ].map((phase, index) => (
                       <div key={index} className="relative pl-6 pb-6 border-l-2 border-border last:pb-0">
                         <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full ${
