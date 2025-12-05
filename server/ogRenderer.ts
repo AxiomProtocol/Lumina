@@ -87,11 +87,26 @@ function generateOgHtml(post: PostWithAuthor, req: Request): string {
   const rawAuthorAvatar = getFullMediaUrl(post.author.avatarUrl, req);
   
   const mediaUrl = rawMediaUrl ? escapeUrl(rawMediaUrl) : null;
-  const thumbnailUrl = rawThumbnailUrl ? escapeUrl(rawThumbnailUrl) : mediaUrl;
   const authorAvatar = rawAuthorAvatar ? escapeUrl(rawAuthorAvatar) : null;
   
   const isVideo = post.postType === 'video';
   const ogType = isVideo ? 'video.other' : 'article';
+  
+  // For og:image, we need an actual image, not a video file
+  // Priority: 1) explicit thumbnail, 2) for images: the media itself, 3) default og-image
+  const defaultOgImage = escapeUrl(`${baseUrl}/og-image.png`);
+  let imageUrl: string;
+  
+  if (rawThumbnailUrl) {
+    // Use explicit thumbnail if available
+    imageUrl = escapeUrl(rawThumbnailUrl);
+  } else if (!isVideo && rawMediaUrl) {
+    // For image posts, use the media URL as the og:image
+    imageUrl = escapeUrl(rawMediaUrl);
+  } else {
+    // For videos without thumbnails, use default og-image
+    imageUrl = defaultOgImage;
+  }
   
   let videoTags = '';
   if (isVideo && mediaUrl) {
@@ -109,8 +124,6 @@ function generateOgHtml(post: PostWithAuthor, req: Request): string {
     videoTags = `
     <meta name="twitter:card" content="summary_large_image" />`;
   }
-  
-  const imageUrl = thumbnailUrl || escapeUrl(`${baseUrl}/og-image.png`);
   
   return `<!DOCTYPE html>
 <html lang="en" prefix="og: https://ogp.me/ns#">
