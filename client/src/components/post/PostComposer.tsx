@@ -314,11 +314,26 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
     });
   };
 
-  const handleSkipThumbnail = () => {
+  const handleSkipThumbnail = async () => {
+    // When user skips, auto-generate a thumbnail from the video
+    if (uploadedVideoPath) {
+      try {
+        const response = await apiRequest("POST", "/api/video/auto-thumbnail", {
+          videoPath: uploadedVideoPath,
+        });
+        const data = await response.json();
+        if (data.thumbnailPath) {
+          setSelectedThumbnail(data.thumbnailPath);
+        }
+      } catch (error) {
+        console.error("Auto-thumbnail generation failed:", error);
+        // Continue without thumbnail if generation fails
+      }
+    }
     setShowThumbnailSelector(false);
     toast({
-      title: "Thumbnail skipped",
-      description: "Your video will use a default thumbnail.",
+      title: "Ready to post",
+      description: "Thumbnail has been auto-generated. Click Post to publish!",
     });
   };
 
@@ -347,6 +362,7 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
     
     try {
       let mediaUrl = uploadedVideoPath;
+      let thumbnailUrl = selectedThumbnail;
       
       if (mediaFile && !mediaUrl) {
         setIsUploading(true);
@@ -359,11 +375,28 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
         setIsUploading(false);
       }
 
+      // Auto-generate thumbnail for videos if not already selected
+      // Note: selectedThumbnail may have been set by handleSkipThumbnail or VideoThumbnailSelector
+      if (mediaType === "video" && mediaUrl && !thumbnailUrl && !selectedThumbnail) {
+        try {
+          const thumbResponse = await apiRequest("POST", "/api/video/auto-thumbnail", {
+            videoPath: mediaUrl,
+          });
+          const thumbData = await thumbResponse.json();
+          if (thumbData.thumbnailPath) {
+            thumbnailUrl = thumbData.thumbnailPath;
+          }
+        } catch (error) {
+          console.error("Auto-thumbnail generation failed:", error);
+          // Continue without thumbnail if generation fails
+        }
+      }
+
       await apiRequest("POST", "/api/posts", {
         content: content.trim(),
         postType: mediaType || "text",
         mediaUrl,
-        thumbnailUrl: selectedThumbnail,
+        thumbnailUrl,
         visibility,
         groupId: groupId || null,
         skipModeration: moderationWarning?.isViolation && 

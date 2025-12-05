@@ -724,7 +724,8 @@ export async function registerRoutes(app: Express): Promise<void> {
 
   app.post("/api/posts", requireAuth, postLimiter, async (req, res) => {
     try {
-      const { content, postType, mediaUrl, mediaType } = req.body;
+      const { content, postType, mediaUrl, mediaType, thumbnailUrl } = req.body;
+      console.log("Creating post with thumbnailUrl:", thumbnailUrl);
       
       // Sanitize user-provided text content to prevent XSS
       const sanitizedContent = sanitizeText(content);
