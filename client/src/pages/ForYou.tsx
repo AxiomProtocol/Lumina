@@ -194,6 +194,8 @@ function VideoCard({
   };
 
   const handleLike = async () => {
+    console.log("handleLike called, user:", user?.id, "post:", post.id);
+    
     if (!user) {
       toast({
         title: "Login required",
@@ -209,8 +211,11 @@ function VideoCard({
     setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
     
     try {
+      console.log("Calling onLike with postId:", post.id);
       await onLike(post.id);
+      console.log("onLike completed successfully");
     } catch (error) {
+      console.error("onLike failed:", error);
       // Revert on error
       setLiked(wasLiked);
       setLikeCount((prev) => (wasLiked ? prev : prev - 1));
@@ -226,17 +231,23 @@ function VideoCard({
     <>
       <div className="relative w-full h-full bg-black flex items-center justify-center">
         {post.mediaUrl ? (
-          <video
-            ref={videoRef}
-            src={post.mediaUrl}
-            poster={post.thumbnailUrl || undefined}
-            loop
-            muted={isMuted}
-            playsInline
-            onClick={togglePlay}
-            className="w-full h-full object-contain cursor-pointer"
-            data-testid={`video-${post.id}`}
-          />
+          <>
+            <video
+              ref={videoRef}
+              src={post.mediaUrl}
+              poster={post.thumbnailUrl || undefined}
+              loop
+              muted={isMuted}
+              playsInline
+              className="w-full h-full object-contain pointer-events-none"
+              data-testid={`video-${post.id}`}
+            />
+            {/* Clickable overlay for play/pause - exclude the right side where action buttons are */}
+            <div 
+              className="absolute top-0 bottom-0 left-0 right-20 cursor-pointer z-10"
+              onClick={togglePlay}
+            />
+          </>
         ) : (
           <div className="flex items-center justify-center text-white/50">
             <p>No video available</p>
@@ -306,7 +317,7 @@ function VideoCard({
           </div>
         </div>
 
-        <div className="absolute right-3 bottom-28 flex flex-col items-center gap-5">
+        <div className="absolute right-3 bottom-28 flex flex-col items-center gap-5 z-[100]">
           <Link href={`/profile/${post.author.username}`}>
             <div className="relative group">
               <Avatar className="h-12 w-12 border-2 border-white ring-2 ring-primary/30 transition-all group-hover:ring-primary/50">
@@ -331,18 +342,20 @@ function VideoCard({
           </Link>
 
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
-              e.preventDefault();
               handleLike();
             }}
-            className="flex flex-col items-center gap-1 group"
+            className="flex flex-col items-center gap-1 group cursor-pointer"
             data-testid="button-like-video"
           >
-            <div className={cn(
-              "w-12 h-12 rounded-full flex items-center justify-center transition-all",
-              liked ? "bg-red-500/30 ring-2 ring-red-500/50" : "bg-white/10 group-hover:bg-white/20"
-            )}>
+            <div 
+              className={cn(
+                "w-12 h-12 rounded-full flex items-center justify-center transition-all",
+                liked ? "bg-red-500/30 ring-2 ring-red-500/50" : "bg-white/10 group-hover:bg-white/20"
+              )}
+            >
               <Heart className={cn("h-6 w-6 transition-transform group-hover:scale-110", liked ? "fill-red-500 text-red-500" : "text-white")} />
             </div>
             <span className="text-white text-xs font-medium">{likeCount}</span>
@@ -575,11 +588,17 @@ export default function ForYou() {
 
   const likeMutation = useMutation({
     mutationFn: async (postId: string) => {
+      console.log("likeMutation mutationFn called with postId:", postId);
       const res = await apiRequest("POST", `/api/posts/${postId}/like`, {});
+      console.log("likeMutation response:", res.status);
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("likeMutation onSuccess:", data);
       queryClient.invalidateQueries({ queryKey: ["/api/posts/videos"] });
+    },
+    onError: (error) => {
+      console.error("likeMutation onError:", error);
     },
   });
 
