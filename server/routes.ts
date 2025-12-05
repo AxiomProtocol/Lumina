@@ -2,8 +2,17 @@ import type { Express, Request, Response, NextFunction } from "express";
 import rateLimit from "express-rate-limit";
 import sanitizeHtml from "sanitize-html";
 import crypto from "crypto";
+import multer from "multer";
 import { storage } from "./storage";
 import { ObjectStorageService, ObjectNotFoundError } from "./objectStorage";
+
+// Configure multer for file uploads (500MB limit for videos)
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 500 * 1024 * 1024, // 500MB
+  },
+});
 import { notificationHub, generateWsToken } from "./websocket";
 import { sendBulkEmail, emailTemplates, sendEmail } from "./services/email";
 import { sendSMS, smsTemplates } from "./services/sms";
@@ -1138,6 +1147,35 @@ export async function registerRoutes(app: Express): Promise<void> {
     } catch (error: any) {
       console.error("Resumable upload error:", error);
       res.status(500).json({ error: error.message || "Failed to create resumable upload" });
+    }
+  });
+
+  // Proxy upload endpoint - uploads through server to avoid browser CORS/timeout issues
+  app.post("/api/objects/upload-proxy", requireAuth, upload.single("file"), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "No file provided" });
+      }
+      
+      const contentType = req.file.mimetype;
+      const buffer = req.file.buffer;
+      
+      console.log(`Proxy upload: ${req.file.originalname}, size: ${buffer.length} bytes, type: ${contentType}`);
+      
+      // Upload to GCS using server-side resumable upload
+      const objectPath = await objectStorageService.uploadFromBuffer(buffer, contentType);
+      
+      // Set ACL to public
+      await objectStorageService.trySetObjectEntityAclPolicy(objectPath, {
+        owner: req.session.userId!,
+        visibility: "public",
+      });
+      
+      console.log(`Proxy upload complete: ${objectPath}`);
+      res.json({ objectPath });
+    } catch (error: any) {
+      console.error("Proxy upload error:", error);
+      res.status(500).json({ error: error.message || "Failed to upload file" });
     }
   });
 

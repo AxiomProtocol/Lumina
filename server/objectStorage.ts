@@ -209,6 +209,74 @@ export class ObjectStorageService {
     return normalizedPath;
   }
 
+  // Upload file directly from server to GCS (proxy upload)
+  async uploadFromBuffer(
+    buffer: Buffer,
+    contentType: string
+  ): Promise<string> {
+    const privateObjectDir = this.getPrivateObjectDir();
+    if (!privateObjectDir) {
+      throw new Error("PRIVATE_OBJECT_DIR not set");
+    }
+    const objectId = randomUUID();
+    const fullPath = `${privateObjectDir}/uploads/${objectId}`;
+    const { bucketName, objectName } = parseObjectPath(fullPath);
+    
+    const bucket = objectStorageClient.bucket(bucketName);
+    const file = bucket.file(objectName);
+    
+    // Upload using stream for better memory handling
+    await new Promise<void>((resolve, reject) => {
+      const stream = file.createWriteStream({
+        metadata: {
+          contentType,
+        },
+        resumable: true, // Use resumable upload on server side
+      });
+      
+      stream.on("error", reject);
+      stream.on("finish", resolve);
+      stream.end(buffer);
+    });
+    
+    return `/objects/uploads/${objectId}`;
+  }
+
+  // Upload file from readable stream to GCS (proxy upload for large files)
+  async uploadFromStream(
+    inputStream: NodeJS.ReadableStream,
+    contentType: string,
+    fileSize?: number
+  ): Promise<string> {
+    const privateObjectDir = this.getPrivateObjectDir();
+    if (!privateObjectDir) {
+      throw new Error("PRIVATE_OBJECT_DIR not set");
+    }
+    const objectId = randomUUID();
+    const fullPath = `${privateObjectDir}/uploads/${objectId}`;
+    const { bucketName, objectName } = parseObjectPath(fullPath);
+    
+    const bucket = objectStorageClient.bucket(bucketName);
+    const file = bucket.file(objectName);
+    
+    // Upload using stream with resumable upload
+    await new Promise<void>((resolve, reject) => {
+      const writeStream = file.createWriteStream({
+        metadata: {
+          contentType,
+        },
+        resumable: true,
+      });
+      
+      writeStream.on("error", reject);
+      writeStream.on("finish", resolve);
+      
+      inputStream.pipe(writeStream);
+    });
+    
+    return `/objects/uploads/${objectId}`;
+  }
+
   async canAccessObjectEntity({
     userId,
     objectFile,

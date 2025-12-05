@@ -116,8 +116,55 @@ export function StoryCreator({ open, onOpenChange }: StoryCreatorProps) {
     reader.readAsDataURL(file);
   };
   
-  // Upload with progress tracking using XMLHttpRequest
-  const uploadWithProgress = async (file: File): Promise<string> => {
+  // Proxy upload for videos - goes through server to avoid browser CORS/timeout issues
+  const uploadViaProxy = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      
+      const xhr = new XMLHttpRequest();
+      
+      xhr.upload.addEventListener("progress", (event) => {
+        if (event.lengthComputable) {
+          const percent = Math.round((event.loaded / event.total) * 100);
+          setUploadProgress(percent);
+        }
+      });
+      
+      xhr.addEventListener("load", () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            const response = JSON.parse(xhr.responseText);
+            resolve(response.objectPath);
+          } catch {
+            reject(new Error("Invalid response from server"));
+          }
+        } else {
+          try {
+            const error = JSON.parse(xhr.responseText);
+            reject(new Error(error.error || `Upload failed with status ${xhr.status}`));
+          } catch {
+            reject(new Error(`Upload failed with status ${xhr.status}`));
+          }
+        }
+      });
+      
+      xhr.addEventListener("error", () => {
+        reject(new Error("Upload failed - please check your connection and try again"));
+      });
+      
+      xhr.addEventListener("timeout", () => {
+        reject(new Error("Upload timed out - video may be too large, try a shorter video"));
+      });
+      
+      xhr.open("POST", "/api/objects/upload-proxy");
+      xhr.timeout = 600000; // 10 minutes timeout
+      xhr.send(formData);
+    });
+  };
+
+  // Direct upload for images - faster for small files
+  const uploadDirect = async (file: File): Promise<string> => {
     // Get signed URL from server
     const uploadRes = await apiRequest("POST", "/api/objects/upload", {});
     const { uploadURL } = await uploadRes.json();
@@ -146,12 +193,12 @@ export function StoryCreator({ open, onOpenChange }: StoryCreatorProps) {
       });
       
       xhr.addEventListener("timeout", () => {
-        reject(new Error("Upload timed out - video may be too large, try a shorter video"));
+        reject(new Error("Upload timed out"));
       });
       
       xhr.open("PUT", uploadURL);
       xhr.setRequestHeader("Content-Type", file.type);
-      xhr.timeout = 600000; // 10 minutes timeout
+      xhr.timeout = 300000; // 5 minutes timeout
       xhr.send(file);
     });
     
@@ -170,7 +217,13 @@ export function StoryCreator({ open, onOpenChange }: StoryCreatorProps) {
     setUploadProgress(0);
     
     try {
-      const objectPath = await uploadWithProgress(mediaFile);
+      // Use proxy upload for videos (server-side resumable), direct for images
+      let objectPath: string;
+      if (mediaType === "video") {
+        objectPath = await uploadViaProxy(mediaFile);
+      } else {
+        objectPath = await uploadDirect(mediaFile);
+      }
       
       await createStoryMutation.mutateAsync({
         mediaUrl: objectPath,
