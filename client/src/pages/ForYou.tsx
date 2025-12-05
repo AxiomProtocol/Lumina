@@ -231,23 +231,25 @@ function VideoCard({
     <>
       <div className="relative w-full h-full bg-black flex items-center justify-center">
         {post.mediaUrl ? (
-          <>
-            <video
-              ref={videoRef}
-              src={post.mediaUrl}
-              poster={post.thumbnailUrl || undefined}
-              loop
-              muted={isMuted}
-              playsInline
-              className="w-full h-full object-contain pointer-events-none"
-              data-testid={`video-${post.id}`}
-            />
-            {/* Clickable overlay for play/pause - exclude the right side where action buttons are */}
-            <div 
-              className="absolute top-0 bottom-0 left-0 right-20 cursor-pointer z-10"
-              onClick={togglePlay}
-            />
-          </>
+          <video
+            ref={videoRef}
+            src={post.mediaUrl}
+            poster={post.thumbnailUrl || undefined}
+            loop
+            muted={isMuted}
+            playsInline
+            onClick={(e) => {
+              // Only toggle play if click is in the left 80% of the video (not on action buttons)
+              const rect = e.currentTarget.getBoundingClientRect();
+              const clickX = e.clientX - rect.left;
+              const width = rect.width;
+              if (clickX < width * 0.85) {
+                togglePlay();
+              }
+            }}
+            className="w-full h-full object-contain cursor-pointer"
+            data-testid={`video-${post.id}`}
+          />
         ) : (
           <div className="flex items-center justify-center text-white/50">
             <p>No video available</p>
@@ -317,7 +319,7 @@ function VideoCard({
           </div>
         </div>
 
-        <div className="absolute right-3 bottom-28 flex flex-col items-center gap-5 z-[100]">
+        <div className="absolute right-3 bottom-28 flex flex-col items-center gap-5 z-[100] pointer-events-auto">
           <Link href={`/profile/${post.author.username}`}>
             <div className="relative group">
               <Avatar className="h-12 w-12 border-2 border-white ring-2 ring-primary/30 transition-all group-hover:ring-primary/50">
@@ -347,7 +349,7 @@ function VideoCard({
               e.stopPropagation();
               handleLike();
             }}
-            className="flex flex-col items-center gap-1 group cursor-pointer"
+            className="flex flex-col items-center gap-1 group cursor-pointer pointer-events-auto"
             data-testid="button-like-video"
           >
             <div 
