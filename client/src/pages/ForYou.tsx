@@ -538,6 +538,24 @@ function VideoCard({
 export default function ForYou() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [slideDirection, setSlideDirection] = useState<'up' | 'down' | null>(null);
+  
+  // Touch/swipe state for mobile
+  const touchStartY = useRef<number | null>(null);
+  const touchEndY = useRef<number | null>(null);
+  const lastScrollTime = useRef<number>(0);
+  const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scrollCooldown = 400; // ms between scroll actions
+  
+  // Cleanup transition timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (transitionTimeoutRef.current) {
+        clearTimeout(transitionTimeoutRef.current);
+      }
+    };
+  }, []);
   
   // Sound state - attempts to play with sound, remembers after first interaction
   const [soundEnabled, setSoundEnabled] = useState(() => {
@@ -618,20 +636,48 @@ export default function ForYou() {
     },
   });
 
-  const goToVideo = useCallback((index: number) => {
+  // Navigate to a video with animation
+  const goToVideo = useCallback((index: number, direction?: 'up' | 'down') => {
     if (index < 0 || index >= posts.length) return;
+    if (isTransitioning) return;
+    
+    // Check cooldown
+    const now = Date.now();
+    if (now - lastScrollTime.current < scrollCooldown) return;
+    lastScrollTime.current = now;
+    
+    // Clear any existing transition timeout
+    if (transitionTimeoutRef.current) {
+      clearTimeout(transitionTimeoutRef.current);
+    }
+    
+    // Set slide direction for animation
+    const dir = direction || (index > currentIndex ? 'down' : 'up');
+    setSlideDirection(dir);
+    setIsTransitioning(true);
+    
     setCurrentIndex(index);
     
-    if (index === posts.length - 2 && hasNextPage) {
+    // Reset transition state after animation completes
+    transitionTimeoutRef.current = setTimeout(() => {
+      setIsTransitioning(false);
+      setSlideDirection(null);
+    }, 350);
+    
+    // Prefetch more videos when near the end
+    if (index >= posts.length - 2 && hasNextPage) {
       fetchNextPage();
     }
-  }, [posts.length, hasNextPage, fetchNextPage]);
+  }, [posts.length, hasNextPage, fetchNextPage, currentIndex, isTransitioning]);
 
+  // Keyboard navigation
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === "ArrowDown" || e.key === "j") {
-      goToVideo(currentIndex + 1);
+      e.preventDefault();
+      goToVideo(currentIndex + 1, 'down');
     } else if (e.key === "ArrowUp" || e.key === "k") {
-      goToVideo(currentIndex - 1);
+      e.preventDefault();
+      goToVideo(currentIndex - 1, 'up');
     }
   }, [currentIndex, goToVideo]);
 
@@ -640,14 +686,15 @@ export default function ForYou() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
+  // Mouse wheel navigation with debouncing
   const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
-    if (Math.abs(e.deltaY) < 30) return;
+    if (Math.abs(e.deltaY) < 50) return; // Increase threshold
     
     if (e.deltaY > 0) {
-      goToVideo(currentIndex + 1);
+      goToVideo(currentIndex + 1, 'down');
     } else {
-      goToVideo(currentIndex - 1);
+      goToVideo(currentIndex - 1, 'up');
     }
   }, [currentIndex, goToVideo]);
 
@@ -658,6 +705,51 @@ export default function ForYou() {
     container.addEventListener("wheel", handleWheel, { passive: false });
     return () => container.removeEventListener("wheel", handleWheel);
   }, [handleWheel]);
+
+  // Touch/swipe gestures for mobile
+  const handleTouchStart = useCallback((e: TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY;
+    touchEndY.current = null;
+  }, []);
+
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    touchEndY.current = e.touches[0].clientY;
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (touchStartY.current === null || touchEndY.current === null) return;
+    
+    const deltaY = touchStartY.current - touchEndY.current;
+    const minSwipeDistance = 50; // Minimum swipe distance to trigger navigation
+    
+    if (Math.abs(deltaY) > minSwipeDistance) {
+      if (deltaY > 0) {
+        // Swiped up - go to next video
+        goToVideo(currentIndex + 1, 'down');
+      } else {
+        // Swiped down - go to previous video
+        goToVideo(currentIndex - 1, 'up');
+      }
+    }
+    
+    touchStartY.current = null;
+    touchEndY.current = null;
+  }, [currentIndex, goToVideo]);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    
+    container.addEventListener("touchstart", handleTouchStart, { passive: true });
+    container.addEventListener("touchmove", handleTouchMove, { passive: true });
+    container.addEventListener("touchend", handleTouchEnd, { passive: true });
+    
+    return () => {
+      container.removeEventListener("touchstart", handleTouchStart);
+      container.removeEventListener("touchmove", handleTouchMove);
+      container.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [handleTouchStart, handleTouchMove, handleTouchEnd]);
 
   return (
     <SoundContext.Provider value={{ soundEnabled, enableSound, userInteracted }}>
@@ -705,23 +797,45 @@ export default function ForYou() {
             </div>
           </div>
         ) : (
-          <div className="h-full">
-            {posts.map((post, index) => (
-              <div
-                key={post.id}
-                className={cn(
-                  "absolute inset-0 transition-opacity duration-300",
-                  index === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"
-                )}
-              >
-                <VideoCard
-                  post={post}
-                  isActive={index === currentIndex}
-                  onLike={(postId) => likeMutation.mutateAsync(postId)}
-                  onFollow={(userId) => followMutation.mutate(userId)}
-                />
-              </div>
-            ))}
+          <div className="h-full relative overflow-hidden">
+            {posts.map((post, index) => {
+              const isCurrentVideo = index === currentIndex;
+              const isPrevVideo = index === currentIndex - 1;
+              const isNextVideo = index === currentIndex + 1;
+              const shouldRender = isCurrentVideo || isPrevVideo || isNextVideo;
+              
+              if (!shouldRender) return null;
+              
+              // Calculate slide transform
+              let translateY = '0%';
+              if (isCurrentVideo) {
+                translateY = '0%';
+              } else if (isPrevVideo) {
+                translateY = '-100%';
+              } else if (isNextVideo) {
+                translateY = '100%';
+              }
+              
+              return (
+                <div
+                  key={post.id}
+                  className={cn(
+                    "absolute inset-0 transition-all duration-300 ease-out will-change-transform",
+                    isCurrentVideo ? "z-10" : "z-0"
+                  )}
+                  style={{
+                    transform: `translateY(${translateY})`,
+                  }}
+                >
+                  <VideoCard
+                    post={post}
+                    isActive={isCurrentVideo}
+                    onLike={(postId) => likeMutation.mutateAsync(postId)}
+                    onFollow={(userId) => followMutation.mutate(userId)}
+                  />
+                </div>
+              );
+            })}
           </div>
         )}
 
@@ -731,8 +845,8 @@ export default function ForYou() {
               variant="ghost"
               size="icon"
               className="h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 text-white disabled:opacity-30 border border-white/10"
-              onClick={() => goToVideo(currentIndex - 1)}
-              disabled={currentIndex === 0}
+              onClick={() => goToVideo(currentIndex - 1, 'up')}
+              disabled={currentIndex === 0 || isTransitioning}
               data-testid="button-prev-video"
             >
               <ChevronUp className="h-6 w-6" />
@@ -741,8 +855,8 @@ export default function ForYou() {
               variant="ghost"
               size="icon"
               className="h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 text-white disabled:opacity-30 border border-white/10"
-              onClick={() => goToVideo(currentIndex + 1)}
-              disabled={currentIndex === posts.length - 1}
+              onClick={() => goToVideo(currentIndex + 1, 'down')}
+              disabled={currentIndex === posts.length - 1 || isTransitioning}
               data-testid="button-next-video"
             >
               <ChevronDown className="h-6 w-6" />
