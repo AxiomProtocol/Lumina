@@ -54,7 +54,23 @@ import {
   BarChart3,
   Gift,
   Crown,
+  HelpCircle,
+  BookOpen,
+  Rocket,
+  Globe,
+  Lock,
+  BadgeCheck,
+  Banknote,
+  RefreshCcw,
+  MessageSquare,
+  ThumbsUp,
+  Award,
+  Layers,
+  ArrowDown,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const shopCategories = [
   { value: "all", label: "All Categories" },
@@ -358,7 +374,7 @@ export default function Marketplace() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="browse" data-testid="tab-browse">
               <Package className="h-4 w-4 mr-2" />
               Products
@@ -374,6 +390,10 @@ export default function Marketplace() {
             <TabsTrigger value="affiliates" data-testid="tab-affiliates">
               <Link2 className="h-4 w-4 mr-2" />
               Affiliates
+            </TabsTrigger>
+            <TabsTrigger value="learn" data-testid="tab-learn">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Learn
             </TabsTrigger>
           </TabsList>
 
@@ -538,6 +558,595 @@ export default function Marketplace() {
                     Browse Affiliate Programs
                   </Button>
                 </div>
+              </div>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="learn" className="space-y-8">
+            {/* Hero Section */}
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 via-primary/10 to-background p-8 md:p-12">
+              <div className="relative z-10">
+                <Badge className="mb-4" variant="secondary">
+                  <Rocket className="h-3 w-3 mr-1" />
+                  Web3 Commerce Revolution
+                </Badge>
+                <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                  The Future of E-Commerce is Here
+                </h2>
+                <p className="text-lg text-muted-foreground max-w-2xl mb-6">
+                  JoinLumina Marketplace combines the best of Web3 technology with seamless shopping experiences. 
+                  Own your shop as an NFT, receive instant payments, and earn rewards on every purchase.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <Button className="gap-2" onClick={() => setActiveTab("browse")}>
+                    <ShoppingBag className="h-4 w-4" />
+                    Start Shopping
+                  </Button>
+                  <Button variant="outline" className="gap-2" onClick={() => setShowCreateShop(true)}>
+                    <Store className="h-4 w-4" />
+                    Open Your Shop
+                  </Button>
+                </div>
+              </div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
+              <div className="absolute bottom-0 left-1/2 w-48 h-48 bg-primary/5 rounded-full blur-2xl" />
+            </div>
+
+            {/* How It Works */}
+            <Card className="p-8">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="p-3 bg-primary/10 rounded-xl">
+                  <Layers className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold">How It Works</h3>
+                  <p className="text-muted-foreground">Simple steps to get started</p>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* For Buyers */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2 text-lg font-semibold">
+                    <ShoppingCart className="h-5 w-5 text-blue-500" />
+                    For Buyers
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="flex gap-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 font-bold">
+                        1
+                      </div>
+                      <div>
+                        <h4 className="font-semibold">Connect Your Wallet</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Connect your MetaMask or compatible Web3 wallet to get started. Make sure you're on Arbitrum One network.
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 font-bold">
+                        2
+                      </div>
+                      <div>
+                        <h4 className="font-semibold">Browse & Add to Cart</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Explore products from verified shops. Add items to your cart from multiple shops in a single session.
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 font-bold">
+                        3
+                      </div>
+                      <div>
+                        <h4 className="font-semibold">Pay with AXM Tokens</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Checkout with AXM tokens. Payments are instant and go directly to sellers with only 2% platform fee.
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 font-bold">
+                        4
+                      </div>
+                      <div>
+                        <h4 className="font-semibold">Earn Rewards</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Get AXM tokens back on every purchase through our Buy-to-Earn program. Leave reviews to earn more!
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* For Sellers */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2 text-lg font-semibold">
+                    <Store className="h-5 w-5 text-green-500" />
+                    For Sellers
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="flex gap-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 font-bold">
+                        1
+                      </div>
+                      <div>
+                        <h4 className="font-semibold">Create Your Shop</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Click "Open Shop" to create your store. Your shop is minted as an NFT you truly own.
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 font-bold">
+                        2
+                      </div>
+                      <div>
+                        <h4 className="font-semibold">Customize & Add Products</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Upload your logo and banner, then list products with up to 20 images each. Set prices in AXM.
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 font-bold">
+                        3
+                      </div>
+                      <div>
+                        <h4 className="font-semibold">Receive Instant Payments</h4>
+                        <p className="text-sm text-muted-foreground">
+                          When customers buy, 98% of the payment goes directly to your wallet. No waiting, no holdbacks.
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 font-bold">
+                        4
+                      </div>
+                      <div>
+                        <h4 className="font-semibold">Grow with Affiliates</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Set up affiliate commissions to let others promote your products and expand your reach.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+            {/* Why We're Better */}
+            <Card className="p-8">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="p-3 bg-amber-500/10 rounded-xl">
+                  <Crown className="h-6 w-6 text-amber-500" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold">Why JoinLumina Beats the Competition</h3>
+                  <p className="text-muted-foreground">See how we compare to traditional platforms</p>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-4 px-4 font-semibold">Feature</th>
+                      <th className="text-center py-4 px-4">
+                        <div className="flex flex-col items-center">
+                          <Badge className="mb-1">JoinLumina</Badge>
+                          <span className="text-xs text-muted-foreground">Web3</span>
+                        </div>
+                      </th>
+                      <th className="text-center py-4 px-4 text-muted-foreground">Amazon</th>
+                      <th className="text-center py-4 px-4 text-muted-foreground">eBay</th>
+                      <th className="text-center py-4 px-4 text-muted-foreground">TikTok Shop</th>
+                      <th className="text-center py-4 px-4 text-muted-foreground">Etsy</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b">
+                      <td className="py-4 px-4 font-medium">Platform Fee</td>
+                      <td className="text-center py-4 px-4 text-green-500 font-semibold">1-2%</td>
+                      <td className="text-center py-4 px-4 text-destructive">8-15%</td>
+                      <td className="text-center py-4 px-4 text-destructive">10-15%</td>
+                      <td className="text-center py-4 px-4 text-destructive">6-8%</td>
+                      <td className="text-center py-4 px-4 text-destructive">6.5%+</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="py-4 px-4 font-medium">Payment Speed</td>
+                      <td className="text-center py-4 px-4 text-green-500 font-semibold">Instant</td>
+                      <td className="text-center py-4 px-4 text-muted-foreground">14+ days</td>
+                      <td className="text-center py-4 px-4 text-muted-foreground">2-4 days</td>
+                      <td className="text-center py-4 px-4 text-muted-foreground">7-14 days</td>
+                      <td className="text-center py-4 px-4 text-muted-foreground">3-5 days</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="py-4 px-4 font-medium">Shop Ownership</td>
+                      <td className="text-center py-4 px-4">
+                        <Badge variant="secondary" className="text-xs">NFT Owned</Badge>
+                      </td>
+                      <td className="text-center py-4 px-4 text-muted-foreground">Rented</td>
+                      <td className="text-center py-4 px-4 text-muted-foreground">Rented</td>
+                      <td className="text-center py-4 px-4 text-muted-foreground">Rented</td>
+                      <td className="text-center py-4 px-4 text-muted-foreground">Rented</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="py-4 px-4 font-medium">Buyer Rewards</td>
+                      <td className="text-center py-4 px-4">
+                        <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
+                      </td>
+                      <td className="text-center py-4 px-4 text-muted-foreground">Limited</td>
+                      <td className="text-center py-4 px-4 text-muted-foreground">None</td>
+                      <td className="text-center py-4 px-4 text-muted-foreground">None</td>
+                      <td className="text-center py-4 px-4 text-muted-foreground">None</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="py-4 px-4 font-medium">Affiliate System</td>
+                      <td className="text-center py-4 px-4">
+                        <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
+                      </td>
+                      <td className="text-center py-4 px-4">
+                        <CheckCircle className="h-5 w-5 text-muted-foreground mx-auto" />
+                      </td>
+                      <td className="text-center py-4 px-4 text-muted-foreground">Limited</td>
+                      <td className="text-center py-4 px-4">
+                        <CheckCircle className="h-5 w-5 text-muted-foreground mx-auto" />
+                      </td>
+                      <td className="text-center py-4 px-4 text-muted-foreground">None</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="py-4 px-4 font-medium">Deplatforming Risk</td>
+                      <td className="text-center py-4 px-4 text-green-500 font-semibold">None</td>
+                      <td className="text-center py-4 px-4 text-destructive">High</td>
+                      <td className="text-center py-4 px-4 text-destructive">High</td>
+                      <td className="text-center py-4 px-4 text-destructive">High</td>
+                      <td className="text-center py-4 px-4 text-destructive">High</td>
+                    </tr>
+                    <tr>
+                      <td className="py-4 px-4 font-medium">Dispute Resolution</td>
+                      <td className="text-center py-4 px-4">
+                        <Badge variant="secondary" className="text-xs">DAO Governed</Badge>
+                      </td>
+                      <td className="text-center py-4 px-4 text-muted-foreground">Platform</td>
+                      <td className="text-center py-4 px-4 text-muted-foreground">Platform</td>
+                      <td className="text-center py-4 px-4 text-muted-foreground">Platform</td>
+                      <td className="text-center py-4 px-4 text-muted-foreground">Platform</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+
+            {/* Key Benefits Grid */}
+            <div className="grid md:grid-cols-3 gap-6">
+              <Card className="p-6">
+                <div className="p-3 bg-green-500/10 rounded-xl w-fit mb-4">
+                  <Banknote className="h-6 w-6 text-green-500" />
+                </div>
+                <h4 className="text-lg font-semibold mb-2">Ultra-Low Fees</h4>
+                <p className="text-sm text-muted-foreground">
+                  Keep 98% of every sale. Our 2% platform fee is the lowest in the industry, 
+                  meaning more money in your pocket with every transaction.
+                </p>
+              </Card>
+
+              <Card className="p-6">
+                <div className="p-3 bg-amber-500/10 rounded-xl w-fit mb-4">
+                  <Zap className="h-6 w-6 text-amber-500" />
+                </div>
+                <h4 className="text-lg font-semibold mb-2">Instant Settlement</h4>
+                <p className="text-sm text-muted-foreground">
+                  No more waiting weeks for payouts. When a customer pays, the AXM tokens 
+                  go directly to your wallet in seconds, not days.
+                </p>
+              </Card>
+
+              <Card className="p-6">
+                <div className="p-3 bg-blue-500/10 rounded-xl w-fit mb-4">
+                  <Shield className="h-6 w-6 text-blue-500" />
+                </div>
+                <h4 className="text-lg font-semibold mb-2">True Ownership</h4>
+                <p className="text-sm text-muted-foreground">
+                  Your shop is an NFT you own. No one can shut you down, ban your account, 
+                  or take your business away. You're in complete control.
+                </p>
+              </Card>
+
+              <Card className="p-6">
+                <div className="p-3 bg-purple-500/10 rounded-xl w-fit mb-4">
+                  <Gift className="h-6 w-6 text-purple-500" />
+                </div>
+                <h4 className="text-lg font-semibold mb-2">Buy-to-Earn</h4>
+                <p className="text-sm text-muted-foreground">
+                  Every purchase earns you AXM tokens. The more you shop, the more you earn. 
+                  Turn your spending into investments.
+                </p>
+              </Card>
+
+              <Card className="p-6">
+                <div className="p-3 bg-pink-500/10 rounded-xl w-fit mb-4">
+                  <MessageSquare className="h-6 w-6 text-pink-500" />
+                </div>
+                <h4 className="text-lg font-semibold mb-2">Review-to-Earn</h4>
+                <p className="text-sm text-muted-foreground">
+                  Leave honest reviews and earn AXM tokens. Your feedback helps the community 
+                  and rewards you for your time.
+                </p>
+              </Card>
+
+              <Card className="p-6">
+                <div className="p-3 bg-cyan-500/10 rounded-xl w-fit mb-4">
+                  <Globe className="h-6 w-6 text-cyan-500" />
+                </div>
+                <h4 className="text-lg font-semibold mb-2">Global & Borderless</h4>
+                <p className="text-sm text-muted-foreground">
+                  No geographic restrictions. Sell to anyone, anywhere in the world. 
+                  Crypto payments mean no currency conversion hassles.
+                </p>
+              </Card>
+            </div>
+
+            {/* Instructions Accordion */}
+            <Card className="p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-3 bg-primary/10 rounded-xl">
+                  <BookOpen className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold">Detailed Instructions</h3>
+                  <p className="text-muted-foreground">Step-by-step guides for buyers and sellers</p>
+                </div>
+              </div>
+
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="wallet-setup">
+                  <AccordionTrigger className="text-left">
+                    <div className="flex items-center gap-3">
+                      <Wallet className="h-5 w-5 text-primary" />
+                      Setting Up Your Wallet
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground space-y-3">
+                    <p>To use JoinLumina Marketplace, you need a Web3 wallet. Here's how to get started:</p>
+                    <ol className="list-decimal list-inside space-y-2 ml-4">
+                      <li>Install MetaMask from <strong>metamask.io</strong> as a browser extension or mobile app</li>
+                      <li>Create a new wallet and <strong>securely save your recovery phrase</strong></li>
+                      <li>Add the Arbitrum One network to MetaMask (Chain ID: 42161)</li>
+                      <li>Fund your wallet with ETH for gas fees and AXM for purchases</li>
+                      <li>Connect your wallet to JoinLumina by clicking the "Connect Wallet" button</li>
+                    </ol>
+                    <p className="text-sm bg-muted/50 p-3 rounded-lg">
+                      <strong>Pro Tip:</strong> Always verify you're on the real JoinLumina website before connecting your wallet. 
+                      Never share your recovery phrase with anyone.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="buying">
+                  <AccordionTrigger className="text-left">
+                    <div className="flex items-center gap-3">
+                      <ShoppingCart className="h-5 w-5 text-blue-500" />
+                      How to Buy Products
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground space-y-3">
+                    <ol className="list-decimal list-inside space-y-2 ml-4">
+                      <li>Browse the <strong>Products</strong> tab or explore individual <strong>Shops</strong></li>
+                      <li>Click on a product to view details, images, and reviews</li>
+                      <li>Click <strong>"Add to Cart"</strong> to add items (you can add from multiple shops)</li>
+                      <li>Click the <strong>Cart</strong> button to review your items</li>
+                      <li>Click <strong>"Checkout"</strong> and confirm the transaction in your wallet</li>
+                      <li>Track your order in the <strong>My Orders</strong> tab</li>
+                    </ol>
+                    <p className="text-sm bg-muted/50 p-3 rounded-lg">
+                      <strong>Rewards:</strong> After your purchase, you'll automatically receive AXM tokens as part of our 
+                      Buy-to-Earn program. Leave a review to earn even more!
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="selling">
+                  <AccordionTrigger className="text-left">
+                    <div className="flex items-center gap-3">
+                      <Store className="h-5 w-5 text-green-500" />
+                      How to Open & Manage Your Shop
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground space-y-3">
+                    <ol className="list-decimal list-inside space-y-2 ml-4">
+                      <li>Click <strong>"Open Shop"</strong> and fill in your shop details</li>
+                      <li>Enter your wallet address where you want to receive payments</li>
+                      <li>Once created, go to <strong>My Shop → Manage</strong> to access your dashboard</li>
+                      <li>In the <strong>Products</strong> tab, add new products with titles, descriptions, and up to 20 images</li>
+                      <li>In the <strong>Settings</strong> tab, upload your logo and banner to customize your shop</li>
+                      <li>View and manage orders in the <strong>Orders</strong> tab</li>
+                    </ol>
+                    <p className="text-sm bg-muted/50 p-3 rounded-lg">
+                      <strong>Pro Tip:</strong> High-quality product images and detailed descriptions lead to more sales. 
+                      Use all 20 image slots to showcase your products from every angle.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="affiliates">
+                  <AccordionTrigger className="text-left">
+                    <div className="flex items-center gap-3">
+                      <Link2 className="h-5 w-5 text-purple-500" />
+                      Earning with Affiliate Links
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground space-y-3">
+                    <p>Earn commissions by promoting products you love:</p>
+                    <ol className="list-decimal list-inside space-y-2 ml-4">
+                      <li>Browse products and find items with affiliate programs enabled</li>
+                      <li>Click the <strong>Share</strong> icon to get your unique affiliate link</li>
+                      <li>Share the link on social media, blogs, or with friends</li>
+                      <li>When someone purchases through your link, you earn up to <strong>20% commission</strong></li>
+                      <li>Commissions are paid instantly to your wallet in AXM tokens</li>
+                    </ol>
+                    <p className="text-sm bg-muted/50 p-3 rounded-lg">
+                      <strong>For Shop Owners:</strong> Enable affiliate programs in your shop settings to let others 
+                      promote your products. Set commission rates between 1-20%.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="disputes">
+                  <AccordionTrigger className="text-left">
+                    <div className="flex items-center gap-3">
+                      <Shield className="h-5 w-5 text-amber-500" />
+                      Dispute Resolution & Buyer Protection
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground space-y-3">
+                    <p>Our DAO-governed dispute resolution ensures fair outcomes:</p>
+                    <ol className="list-decimal list-inside space-y-2 ml-4">
+                      <li>If you have an issue with an order, first contact the seller directly</li>
+                      <li>If unresolved, open a dispute from your order details page</li>
+                      <li>Provide evidence (screenshots, messages, photos of products received)</li>
+                      <li>The DAO community reviews the case and votes on the outcome</li>
+                      <li>Resolutions are enforced on-chain, ensuring transparency</li>
+                    </ol>
+                    <p className="text-sm bg-muted/50 p-3 rounded-lg">
+                      <strong>Note:</strong> Most disputes are resolved within 48-72 hours. Both buyers and sellers 
+                      can stake AXM tokens to support their case, with the winner receiving the stakes.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </Card>
+
+            {/* FAQs */}
+            <Card className="p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-3 bg-primary/10 rounded-xl">
+                  <HelpCircle className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold">Frequently Asked Questions</h3>
+                  <p className="text-muted-foreground">Quick answers to common questions</p>
+                </div>
+              </div>
+
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="faq-1">
+                  <AccordionTrigger className="text-left">What is AXM token and where can I get it?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">
+                    AXM is the native token of the Lumina ecosystem on Arbitrum One. You can acquire AXM through our 
+                    built-in Exchange, by bridging from other networks, or by earning it through Buy-to-Earn and 
+                    Review-to-Earn programs. AXM is used for all transactions, rewards, staking, and governance.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="faq-2">
+                  <AccordionTrigger className="text-left">Why are fees so low compared to other platforms?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">
+                    Traditional platforms charge high fees to cover payment processing, fraud prevention, and 
+                    middleman costs. Blockchain technology eliminates these intermediaries. Our 2% fee covers 
+                    platform maintenance and DAO treasury contributions. There are no hidden fees or payment 
+                    processor charges.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="faq-3">
+                  <AccordionTrigger className="text-left">What does "shop as NFT" mean?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">
+                    Your shop is represented as an NFT (Non-Fungible Token) on the Arbitrum blockchain. This means 
+                    you truly own it – it can't be arbitrarily shut down by a central authority. You can even 
+                    transfer or sell your shop to someone else. The NFT contains your shop's data and earnings rights.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="faq-4">
+                  <AccordionTrigger className="text-left">How does Buy-to-Earn work?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">
+                    Every time you make a purchase, a portion of the transaction is rewarded back to you in AXM 
+                    tokens. The exact reward rate varies based on the product, seller settings, and your account 
+                    level. These rewards are distributed automatically after purchase confirmation.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="faq-5">
+                  <AccordionTrigger className="text-left">Can I sell physical products or only digital?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">
+                    You can sell both! JoinLumina Marketplace supports physical goods, digital products, services, 
+                    and NFTs. For physical goods, you're responsible for shipping. Our order system helps you 
+                    track shipping addresses and fulfillment status.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="faq-6">
+                  <AccordionTrigger className="text-left">What happens if I receive a damaged or wrong item?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">
+                    First, contact the seller through your order details. If the seller doesn't resolve your issue, 
+                    you can open a DAO-governed dispute. Provide evidence of the problem, and the community will 
+                    vote on a fair resolution. Successful disputes can result in full or partial refunds.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="faq-7">
+                  <AccordionTrigger className="text-left">Is there a minimum amount to start selling?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">
+                    No minimum! You can create a shop and list products for free. You only pay the 2% platform fee 
+                    when you make a sale. There are no monthly fees, listing fees, or subscription costs.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="faq-8">
+                  <AccordionTrigger className="text-left">How do I get verified as a seller?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">
+                    Verification is earned through positive reputation. Factors include: completed sales, positive 
+                    reviews, response time, and dispute resolution rate. High-performing shops receive a verified 
+                    badge that increases buyer trust and visibility in search results.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="faq-9">
+                  <AccordionTrigger className="text-left">What network should my wallet be on?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">
+                    JoinLumina Marketplace runs on Arbitrum One (Chain ID: 42161). Make sure your wallet is 
+                    connected to this network. You'll need ETH for gas fees (very low on Arbitrum) and AXM 
+                    tokens for purchases. Our Exchange can help you swap between tokens.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="faq-10">
+                  <AccordionTrigger className="text-left">Can I use LIVE shopping features?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">
+                    Yes! Shop owners can host live shopping events to showcase products in real-time. Buyers can 
+                    join live streams, ask questions, and purchase featured items directly during the broadcast. 
+                    It's like QVC, but decentralized and interactive.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </Card>
+
+            {/* Call to Action */}
+            <Card className="p-8 bg-gradient-to-br from-primary/10 to-background text-center">
+              <Rocket className="h-12 w-12 text-primary mx-auto mb-4" />
+              <h3 className="text-2xl font-bold mb-2">Ready to Join the Revolution?</h3>
+              <p className="text-muted-foreground max-w-xl mx-auto mb-6">
+                Whether you're a buyer looking for deals and rewards, or a seller seeking freedom and fair fees, 
+                JoinLumina Marketplace is your gateway to Web3 commerce.
+              </p>
+              <div className="flex flex-wrap gap-3 justify-center">
+                <Button size="lg" className="gap-2" onClick={() => setActiveTab("browse")}>
+                  <ShoppingBag className="h-4 w-4" />
+                  Start Shopping
+                </Button>
+                <Button size="lg" variant="outline" className="gap-2" onClick={() => setShowCreateShop(true)}>
+                  <Store className="h-4 w-4" />
+                  Open Your Shop
+                </Button>
               </div>
             </Card>
           </TabsContent>
