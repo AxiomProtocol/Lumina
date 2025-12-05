@@ -6573,6 +6573,7 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       const product = await storage.createShopProduct({
         shopId: shop.id,
+        name: sanitizeText(title),
         title: sanitizeText(title),
         slug,
         description: sanitizeText(description),
@@ -6587,7 +6588,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         requiresShipping: requiresShipping !== false,
         tags,
         status: 'active',
-      });
+      } as any);
 
       res.status(201).json(product);
     } catch (error) {
