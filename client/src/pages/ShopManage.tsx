@@ -126,11 +126,18 @@ export default function ShopManage() {
     priceAxm: "",
     category: "other",
     inventory: "",
-    thumbnailUrl: "",
+    media: [] as string[],
   });
+
+  const MAX_IMAGES = 20;
 
   const handleImageUpload = async (file: File) => {
     if (!file) return;
+    
+    if (productForm.media.length >= MAX_IMAGES) {
+      toast({ title: "Maximum images reached", description: `You can only upload up to ${MAX_IMAGES} images`, variant: "destructive" });
+      return;
+    }
     
     const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
@@ -157,20 +164,25 @@ export default function ShopManage() {
 
       if (!uploadRes.ok) throw new Error("Upload failed");
 
-      // Extract the object ID from the GCS URL and convert to our /objects/ path
-      // GCS URL format: https://storage.googleapis.com/bucket-id/.private/uploads/uuid
       const gcsUrl = uploadURL.split("?")[0];
       const uploadsMatch = gcsUrl.match(/\/uploads\/([a-f0-9-]+)$/i);
       const objectId = uploadsMatch ? uploadsMatch[1] : gcsUrl.split("/").pop();
       const imageUrl = `/objects/uploads/${objectId}`;
       
-      setProductForm(p => ({ ...p, thumbnailUrl: imageUrl }));
+      setProductForm(p => ({ ...p, media: [...p.media, imageUrl] }));
       toast({ title: "Image uploaded successfully" });
     } catch (error: any) {
       toast({ title: "Upload failed", description: error.message, variant: "destructive" });
     } finally {
       setUploadingImage(false);
     }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setProductForm(p => ({
+      ...p,
+      media: p.media.filter((_, i) => i !== index)
+    }));
   };
 
   const { data: shop, isLoading: shopLoading } = useQuery<Shop>({
@@ -230,9 +242,9 @@ export default function ShopManage() {
         shortDescription: data.shortDescription?.trim() || null,
         priceAxm: data.priceAxm,
         category: data.category || "other",
-        thumbnailUrl: data.thumbnailUrl?.trim() || null,
+        thumbnailUrl: data.media.length > 0 ? data.media[0] : null,
         inventory: data.inventory ? parseInt(data.inventory) : null,
-        mediaUrls: data.thumbnailUrl ? [data.thumbnailUrl.trim()] : [],
+        mediaUrls: data.media,
       });
       if (!res.ok) {
         const error = await res.json();
@@ -244,7 +256,7 @@ export default function ShopManage() {
       toast({ title: "Product created successfully" });
       queryClient.invalidateQueries({ queryKey: ["/api/marketplace/products", "shop", shop?.id, "all"] });
       setShowAddProduct(false);
-      setProductForm({ title: "", description: "", shortDescription: "", priceAxm: "", category: "other", inventory: "", thumbnailUrl: "" });
+      setProductForm({ title: "", description: "", shortDescription: "", priceAxm: "", category: "other", inventory: "", media: [] });
     },
     onError: (error: any) => {
       toast({ title: "Failed to create product", description: error.message, variant: "destructive" });
@@ -485,27 +497,33 @@ export default function ShopManage() {
                       </Select>
                     </div>
                     <div>
-                      <Label>Product Image</Label>
-                      <div className="mt-2">
-                        {productForm.thumbnailUrl ? (
-                          <div className="relative w-32 h-32 rounded-md overflow-hidden border bg-muted">
+                      <Label>Product Images ({productForm.media.length}/{MAX_IMAGES})</Label>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {productForm.media.map((url, index) => (
+                          <div key={index} className="relative w-20 h-20 rounded-md overflow-hidden border bg-muted group">
                             <img 
-                              src={productForm.thumbnailUrl} 
-                              alt="Product preview" 
+                              src={url} 
+                              alt={`Product ${index + 1}`} 
                               className="w-full h-full object-cover"
                             />
+                            {index === 0 && (
+                              <span className="absolute top-0 left-0 bg-primary text-primary-foreground text-[10px] px-1 rounded-br">
+                                Main
+                              </span>
+                            )}
                             <Button
                               variant="destructive"
                               size="icon"
-                              className="absolute top-1 right-1 h-6 w-6"
-                              onClick={() => setProductForm(p => ({ ...p, thumbnailUrl: "" }))}
-                              data-testid="button-remove-image"
+                              className="absolute top-1 right-1 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => handleRemoveImage(index)}
+                              data-testid={`button-remove-image-${index}`}
                             >
-                              <XCircle className="h-4 w-4" />
+                              <XCircle className="h-3 w-3" />
                             </Button>
                           </div>
-                        ) : (
-                          <label className="flex flex-col items-center justify-center w-32 h-32 border-2 border-dashed rounded-md cursor-pointer hover:border-primary transition-colors">
+                        ))}
+                        {productForm.media.length < MAX_IMAGES && (
+                          <label className="flex flex-col items-center justify-center w-20 h-20 border-2 border-dashed rounded-md cursor-pointer hover:border-primary transition-colors">
                             <input
                               type="file"
                               accept="image/jpeg,image/png,image/gif,image/webp"
@@ -513,16 +531,17 @@ export default function ShopManage() {
                               onChange={(e) => {
                                 const file = e.target.files?.[0];
                                 if (file) handleImageUpload(file);
+                                e.target.value = "";
                               }}
                               disabled={uploadingImage}
                               data-testid="input-product-image"
                             />
                             {uploadingImage ? (
-                              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                             ) : (
                               <>
-                                <Upload className="h-8 w-8 text-muted-foreground mb-2" />
-                                <span className="text-xs text-muted-foreground">Upload Image</span>
+                                <Plus className="h-5 w-5 text-muted-foreground" />
+                                <span className="text-[10px] text-muted-foreground">Add</span>
                               </>
                             )}
                           </label>
@@ -618,27 +637,33 @@ export default function ShopManage() {
                       </Select>
                     </div>
                     <div>
-                      <Label>Product Image</Label>
-                      <div className="mt-2">
-                        {productForm.thumbnailUrl ? (
-                          <div className="relative w-32 h-32 rounded-md overflow-hidden border bg-muted">
+                      <Label>Product Images ({productForm.media.length}/{MAX_IMAGES})</Label>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {productForm.media.map((url, index) => (
+                          <div key={index} className="relative w-20 h-20 rounded-md overflow-hidden border bg-muted group">
                             <img 
-                              src={productForm.thumbnailUrl} 
-                              alt="Product preview" 
+                              src={url} 
+                              alt={`Product ${index + 1}`} 
                               className="w-full h-full object-cover"
                             />
+                            {index === 0 && (
+                              <span className="absolute top-0 left-0 bg-primary text-primary-foreground text-[10px] px-1 rounded-br">
+                                Main
+                              </span>
+                            )}
                             <Button
                               variant="destructive"
                               size="icon"
-                              className="absolute top-1 right-1 h-6 w-6"
-                              onClick={() => setProductForm(p => ({ ...p, thumbnailUrl: "" }))}
-                              data-testid="button-edit-remove-image"
+                              className="absolute top-1 right-1 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => handleRemoveImage(index)}
+                              data-testid={`button-edit-remove-image-${index}`}
                             >
-                              <XCircle className="h-4 w-4" />
+                              <XCircle className="h-3 w-3" />
                             </Button>
                           </div>
-                        ) : (
-                          <label className="flex flex-col items-center justify-center w-32 h-32 border-2 border-dashed rounded-md cursor-pointer hover:border-primary transition-colors">
+                        ))}
+                        {productForm.media.length < MAX_IMAGES && (
+                          <label className="flex flex-col items-center justify-center w-20 h-20 border-2 border-dashed rounded-md cursor-pointer hover:border-primary transition-colors">
                             <input
                               type="file"
                               accept="image/jpeg,image/png,image/gif,image/webp"
@@ -646,16 +671,17 @@ export default function ShopManage() {
                               onChange={(e) => {
                                 const file = e.target.files?.[0];
                                 if (file) handleImageUpload(file);
+                                e.target.value = "";
                               }}
                               disabled={uploadingImage}
                               data-testid="input-edit-product-image"
                             />
                             {uploadingImage ? (
-                              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                             ) : (
                               <>
-                                <Upload className="h-8 w-8 text-muted-foreground mb-2" />
-                                <span className="text-xs text-muted-foreground">Upload Image</span>
+                                <Plus className="h-5 w-5 text-muted-foreground" />
+                                <span className="text-[10px] text-muted-foreground">Add</span>
                               </>
                             )}
                           </label>
@@ -674,8 +700,8 @@ export default function ShopManage() {
                             priceAxm: productForm.priceAxm,
                             category: productForm.category,
                             inventory: productForm.inventory ? parseInt(productForm.inventory) : null,
-                            thumbnailUrl: productForm.thumbnailUrl || null,
-                            mediaUrls: productForm.thumbnailUrl ? [productForm.thumbnailUrl] : [],
+                            thumbnailUrl: productForm.media.length > 0 ? productForm.media[0] : null,
+                            mediaUrls: productForm.media,
                           });
                           setEditingProduct(null);
                         }
@@ -751,7 +777,7 @@ export default function ShopManage() {
                                 priceAxm: product.priceAxm || "",
                                 category: product.category || "other",
                                 inventory: product.inventory?.toString() || "",
-                                thumbnailUrl: product.thumbnailUrl || "",
+                                media: product.mediaUrls || (product.thumbnailUrl ? [product.thumbnailUrl] : []),
                               });
                             }}
                             data-testid={`button-edit-product-${product.id}`}
