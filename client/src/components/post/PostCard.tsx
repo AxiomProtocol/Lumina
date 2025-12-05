@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { Heart, MessageCircle, Share2, Repeat2, MoreHorizontal, Coins, Play, Copy, Check, Twitter, Facebook, Link as LinkIcon } from "lucide-react";
+import { Heart, MessageCircle, Share2, Repeat2, MoreHorizontal, Coins, Play, Copy, Check, Twitter, Facebook, Link as LinkIcon, Trash2, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -61,7 +61,9 @@ export function PostCard({ post, onLike, onComment, onShare, onRepost }: PostCar
   const [showCommentModal, setShowCommentModal] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [showRepostDialog, setShowRepostDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isReposting, setIsReposting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const postUrl = `${window.location.origin}/post/${post.id}`;
@@ -188,6 +190,34 @@ export function PostCard({ post, onLike, onComment, onShare, onRepost }: PostCar
     }
   };
 
+  const handleDelete = async () => {
+    if (!user || user.id !== post.author.id) return;
+
+    setIsDeleting(true);
+    try {
+      await apiRequest("DELETE", `/api/posts/${post.id}`);
+      
+      await queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/posts/for-you"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/users", post.author.username, "posts"] });
+      
+      toast({
+        title: "Post deleted",
+        description: "Your post has been removed.",
+      });
+      
+      setShowDeleteDialog(false);
+    } catch (err) {
+      toast({
+        title: "Delete failed",
+        description: "Could not delete the post. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <>
       <Card className="overflow-hidden hover-elevate" data-testid={`post-card-${post.id}`}>
@@ -223,12 +253,32 @@ export function PostCard({ post, onLike, onComment, onShare, onRepost }: PostCar
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>Copy link</DropdownMenuItem>
-                    <DropdownMenuItem>Share to...</DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleCopyLink} data-testid="menu-copy-link">
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copy link
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleNativeShare} data-testid="menu-share">
+                      <Share2 className="h-4 w-4 mr-2" />
+                      Share to...
+                    </DropdownMenuItem>
+                    {user?.id === post.author.id && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                          onClick={() => setShowDeleteDialog(true)}
+                          className="text-destructive focus:text-destructive"
+                          data-testid="menu-delete-post"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete post
+                        </DropdownMenuItem>
+                      </>
+                    )}
                     {user?.id !== post.author.id && (
                       <>
-                        <DropdownMenuItem>Report</DropdownMenuItem>
-                        <DropdownMenuItem>Mute @{post.author.username}</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem data-testid="menu-report">Report</DropdownMenuItem>
+                        <DropdownMenuItem data-testid="menu-mute">Mute @{post.author.username}</DropdownMenuItem>
                       </>
                     )}
                   </DropdownMenuContent>
@@ -420,6 +470,63 @@ export function PostCard({ post, onLike, onComment, onShare, onRepost }: PostCar
               data-testid="button-confirm-repost"
             >
               {isReposting ? "Reposting..." : "Repost"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent data-testid="delete-post-dialog">
+          <DialogHeader>
+            <DialogTitle>Delete this post?</DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. This will permanently delete your post and remove it from all feeds.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="p-3 rounded-lg bg-muted/50 border text-sm">
+            {post.content && (
+              <p className="text-muted-foreground line-clamp-3">{post.content}</p>
+            )}
+            {post.postType === "video" && post.mediaUrl && (
+              <div className="flex items-center gap-2 text-muted-foreground mt-2">
+                <Play className="h-4 w-4" />
+                <span>Video post</span>
+              </div>
+            )}
+            {post.postType === "image" && post.mediaUrl && (
+              <div className="mt-2 rounded overflow-hidden max-h-24">
+                <img src={post.mediaUrl} alt="Post preview" className="w-full object-cover" />
+              </div>
+            )}
+          </div>
+          
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+              disabled={isDeleting}
+              data-testid="button-cancel-delete"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={isDeleting}
+              data-testid="button-confirm-delete"
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
