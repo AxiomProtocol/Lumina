@@ -165,16 +165,16 @@ export default function ShopManage() {
 
       if (!uploadRes.ok) throw new Error("Upload failed");
 
-      // Extract the object path from the signed GCS URL
-      // GCS URL format: https://storage.googleapis.com/bucket/.private/uploads/uuid?signature...
+      // Get the GCS URL without query params to normalize
       const gcsUrl = uploadURL.split("?")[0];
-      const pathMatch = gcsUrl.match(/\/.private\/uploads\/([a-f0-9-]+)$/i);
-      if (!pathMatch) throw new Error("Invalid upload URL format");
       
-      const objectId = pathMatch[1];
-      const imageUrl = `/objects/.private/uploads/${objectId}`;
+      // Call the media API to set public ACL and get the normalized path
+      const mediaRes = await apiRequest("PUT", "/api/media", { mediaURL: gcsUrl });
+      if (!mediaRes.ok) throw new Error("Failed to finalize upload");
       
-      setProductForm(p => ({ ...p, media: [...p.media, imageUrl] }));
+      const { objectPath } = await mediaRes.json();
+      
+      setProductForm(p => ({ ...p, media: [...p.media, objectPath] }));
       toast({ title: "Image uploaded successfully" });
     } catch (error: any) {
       toast({ title: "Upload failed", description: error.message, variant: "destructive" });
