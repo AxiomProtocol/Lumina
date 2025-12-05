@@ -707,13 +707,13 @@ export default function Landing() {
               </div>
               
               <div>
-                <h4 className="font-semibold mb-4">Learn</h4>
+                <h4 className="font-semibold mb-4">Learn & Support</h4>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li><Link href="/academy" className="hover:text-primary transition-colors">The Forge Academy</Link></li>
                   <li><Link href="/guidelines" className="hover:text-primary transition-colors">Guidelines</Link></li>
                   <li><Link href="/whitepaper" className="hover:text-primary transition-colors">Whitepaper</Link></li>
-                  <li><a href="#" className="hover:text-primary transition-colors">Terms of Service</a></li>
-                  <li><a href="#" className="hover:text-primary transition-colors">Support</a></li>
+                  <li><Link href="/feedback" className="hover:text-primary transition-colors">Report Bug / Feedback</Link></li>
+                  <li><a href="mailto:support@joinlumina.io" className="hover:text-primary transition-colors">Contact Support</a></li>
                 </ul>
               </div>
             </div>

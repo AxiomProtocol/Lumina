@@ -85,6 +85,7 @@ import {
   arbitrators,
   arbitratorVotes,
   productProvenance,
+  feedbackReports,
   type User,
   type InsertUser,
   type Post,
@@ -272,6 +273,8 @@ import {
   type ArbitratorWithUser,
   type AffiliateLinkWithDetails,
   type BountyWithDetails,
+  type FeedbackReport,
+  type InsertFeedbackReport,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, or, sql, inArray, ilike } from "drizzle-orm";
@@ -505,6 +508,10 @@ export interface IStorage {
   getBounty(id: number): Promise<BountyWithDetails | undefined>;
   createBounty(bounty: InsertBounty): Promise<Bounty>;
   updateBounty(id: number, updates: Partial<Bounty>): Promise<Bounty | undefined>;
+  
+  // Feedback/Beta Reports
+  getFeedbackCount(): Promise<number>;
+  createFeedbackReport(report: InsertFeedbackReport): Promise<FeedbackReport>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -4405,6 +4412,17 @@ export class DatabaseStorage implements IStorage {
   async updateBounty(id: number, updates: Partial<Bounty>): Promise<Bounty | undefined> {
     const [updated] = await db.update(bounties).set(updates).where(eq(bounties.id, id)).returning();
     return updated || undefined;
+  }
+
+  // Feedback/Beta Reports
+  async getFeedbackCount(): Promise<number> {
+    const result = await db.select({ count: sql<number>`count(*)::int` }).from(feedbackReports);
+    return result[0]?.count || 0;
+  }
+
+  async createFeedbackReport(report: InsertFeedbackReport): Promise<FeedbackReport> {
+    const [created] = await db.insert(feedbackReports).values(report as any).returning();
+    return created;
   }
 }
 

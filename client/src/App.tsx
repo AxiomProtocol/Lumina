@@ -52,6 +52,7 @@ import ShopManage from "@/pages/ShopManage";
 import ProductDetail from "@/pages/ProductDetail";
 import Checkout from "@/pages/Checkout";
 import PostDetail from "@/pages/PostDetail";
+import Feedback from "@/pages/Feedback";
 import { CartProvider } from "@/lib/cartContext";
 import { AffiliateProvider } from "@/lib/affiliateContext";
 
@@ -121,6 +122,7 @@ function Router() {
       <Route path="/marketplace/product/:id" component={ProductDetail} />
       <Route path="/marketplace/checkout" component={() => <ProtectedRoute component={Checkout} />} />
       <Route path="/post/:id" component={PostDetail} />
+      <Route path="/feedback" component={Feedback} />
       <Route path="/business" component={() => <ProtectedRoute component={BusinessDashboard} />} />
       <Route path="/settings">
         {() => <ProtectedRoute component={Settings} />}

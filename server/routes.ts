@@ -7351,4 +7351,93 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.status(500).json({ error: "Failed to get bounty" });
     }
   });
+
+  // ============= FEEDBACK/BETA REPORTS =============
+
+  // Get feedback count for V2 progress
+  app.get("/api/feedback/count", async (_req, res) => {
+    try {
+      const count = await storage.getFeedbackCount();
+      res.json({ count });
+    } catch (error) {
+      console.error("Get feedback count error:", error);
+      res.status(500).json({ error: "Failed to get feedback count" });
+    }
+  });
+
+  // Submit feedback
+  app.post("/api/feedback", generalLimiter, async (req, res) => {
+    try {
+      const { name, email, type, subject, message, userId, userAgent } = req.body;
+
+      // Validate required fields
+      if (!name || !email || !subject || !message) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      // Validate feedback type
+      const validTypes = ["bug", "suggestion", "general"];
+      const feedbackType = validTypes.includes(type) ? type : "general";
+
+      // Validate lengths
+      if (name.length < 2 || name.length > 255) {
+        return res.status(400).json({ error: "Name must be between 2 and 255 characters" });
+      }
+      if (subject.length < 5 || subject.length > 500) {
+        return res.status(400).json({ error: "Subject must be between 5 and 500 characters" });
+      }
+      if (message.length < 20) {
+        return res.status(400).json({ error: "Message must be at least 20 characters" });
+      }
+
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: "Please provide a valid email address" });
+      }
+
+      // Sanitize input
+      const sanitizedData = {
+        name: sanitizeText(name),
+        email: sanitizeText(email),
+        type: feedbackType,
+        subject: sanitizeText(subject),
+        message: sanitizeText(message),
+        userId: userId || null,
+        userAgent: userAgent || null,
+      };
+
+      // Save to database
+      const feedback = await storage.createFeedbackReport(sanitizedData);
+
+      // Send email notification to support
+      const emailHtml = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0a0a0a; color: #fff; padding: 40px;">
+          <h1 style="color: #10b981;">New Feedback Received</h1>
+          <p><strong>Type:</strong> ${sanitizedData.type}</p>
+          <p><strong>From:</strong> ${sanitizedData.name} (${sanitizedData.email})</p>
+          <p><strong>Subject:</strong> ${sanitizedData.subject}</p>
+          <hr style="border: 1px solid #333; margin: 20px 0;">
+          <h3>Message:</h3>
+          <p style="white-space: pre-wrap;">${sanitizedData.message}</p>
+          <hr style="border: 1px solid #333; margin: 20px 0;">
+          <p style="color: #888; font-size: 12px;">
+            User ID: ${sanitizedData.userId || "Guest"}<br>
+            User Agent: ${sanitizedData.userAgent || "Unknown"}
+          </p>
+        </div>
+      `;
+
+      await sendEmail({
+        to: "support@joinlumina.io",
+        subject: `[Lumina V1 Feedback] ${sanitizedData.type.toUpperCase()}: ${sanitizedData.subject}`,
+        html: emailHtml,
+      });
+
+      res.json({ success: true, id: feedback.id });
+    } catch (error) {
+      console.error("Submit feedback error:", error);
+      res.status(500).json({ error: "Failed to submit feedback" });
+    }
+  });
 }

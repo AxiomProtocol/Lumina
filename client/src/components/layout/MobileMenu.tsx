@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { X, Home, Play, Users, User, Settings, TrendingUp, Coins, Search, MessageCircle, BarChart3, Trophy, Radio, ShoppingBag, ImageIcon, Vote, Lock, Award, Megaphone, Hand, ClipboardList, Phone, Shield, Building2, Gift, GraduationCap, ArrowDownUp, Server, ArrowLeftRight, FileText, Wallet, Store } from "lucide-react";
+import { X, Home, Play, Users, User, Settings, TrendingUp, Coins, Search, MessageCircle, BarChart3, Trophy, Radio, ShoppingBag, ImageIcon, Vote, Lock, Award, Megaphone, Hand, ClipboardList, Phone, Shield, Building2, Gift, GraduationCap, ArrowDownUp, Server, ArrowLeftRight, FileText, Wallet, Store, Bug } from "lucide-react";
 import luminaLogo from "@/assets/logo.png";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -41,6 +41,7 @@ const otherItems = [
   { href: "/referrals", label: "Referrals", icon: Gift },
   { href: "/whitepaper", label: "Whitepaper", icon: FileText },
   { href: "/guidelines", label: "Guidelines", icon: Shield },
+  { href: "/feedback", label: "Report Bug / Feedback", icon: Bug },
 ];
 
 interface MobileMenuProps {

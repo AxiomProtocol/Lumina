@@ -3893,3 +3893,27 @@ export interface BountyWithDetails extends Bounty {
   product?: ShopProduct | null;
   claims: (typeof bountyClaims.$inferSelect & { creator: User })[];
 }
+
+// ============= FEEDBACK/BETA REPORTS =============
+
+export const feedbackTypeEnum = pgEnum("feedback_type", ["bug", "suggestion", "general"]);
+
+export const feedbackReports = pgTable("feedback_reports", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  type: feedbackTypeEnum("type").notNull().default("general"),
+  subject: varchar("subject", { length: 500 }).notNull(),
+  message: text("message").notNull(),
+  userAgent: text("user_agent"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertFeedbackReportSchema = createInsertSchema(feedbackReports).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertFeedbackReport = z.infer<typeof insertFeedbackReportSchema>;
+export type FeedbackReport = typeof feedbackReports.$inferSelect;
