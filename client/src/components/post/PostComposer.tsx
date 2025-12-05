@@ -162,38 +162,93 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
     }
   };
 
-  const uploadWithProgress = (url: string, file: File): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      
-      xhr.upload.addEventListener("progress", (event) => {
-        if (event.lengthComputable) {
-          const percent = Math.round((event.loaded / event.total) * 100);
-          setUploadProgress(percent);
-        }
-      });
-      
-      xhr.addEventListener("load", () => {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          resolve();
-        } else {
-          reject(new Error(`Upload failed with status ${xhr.status}`));
-        }
-      });
-      
-      xhr.addEventListener("error", () => {
-        reject(new Error("Upload failed - network error"));
-      });
-      
-      xhr.addEventListener("timeout", () => {
-        reject(new Error("Upload timed out - please try again"));
-      });
-      
-      xhr.open("PUT", url);
-      xhr.setRequestHeader("Content-Type", file.type);
-      xhr.timeout = 600000; // 10 minutes timeout for large files
-      xhr.send(file);
+  const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB chunks for resumable upload
+
+  // Upload a single chunk to the resumable upload URL
+  const uploadChunk = async (
+    resumableUri: string,
+    file: File,
+    start: number,
+    end: number,
+    totalSize: number
+  ): Promise<void> => {
+    const chunk = file.slice(start, end);
+    const contentRange = `bytes ${start}-${end - 1}/${totalSize}`;
+    
+    const response = await fetch(resumableUri, {
+      method: "PUT",
+      headers: {
+        "Content-Range": contentRange,
+        "Content-Type": file.type,
+      },
+      body: chunk,
     });
+    
+    if (!response.ok && response.status !== 308) {
+      throw new Error(`Chunk upload failed with status ${response.status}`);
+    }
+  };
+
+  // Resumable upload for large files (videos)
+  const uploadResumable = async (file: File): Promise<string> => {
+    // Get resumable upload session from server
+    const sessionRes = await apiRequest("POST", "/api/objects/resumable-upload", {
+      contentType: file.type,
+    });
+    const { resumableUri, objectPath } = await sessionRes.json();
+    
+    const totalSize = file.size;
+    let uploadedBytes = 0;
+    
+    // Upload in chunks
+    while (uploadedBytes < totalSize) {
+      const end = Math.min(uploadedBytes + CHUNK_SIZE, totalSize);
+      
+      // Retry logic for each chunk
+      let retries = 3;
+      while (retries > 0) {
+        try {
+          await uploadChunk(resumableUri, file, uploadedBytes, end, totalSize);
+          break;
+        } catch (error) {
+          retries--;
+          if (retries === 0) throw error;
+          await new Promise(r => setTimeout(r, 1000)); // Wait 1s before retry
+        }
+      }
+      
+      uploadedBytes = end;
+      setUploadProgress(Math.round((uploadedBytes / totalSize) * 100));
+    }
+    
+    return objectPath;
+  };
+
+  // Simple upload for small files (images)
+  const uploadSimple = async (file: File): Promise<string> => {
+    const uploadRes = await apiRequest("POST", "/api/objects/upload", {});
+    const { uploadURL } = await uploadRes.json();
+    
+    // Use fetch for simple uploads
+    const response = await fetch(uploadURL, {
+      method: "PUT",
+      headers: {
+        "Content-Type": file.type,
+      },
+      body: file,
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Upload failed with status ${response.status}`);
+    }
+    
+    setUploadProgress(100);
+    
+    const updateRes = await apiRequest("PUT", "/api/media", {
+      mediaURL: uploadURL.split("?")[0],
+    });
+    const { objectPath } = await updateRes.json();
+    return objectPath;
   };
 
   const handleSubmit = async () => {
@@ -218,19 +273,18 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
       
       if (mediaFile) {
         setIsUploading(true);
-        const uploadRes = await apiRequest("POST", "/api/objects/upload", {});
-        const { uploadURL } = await uploadRes.json();
         
-        // Use XMLHttpRequest for progress tracking on large files
-        await uploadWithProgress(uploadURL, mediaFile);
+        // Use resumable upload for videos (more reliable for large files)
+        // Use simple upload for images
+        if (mediaType === "video") {
+          mediaUrl = await uploadResumable(mediaFile);
+          // Set ACL for resumable uploads
+          await apiRequest("PUT", "/api/media", { mediaURL: mediaUrl });
+        } else {
+          mediaUrl = await uploadSimple(mediaFile);
+        }
         
         setIsUploading(false);
-        
-        const updateRes = await apiRequest("PUT", "/api/media", {
-          mediaURL: uploadURL.split("?")[0],
-        });
-        const { objectPath } = await updateRes.json();
-        mediaUrl = objectPath;
       }
 
       await apiRequest("POST", "/api/posts", {

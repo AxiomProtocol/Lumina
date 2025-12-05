@@ -40,6 +40,32 @@ export class ObjectNotFoundError extends Error {
 export class ObjectStorageService {
   constructor() {}
 
+  // Create a resumable upload session for large files (videos)
+  async createResumableUpload(contentType: string): Promise<{ resumableUri: string; objectPath: string }> {
+    const privateObjectDir = this.getPrivateObjectDir();
+    if (!privateObjectDir) {
+      throw new Error("PRIVATE_OBJECT_DIR not set");
+    }
+    const objectId = randomUUID();
+    const fullPath = `${privateObjectDir}/uploads/${objectId}`;
+    const { bucketName, objectName } = parseObjectPath(fullPath);
+    
+    const bucket = objectStorageClient.bucket(bucketName);
+    const file = bucket.file(objectName);
+    
+    // Create a resumable upload session
+    const [resumableUri] = await file.createResumableUpload({
+      metadata: {
+        contentType,
+      },
+    });
+    
+    return {
+      resumableUri,
+      objectPath: `/objects/uploads/${objectId}`,
+    };
+  }
+
   getPublicObjectSearchPaths(): Array<string> {
     const pathsStr = process.env.PUBLIC_OBJECT_SEARCH_PATHS || "";
     const paths = Array.from(
@@ -254,4 +280,23 @@ async function signObjectURL({
   }
   const { signed_url: signedURL } = await response.json();
   return signedURL;
+}
+
+// Create a resumable upload session for large files
+export async function createResumableUploadSession(
+  bucketName: string,
+  objectName: string,
+  contentType: string
+): Promise<string> {
+  const bucket = objectStorageClient.bucket(bucketName);
+  const file = bucket.file(objectName);
+  
+  // Create a resumable upload session
+  const [resumableUri] = await file.createResumableUpload({
+    metadata: {
+      contentType,
+    },
+  });
+  
+  return resumableUri;
 }

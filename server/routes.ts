@@ -1125,6 +1125,22 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Resumable upload endpoint for large files (videos)
+  app.post("/api/objects/resumable-upload", requireAuth, async (req, res) => {
+    try {
+      const { contentType } = req.body;
+      if (!contentType) {
+        return res.status(400).json({ error: "contentType is required" });
+      }
+      
+      const result = await objectStorageService.createResumableUpload(contentType);
+      res.json(result);
+    } catch (error: any) {
+      console.error("Resumable upload error:", error);
+      res.status(500).json({ error: error.message || "Failed to create resumable upload" });
+    }
+  });
+
   app.put("/api/media", requireAuth, async (req, res) => {
     try {
       const { mediaURL } = req.body;
