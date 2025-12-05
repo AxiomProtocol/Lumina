@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link, useLocation } from "wouter";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
@@ -11,12 +11,14 @@ import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/lib/cartContext";
 import { useWallet } from "@/lib/walletContext";
+import { useAffiliate } from "@/lib/affiliateContext";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { 
   AXM_TOKEN_ADDRESS, 
   parseAxmAmount, 
   PLATFORM_TREASURY_WALLET,
-  MARKETPLACE_PLATFORM_FEE_BPS
+  MARKETPLACE_PLATFORM_FEE_BPS,
+  MARKETPLACE_AFFILIATE_FEE_BPS
 } from "@/lib/web3Config";
 import { 
   ShoppingCart, 
@@ -65,6 +67,7 @@ export default function Checkout() {
     isCorrectNetwork, 
     switchNetwork 
   } = useWallet();
+  const { getAffiliateForShop } = useAffiliate();
 
   const [step, setStep] = useState<CheckoutStep>("cart");
   const [shippingInfo, setShippingInfo] = useState({
@@ -78,12 +81,29 @@ export default function Checkout() {
   const [orderResults, setOrderResults] = useState<OrderResult[]>([]);
   const [failedOrders, setFailedOrders] = useState<{ shopName: string; error: string }[]>([]);
 
-  const platformFeePercent = MARKETPLACE_PLATFORM_FEE_BPS / 100; // 2% from 200 basis points
+  const platformFeePercent = MARKETPLACE_PLATFORM_FEE_BPS / 100;
+  const affiliateFeePercent = MARKETPLACE_AFFILIATE_FEE_BPS / 100;
   const subtotal = getCartTotal();
   const platformFee = subtotal * (platformFeePercent / 100);
-  const total = subtotal + platformFee;
   const shopGroups = getItemsByShop();
   const totalShops = shopGroups.size;
+  
+  const affiliateFees = useMemo(() => {
+    let totalAffiliateFee = 0;
+    for (const [shopId, items] of shopGroups.entries()) {
+      const affiliate = getAffiliateForShop(shopId);
+      if (affiliate) {
+        const shopSubtotal = items.reduce(
+          (sum, item) => sum + parseFloat(item.product.priceAxm) * item.quantity, 
+          0
+        );
+        totalAffiliateFee += shopSubtotal * (affiliateFeePercent / 100);
+      }
+    }
+    return totalAffiliateFee;
+  }, [shopGroups, getAffiliateForShop, affiliateFeePercent]);
+  
+  const total = subtotal + platformFee;
 
   const balance = typeof axmBalance === 'string' ? parseFloat(axmBalance) : axmBalance;
   const hasInsufficientBalance = balance !== null && balance < total;
@@ -137,9 +157,14 @@ export default function Checkout() {
         0
       );
       const shopPlatformFee = shopSubtotal * (platformFeePercent / 100);
-      // TODO: When affiliate links are integrated, deduct affiliate fee here
-      // affiliateFee = shopSubtotal * (MARKETPLACE_AFFILIATE_FEE_BPS / 10000) if affiliate link used
-      const sellerAmount = shopSubtotal - shopPlatformFee;
+      
+      const affiliate = getAffiliateForShop(shopId);
+      const shopAffiliateFee = affiliate 
+        ? shopSubtotal * (affiliateFeePercent / 100) 
+        : 0;
+      const affiliateWallet = affiliate?.walletAddress;
+      
+      const sellerAmount = shopSubtotal - shopPlatformFee - shopAffiliateFee;
 
       try {
         // Transaction 1: Send platform fee to treasury FIRST (required before seller payment)
@@ -148,8 +173,6 @@ export default function Checkout() {
           try {
             platformFeeTxHash = await sendTokens(PLATFORM_TREASURY_WALLET, shopPlatformFee);
           } catch (feeError: any) {
-            // Fee transfer failed - ABORT this shop's order entirely
-            // Don't pay seller if we can't collect our fee
             console.error("Platform fee transfer failed:", feeError.message);
             setFailedOrders(prev => [...prev, { 
               shopName, 
@@ -158,11 +181,21 @@ export default function Checkout() {
             localFailedCount++;
             completedCount++;
             setProcessingProgress((completedCount / totalShops) * 100);
-            continue; // Skip to next shop without paying seller
+            continue;
           }
         }
 
-        // Transaction 2: Send seller share to seller wallet (only after fee succeeded)
+        // Transaction 2: Send affiliate fee if applicable
+        let affiliateFeeTxHash = "";
+        if (shopAffiliateFee > 0 && affiliateWallet) {
+          try {
+            affiliateFeeTxHash = await sendTokens(affiliateWallet, shopAffiliateFee);
+          } catch (affError: any) {
+            console.error("Affiliate fee transfer failed:", affError.message);
+          }
+        }
+
+        // Transaction 3: Send seller share to seller wallet
         const sellerTxHash = await sendTokens(shopWallet, sellerAmount);
 
         const orderRes = await apiRequest("POST", "/api/marketplace/orders", {
@@ -174,6 +207,9 @@ export default function Checkout() {
           })),
           txHash: sellerTxHash,
           platformFeeTxHash,
+          affiliateFeeTxHash: affiliateFeeTxHash || undefined,
+          affiliateFeeAxm: shopAffiliateFee > 0 ? shopAffiliateFee.toString() : undefined,
+          affiliateLinkId: affiliate?.linkId,
           shippingAddress: shippingInfo.address || undefined,
           shippingName: shippingInfo.name,
           shippingEmail: shippingInfo.email,

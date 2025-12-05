@@ -542,7 +542,11 @@ export default function ForYou() {
   // Sound state - attempts to play with sound, remembers after first interaction
   const [soundEnabled, setSoundEnabled] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('lumina-sound-enabled') === 'true';
+      try {
+        return localStorage.getItem('lumina-sound-enabled') === 'true';
+      } catch {
+        return true;
+      }
     }
     return true;
   });
@@ -551,7 +555,11 @@ export default function ForYou() {
   const enableSound = useCallback(() => {
     setUserInteracted(true);
     setSoundEnabled(true);
-    localStorage.setItem('lumina-sound-enabled', 'true');
+    try {
+      localStorage.setItem('lumina-sound-enabled', 'true');
+    } catch {
+      // localStorage may be unavailable in private browsing
+    }
   }, []);
 
   // Listen for any user interaction to unlock sound

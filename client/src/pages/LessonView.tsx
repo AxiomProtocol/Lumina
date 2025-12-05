@@ -99,15 +99,19 @@ export default function LessonView() {
     setIsCompleting(true);
     
     // Store completion in localStorage since frontend lessons don't map 1:1 to on-chain modules
-    const completionKey = `lesson_completed_${courseId}_${lessonId}_${address}`;
-    localStorage.setItem(completionKey, 'true');
-    
-    // Update local progress tracking
-    const progressKey = `course_progress_${courseId}_${address}`;
-    const existingProgress = JSON.parse(localStorage.getItem(progressKey) || '[]');
-    if (!existingProgress.includes(lessonId)) {
-      existingProgress.push(lessonId);
-      localStorage.setItem(progressKey, JSON.stringify(existingProgress));
+    try {
+      const completionKey = `lesson_completed_${courseId}_${lessonId}_${address}`;
+      localStorage.setItem(completionKey, 'true');
+      
+      // Update local progress tracking
+      const progressKey = `course_progress_${courseId}_${address}`;
+      const existingProgress = JSON.parse(localStorage.getItem(progressKey) || '[]');
+      if (!existingProgress.includes(lessonId)) {
+        existingProgress.push(lessonId);
+        localStorage.setItem(progressKey, JSON.stringify(existingProgress));
+      }
+    } catch {
+      // localStorage may be unavailable in private browsing
     }
     
     toast({
@@ -127,8 +131,12 @@ export default function LessonView() {
   // Check local completion status
   const checkLocalCompletion = () => {
     if (!address) return false;
-    const completionKey = `lesson_completed_${courseId}_${lessonId}_${address}`;
-    return localStorage.getItem(completionKey) === 'true';
+    try {
+      const completionKey = `lesson_completed_${courseId}_${lessonId}_${address}`;
+      return localStorage.getItem(completionKey) === 'true';
+    } catch {
+      return false;
+    }
   };
   
   const isLocallyCompleted = checkLocalCompletion();
@@ -136,8 +144,12 @@ export default function LessonView() {
   // Get local progress for this course
   const getLocalProgress = () => {
     if (!address) return [];
-    const progressKey = `course_progress_${courseId}_${address}`;
-    return JSON.parse(localStorage.getItem(progressKey) || '[]');
+    try {
+      const progressKey = `course_progress_${courseId}_${address}`;
+      return JSON.parse(localStorage.getItem(progressKey) || '[]');
+    } catch {
+      return [];
+    }
   };
   
   const localProgress = getLocalProgress();

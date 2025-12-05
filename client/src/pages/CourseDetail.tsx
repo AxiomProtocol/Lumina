@@ -221,8 +221,12 @@ export default function CourseDetail() {
   // Check if a specific lesson is completed locally
   const isLessonLocallyCompleted = (lessonId: number) => {
     if (!address) return false;
-    const completionKey = `lesson_completed_${courseId}_${lessonId}_${address}`;
-    return localStorage.getItem(completionKey) === 'true';
+    try {
+      const completionKey = `lesson_completed_${courseId}_${lessonId}_${address}`;
+      return localStorage.getItem(completionKey) === 'true';
+    } catch {
+      return false;
+    }
   };
 
   return (

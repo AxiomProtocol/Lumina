@@ -140,18 +140,28 @@ export function HLSVideoPlayer({
       };
     } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
       video.src = src;
-      video.addEventListener("loadedmetadata", () => {
+      
+      const handleLoadedMetadata = () => {
         setIsLoading(false);
         setStreamStatus("active");
         onStreamActive?.();
         if (autoPlay) {
           video.play().catch(console.error);
         }
-      });
-      video.addEventListener("error", () => {
+      };
+      
+      const handleError = () => {
         setError("Failed to load stream");
         onError?.("Failed to load stream");
-      });
+      };
+      
+      video.addEventListener("loadedmetadata", handleLoadedMetadata);
+      video.addEventListener("error", handleError);
+      
+      return () => {
+        video.removeEventListener("loadedmetadata", handleLoadedMetadata);
+        video.removeEventListener("error", handleError);
+      };
     } else {
       setError("HLS playback not supported in this browser");
       onError?.("HLS playback not supported");

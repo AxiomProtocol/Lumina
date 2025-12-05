@@ -25,6 +25,7 @@ export default function WHEPVideoPlayer({
   const containerRef = useRef<HTMLDivElement>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
   const whepResourceUrlRef = useRef<string | null>(null);
+  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -73,7 +74,10 @@ export default function WHEPVideoPlayer({
           setIsConnected(false);
           onConnectionChange?.(false);
           if (retryCount < 3) {
-            setTimeout(() => {
+            if (retryTimeoutRef.current) {
+              clearTimeout(retryTimeoutRef.current);
+            }
+            retryTimeoutRef.current = setTimeout(() => {
               setRetryCount(prev => prev + 1);
               connect();
             }, 2000);
@@ -162,6 +166,10 @@ export default function WHEPVideoPlayer({
       connect();
     }
     return () => {
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current);
+        retryTimeoutRef.current = null;
+      }
       disconnect();
     };
   }, [whepUrl]);

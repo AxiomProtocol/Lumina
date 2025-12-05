@@ -13,8 +13,12 @@ const ThemeContext = createContext<ThemeContextType | null>(null);
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("lumina-theme") as Theme | null;
-      if (stored) return stored;
+      try {
+        const stored = localStorage.getItem("lumina-theme") as Theme | null;
+        if (stored) return stored;
+      } catch {
+        // localStorage may be unavailable
+      }
       return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
     }
     return "dark";
@@ -27,7 +31,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     } else {
       root.classList.remove("dark");
     }
-    localStorage.setItem("lumina-theme", theme);
+    try {
+      localStorage.setItem("lumina-theme", theme);
+    } catch {
+      // localStorage may be unavailable in private browsing
+    }
   }, [theme]);
 
   function toggleTheme() {

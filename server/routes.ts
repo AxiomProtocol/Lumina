@@ -7291,6 +7291,35 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  app.get("/api/marketplace/affiliate-links/code/:code", async (req, res) => {
+    try {
+      const link = await storage.getAffiliateLinkByCode(req.params.code);
+      if (!link) {
+        return res.status(404).json({ error: "Affiliate link not found" });
+      }
+      if (link.status !== 'active') {
+        return res.status(404).json({ error: "Affiliate link is inactive" });
+      }
+      
+      const affiliateUser = await storage.getUser(link.affiliateUserId);
+      const commissionRate = parseFloat(link.program.commissionRate || "10");
+      const commissionBps = Math.round(commissionRate * 100);
+      
+      res.json({
+        id: link.id,
+        code: link.code,
+        shopId: link.program.shopId,
+        productId: link.productId,
+        affiliateUserId: link.affiliateUserId,
+        affiliateWallet: affiliateUser?.walletAddress || null,
+        commissionBps
+      });
+    } catch (error) {
+      console.error("Get affiliate link by code error:", error);
+      res.status(500).json({ error: "Failed to get affiliate link" });
+    }
+  });
+
   // Bounties
   app.get("/api/marketplace/bounties", async (req, res) => {
     try {

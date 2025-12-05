@@ -3156,7 +3156,7 @@ export const shopsRelations = relations(shops, ({ one, many }) => ({
 
 export const shopProducts = pgTable("shop_products", {
   id: serial("id").primaryKey(),
-  shopId: integer("shop_id").notNull(),
+  shopId: integer("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   title: text("title"),
   slug: text("slug").notNull(),
@@ -3208,7 +3208,7 @@ export const shopProductsRelations = relations(shopProducts, ({ one, many }) => 
 export const shopOrders = pgTable("shop_orders", {
   id: serial("id").primaryKey(),
   orderNumber: text("order_number").notNull().unique(),
-  shopId: integer("shop_id").notNull(),
+  shopId: integer("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
   buyerId: varchar("buyer_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   status: shopOrderStatusEnum("status").default("pending"),
   subtotalAxm: text("subtotal_axm").notNull(),
@@ -3259,8 +3259,8 @@ export const shopOrdersRelations = relations(shopOrders, ({ one, many }) => ({
 
 export const shopOrderItems = pgTable("shop_order_items", {
   id: serial("id").primaryKey(),
-  orderId: integer("order_id").notNull(),
-  productId: integer("product_id").notNull(),
+  orderId: integer("order_id").notNull().references(() => shopOrders.id, { onDelete: "cascade" }),
+  productId: integer("product_id").notNull().references(() => shopProducts.id, { onDelete: "cascade" }),
   quantity: integer("quantity").notNull().default(1),
   priceAxm: text("price_axm").notNull(),
   totalAxm: text("total_axm").notNull(),
@@ -3281,9 +3281,9 @@ export const shopOrderItemsRelations = relations(shopOrderItems, ({ one }) => ({
 
 export const shopPayouts = pgTable("shop_payouts", {
   id: serial("id").primaryKey(),
-  shopId: integer("shop_id").notNull(),
-  orderId: integer("order_id"),
-  recipientId: integer("recipient_id").notNull(),
+  shopId: integer("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+  orderId: integer("order_id").references(() => shopOrders.id, { onDelete: "set null" }),
+  recipientId: varchar("recipient_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   recipientWallet: text("recipient_wallet").notNull(),
   amountAxm: text("amount_axm").notNull(),
   payoutType: text("payout_type").notNull(),
@@ -3312,7 +3312,7 @@ export const shopPayoutsRelations = relations(shopPayouts, ({ one }) => ({
 
 export const affiliatePrograms = pgTable("affiliate_programs", {
   id: serial("id").primaryKey(),
-  shopId: integer("shop_id").notNull().unique(),
+  shopId: integer("shop_id").notNull().unique().references(() => shops.id, { onDelete: "cascade" }),
   name: text("name"),
   description: text("description"),
   commissionType: text("commission_type").default("percentage"),
@@ -3344,9 +3344,9 @@ export const affiliateLinkStatusEnum = pgEnum("affiliate_link_status", ["active"
 
 export const affiliateLinks = pgTable("affiliate_links", {
   id: serial("id").primaryKey(),
-  programId: integer("program_id").notNull(),
+  programId: integer("program_id").notNull().references(() => affiliatePrograms.id, { onDelete: "cascade" }),
   affiliateUserId: varchar("affiliate_user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  productId: integer("product_id"),
+  productId: integer("product_id").references(() => shopProducts.id, { onDelete: "set null" }),
   code: text("code").notNull().unique(),
   url: text("url"),
   status: affiliateLinkStatusEnum("status").default("active"),
@@ -3378,8 +3378,8 @@ export const affiliateLinksRelations = relations(affiliateLinks, ({ one, many })
 
 export const affiliateEarnings = pgTable("affiliate_earnings", {
   id: serial("id").primaryKey(),
-  affiliateLinkId: integer("affiliate_link_id").notNull(),
-  orderId: integer("order_id").notNull(),
+  affiliateLinkId: integer("affiliate_link_id").notNull().references(() => affiliateLinks.id, { onDelete: "cascade" }),
+  orderId: integer("order_id").notNull().references(() => shopOrders.id, { onDelete: "cascade" }),
   amount: text("amount").notNull(),
   status: text("status").default("pending"),
   txHash: text("tx_hash"),
@@ -3403,10 +3403,10 @@ export const bountyStatusEnum = pgEnum("bounty_status", ["open", "in_progress", 
 
 export const bounties = pgTable("bounties", {
   id: serial("id").primaryKey(),
-  programId: integer("program_id"),
-  creatorId: integer("creator_id").notNull(),
-  shopId: integer("shop_id"),
-  productId: integer("product_id"),
+  programId: integer("program_id").references(() => affiliatePrograms.id, { onDelete: "set null" }),
+  creatorId: varchar("creator_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  shopId: integer("shop_id").references(() => shops.id, { onDelete: "cascade" }),
+  productId: integer("product_id").references(() => shopProducts.id, { onDelete: "set null" }),
   title: text("title").notNull(),
   description: text("description"),
   bountyType: text("bounty_type").notNull(),
@@ -3443,7 +3443,7 @@ export const bountiesRelations = relations(bounties, ({ one, many }) => ({
 
 export const bountyClaims = pgTable("bounty_claims", {
   id: serial("id").primaryKey(),
-  bountyId: integer("bounty_id").notNull(),
+  bountyId: integer("bounty_id").notNull().references(() => bounties.id, { onDelete: "cascade" }),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   status: text("status").default("pending"),
   proofUrl: text("proof_url"),
@@ -3470,8 +3470,8 @@ export const reviewStatusEnum = pgEnum("review_status", ["pending", "approved", 
 
 export const productReviews = pgTable("product_reviews", {
   id: serial("id").primaryKey(),
-  productId: integer("product_id").notNull(),
-  orderId: integer("order_id"),
+  productId: integer("product_id").notNull().references(() => shopProducts.id, { onDelete: "cascade" }),
+  orderId: integer("order_id").references(() => shopOrders.id, { onDelete: "set null" }),
   reviewerId: varchar("reviewer_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   rating: integer("rating").notNull(),
   title: text("title"),
@@ -3574,8 +3574,8 @@ export const disputeResolutionEnum = pgEnum("dispute_resolution", ["refund", "pa
 
 export const disputes = pgTable("disputes", {
   id: serial("id").primaryKey(),
-  orderId: integer("order_id").notNull().unique(),
-  shopId: integer("shop_id").notNull(),
+  orderId: integer("order_id").notNull().unique().references(() => shopOrders.id, { onDelete: "cascade" }),
+  shopId: integer("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
   buyerId: varchar("buyer_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   sellerId: varchar("seller_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   disputeType: text("dispute_type").notNull(),
@@ -3618,7 +3618,7 @@ export const disputesRelations = relations(disputes, ({ one }) => ({
 
 export const disputeEvidence = pgTable("dispute_evidence", {
   id: serial("id").primaryKey(),
-  disputeId: integer("dispute_id").notNull(),
+  disputeId: integer("dispute_id").notNull().references(() => disputes.id, { onDelete: "cascade" }),
   submittedBy: varchar("submitted_by").notNull().references(() => users.id, { onDelete: "cascade" }),
   evidenceType: text("evidence_type").notNull(),
   content: text("content"),
@@ -3641,7 +3641,7 @@ export const disputeEvidenceRelations = relations(disputeEvidence, ({ one }) => 
 
 export const arbitrators = pgTable("arbitrators", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().unique(),
+  userId: varchar("user_id").notNull().unique().references(() => users.id, { onDelete: "cascade" }),
   stakingAmount: text("staking_amount").notNull(),
   stakingTx: text("staking_tx"),
   isActive: boolean("is_active").default(true),
@@ -3665,8 +3665,8 @@ export const arbitratorsRelations = relations(arbitrators, ({ one, many }) => ({
 
 export const arbitratorVotes = pgTable("arbitrator_votes", {
   id: serial("id").primaryKey(),
-  disputeId: integer("dispute_id").notNull(),
-  arbitratorId: integer("arbitrator_id").notNull(),
+  disputeId: integer("dispute_id").notNull().references(() => disputes.id, { onDelete: "cascade" }),
+  arbitratorId: integer("arbitrator_id").notNull().references(() => arbitrators.id, { onDelete: "cascade" }),
   vote: text("vote").notNull(),
   reasoning: text("reasoning"),
   stakedAmount: text("staked_amount"),

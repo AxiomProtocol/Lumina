@@ -53,6 +53,7 @@ import ProductDetail from "@/pages/ProductDetail";
 import Checkout from "@/pages/Checkout";
 import PostDetail from "@/pages/PostDetail";
 import { CartProvider } from "@/lib/cartContext";
+import { AffiliateProvider } from "@/lib/affiliateContext";
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { user, isLoading } = useAuth();
@@ -145,10 +146,12 @@ function App() {
         <AuthProvider>
           <WalletProvider>
             <CartProvider>
-              <TooltipProvider>
-                <Toaster />
-                <Router />
-              </TooltipProvider>
+              <AffiliateProvider>
+                <TooltipProvider>
+                  <Toaster />
+                  <Router />
+                </TooltipProvider>
+              </AffiliateProvider>
             </CartProvider>
           </WalletProvider>
         </AuthProvider>

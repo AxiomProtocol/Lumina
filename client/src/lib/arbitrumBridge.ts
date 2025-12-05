@@ -641,9 +641,13 @@ export function getL2ExplorerUrl(txHash: string): string {
 const BRIDGE_TX_STORAGE_KEY = 'lumina_bridge_transactions';
 
 export function saveBridgeTransaction(tx: BridgeTransaction): void {
-  const existing = getBridgeTransactions();
-  const updated = [tx, ...existing.filter(t => t.id !== tx.id)].slice(0, 50);
-  localStorage.setItem(BRIDGE_TX_STORAGE_KEY, JSON.stringify(updated));
+  try {
+    const existing = getBridgeTransactions();
+    const updated = [tx, ...existing.filter(t => t.id !== tx.id)].slice(0, 50);
+    localStorage.setItem(BRIDGE_TX_STORAGE_KEY, JSON.stringify(updated));
+  } catch {
+    // localStorage may be unavailable in private browsing
+  }
 }
 
 export function getBridgeTransactions(): BridgeTransaction[] {
@@ -656,11 +660,15 @@ export function getBridgeTransactions(): BridgeTransaction[] {
 }
 
 export function updateBridgeTransaction(id: string, updates: Partial<BridgeTransaction>): void {
-  const transactions = getBridgeTransactions();
-  const index = transactions.findIndex(t => t.id === id);
-  if (index !== -1) {
-    transactions[index] = { ...transactions[index], ...updates };
-    localStorage.setItem(BRIDGE_TX_STORAGE_KEY, JSON.stringify(transactions));
+  try {
+    const transactions = getBridgeTransactions();
+    const index = transactions.findIndex(t => t.id === id);
+    if (index !== -1) {
+      transactions[index] = { ...transactions[index], ...updates };
+      localStorage.setItem(BRIDGE_TX_STORAGE_KEY, JSON.stringify(transactions));
+    }
+  } catch {
+    // localStorage may be unavailable in private browsing
   }
 }
 

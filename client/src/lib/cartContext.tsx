@@ -37,7 +37,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+    } catch {
+      // localStorage may be unavailable in private browsing
+    }
   }, [cartItems]);
 
   const addToCart = (product: ShopProductWithShop, quantity: number = 1) => {
