@@ -1,10 +1,9 @@
 import { Link } from "wouter";
 import { 
   Wallet, 
-  Play, 
   Coins, 
   Users, 
-  Zap, 
+  Zap,
   Shield, 
   ArrowRight, 
   ChevronRight,
@@ -16,7 +15,12 @@ import {
   Award,
   Ban,
   CheckCircle,
-  Star
+  Star,
+  ShoppingBag,
+  GraduationCap,
+  ArrowLeftRight,
+  Video,
+  MessageSquare
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -27,14 +31,33 @@ import { useWallet } from "@/lib/walletContext";
 
 const platformValues = [
   {
-    icon: Heart,
-    title: "Righteous Content",
-    description: "A platform dedicated to moral, ethical, and uplifting content that inspires positive change.",
+    icon: ShoppingBag,
+    title: "Web3 Marketplace",
+    description: "Buy and sell with AXM tokens. NFT shop ownership, instant payments, and earn rewards on every purchase.",
+    badge: "New",
   },
   {
-    icon: BookOpen,
-    title: "Education First",
-    description: "Learn and grow with educational content spanning finance, technology, science, and spirituality.",
+    icon: GraduationCap,
+    title: "The Forge Academy",
+    description: "Learn blockchain, DeFi, and Web3 through structured courses. Earn NFT certifications and XP rewards.",
+    badge: "New",
+  },
+  {
+    icon: ArrowLeftRight,
+    title: "DEX & Bridge",
+    description: "Swap tokens instantly and bridge assets between Ethereum and Arbitrum with low fees.",
+    badge: "New",
+  },
+  {
+    icon: Video,
+    title: "Live Shopping",
+    description: "Host live streams to showcase products. Viewers can purchase in real-time with AXM tokens.",
+    badge: "Coming Soon",
+  },
+  {
+    icon: Coins,
+    title: "Earn Rewards",
+    description: "Get rewarded in AXM tokens for creating content, reviews, purchases, and meaningful engagement.",
   },
   {
     icon: Shield,
@@ -42,19 +65,19 @@ const platformValues = [
     description: "AI-powered moderation ensures a clean, respectful environment free from harmful content.",
   },
   {
-    icon: Coins,
-    title: "Earn Rewards",
-    description: "Get rewarded in AXM tokens for creating quality content and meaningful engagement.",
-  },
-  {
     icon: Users,
     title: "Build Community",
-    description: "Connect with like-minded individuals committed to making the world a better place.",
+    description: "Connect with like-minded creators, shoppers, and entrepreneurs in interest-based groups.",
   },
   {
     icon: Globe,
     title: "Web3 Powered",
     description: "Built on Arbitrum One for true ownership, instant transactions, and decentralized rewards.",
+  },
+  {
+    icon: MessageSquare,
+    title: "DAO Governance",
+    description: "Community-driven decisions through proposal voting. Disputes resolved by token holder consensus.",
   },
 ];
 
@@ -299,18 +322,18 @@ export default function Landing() {
               </div>
               
               {/* Stats */}
-              <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
+              <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
                 <div className="text-center">
-                  <div className="text-3xl sm:text-4xl font-bold text-primary">100%</div>
-                  <div className="text-sm text-muted-foreground">Positive Content</div>
+                  <div className="text-3xl sm:text-4xl font-bold text-primary">2%</div>
+                  <div className="text-sm text-muted-foreground">Low Marketplace Fees</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl sm:text-4xl font-bold text-primary">Web3</div>
-                  <div className="text-sm text-muted-foreground">Powered Platform</div>
+                  <div className="text-3xl sm:text-4xl font-bold text-primary">Instant</div>
+                  <div className="text-sm text-muted-foreground">AXM Payments</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl sm:text-4xl font-bold text-primary">AXM</div>
-                  <div className="text-sm text-muted-foreground">Token Rewards</div>
+                  <div className="text-3xl sm:text-4xl font-bold text-primary">NFT</div>
+                  <div className="text-sm text-muted-foreground">Shop Ownership</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl sm:text-4xl font-bold text-primary">24/7</div>
@@ -373,8 +396,16 @@ export default function Landing() {
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {platformValues.map((feature, index) => (
-                <Card key={index} className="group hover-elevate bg-card/50 border-border/50">
+                <Card key={index} className="group hover-elevate bg-card/50 border-border/50 relative overflow-visible">
                   <CardContent className="p-6">
+                    {feature.badge && (
+                      <Badge 
+                        variant={feature.badge === "Coming Soon" ? "secondary" : "default"}
+                        className={`absolute -top-2 -right-2 text-xs ${feature.badge === "New" ? "bg-primary" : ""}`}
+                      >
+                        {feature.badge}
+                      </Badge>
+                    )}
                     <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-emerald-500/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
                       <feature.icon className="h-7 w-7 text-primary" />
                     </div>
@@ -658,6 +689,7 @@ export default function Landing() {
                   <li><Link href="/feed" className="hover:text-primary transition-colors">Feed</Link></li>
                   <li><Link href="/foryou" className="hover:text-primary transition-colors">For You</Link></li>
                   <li><Link href="/groups" className="hover:text-primary transition-colors">Groups</Link></li>
+                  <li><Link href="/marketplace" className="hover:text-primary transition-colors">Marketplace</Link></li>
                   <li><Link href="/nfts" className="hover:text-primary transition-colors">NFT Gallery</Link></li>
                 </ul>
               </div>
@@ -666,19 +698,20 @@ export default function Landing() {
                 <h4 className="font-semibold mb-4">Web3</h4>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li><Link href="/treasury" className="hover:text-primary transition-colors">Treasury</Link></li>
+                  <li><Link href="/exchange" className="hover:text-primary transition-colors">Exchange</Link></li>
+                  <li><Link href="/bridge" className="hover:text-primary transition-colors">Bridge</Link></li>
                   <li><Link href="/staking" className="hover:text-primary transition-colors">Staking</Link></li>
                   <li><Link href="/governance" className="hover:text-primary transition-colors">Governance</Link></li>
-                  <li><Link href="/rewards" className="hover:text-primary transition-colors">Rewards</Link></li>
-                  <li><Link href="/whitepaper" className="hover:text-primary transition-colors">Whitepaper</Link></li>
                 </ul>
               </div>
               
               <div>
-                <h4 className="font-semibold mb-4">Community</h4>
+                <h4 className="font-semibold mb-4">Learn</h4>
                 <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li><Link href="/academy" className="hover:text-primary transition-colors">The Forge Academy</Link></li>
                   <li><Link href="/guidelines" className="hover:text-primary transition-colors">Guidelines</Link></li>
+                  <li><Link href="/whitepaper" className="hover:text-primary transition-colors">Whitepaper</Link></li>
                   <li><a href="#" className="hover:text-primary transition-colors">Terms of Service</a></li>
-                  <li><a href="#" className="hover:text-primary transition-colors">Privacy Policy</a></li>
                   <li><a href="#" className="hover:text-primary transition-colors">Support</a></li>
                 </ul>
               </div>
@@ -686,13 +719,13 @@ export default function Landing() {
             
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-border">
               <p className="text-sm text-muted-foreground">
-                © 2024 Lumina. All rights reserved.
+                © 2025 Lumina. All rights reserved.
               </p>
               
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <span>Built on Arbitrum One</span>
                 <span>•</span>
-                <span>Powered by Lumina Protocol</span>
+                <span>Powered by AXIOM Protocol</span>
               </div>
             </div>
           </div>
