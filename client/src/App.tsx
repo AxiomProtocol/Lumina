@@ -49,6 +49,7 @@ import Exchange from "@/pages/Exchange";
 import Nodes from "@/pages/Nodes";
 import Marketplace from "@/pages/Marketplace";
 import ShopDetail from "@/pages/ShopDetail";
+import ShopManage from "@/pages/ShopManage";
 import ProductDetail from "@/pages/ProductDetail";
 import Checkout from "@/pages/Checkout";
 import { CartProvider } from "@/lib/cartContext";
@@ -116,6 +117,7 @@ function Router() {
       <Route path="/nodes" component={Nodes} />
       <Route path="/marketplace" component={Marketplace} />
       <Route path="/marketplace/shop/:slug" component={ShopDetail} />
+      <Route path="/marketplace/shop/:slug/manage" component={() => <ProtectedRoute component={ShopManage} />} />
       <Route path="/marketplace/product/:id" component={ProductDetail} />
       <Route path="/marketplace/checkout" component={() => <ProtectedRoute component={Checkout} />} />
       <Route path="/business" component={() => <ProtectedRoute component={BusinessDashboard} />} />
