@@ -46,3 +46,8 @@ The platform features a dark emerald theme with glowing accents (HSL 160 84% 45%
 - **Cloudflare Stream**: For browser-based WebRTC streaming (WHIP for ingest, WHEP for playback).
 - **Axiom Protocol Smart Contracts**: (AXM Token, StakingAndEmissionsHub, CommunitySocialHub, GamificationHub, MarketsAndListingsHub, CitizenReputationOracle, AxiomAcademyHub, AxiomExchangeHub, DePINNodeSales) deployed on Arbitrum One.
 - **Arbitrum SDK**: For L1/L2 bridging operations.
+
+## Documentation
+
+- **Whitepaper**: Version 2.0 (December 2025) - Available at `/whitepaper` with 16 sections covering all platform features, 9 smart contracts, and 6-phase roadmap.
+- **Introduction Video Script**: Located at `docs/intro-video-script.md` - 90-120 second script covering platform overview, marketplace, academy, and call-to-action.
