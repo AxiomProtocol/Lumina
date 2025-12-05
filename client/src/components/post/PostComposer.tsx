@@ -162,34 +162,7 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
     }
   };
 
-  const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB chunks for resumable upload
-
-  // Upload a single chunk to the resumable upload URL
-  const uploadChunk = async (
-    resumableUri: string,
-    file: File,
-    start: number,
-    end: number,
-    totalSize: number
-  ): Promise<void> => {
-    const chunk = file.slice(start, end);
-    const contentRange = `bytes ${start}-${end - 1}/${totalSize}`;
-    
-    const response = await fetch(resumableUri, {
-      method: "PUT",
-      headers: {
-        "Content-Range": contentRange,
-        "Content-Type": file.type,
-      },
-      body: chunk,
-    });
-    
-    if (!response.ok && response.status !== 308) {
-      throw new Error(`Chunk upload failed with status ${response.status}`);
-    }
-  };
-
-  // Resumable upload for large files (videos)
+  // Resumable upload for large files (videos) with XMLHttpRequest for progress
   const uploadResumable = async (file: File): Promise<string> => {
     // Get resumable upload session from server
     const sessionRes = await apiRequest("POST", "/api/objects/resumable-upload", {
@@ -197,31 +170,38 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
     });
     const { resumableUri, objectPath } = await sessionRes.json();
     
-    const totalSize = file.size;
-    let uploadedBytes = 0;
-    
-    // Upload in chunks
-    while (uploadedBytes < totalSize) {
-      const end = Math.min(uploadedBytes + CHUNK_SIZE, totalSize);
+    // Upload entire file to resumable URI with progress tracking
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
       
-      // Retry logic for each chunk
-      let retries = 3;
-      while (retries > 0) {
-        try {
-          await uploadChunk(resumableUri, file, uploadedBytes, end, totalSize);
-          break;
-        } catch (error) {
-          retries--;
-          if (retries === 0) throw error;
-          await new Promise(r => setTimeout(r, 1000)); // Wait 1s before retry
+      xhr.upload.addEventListener("progress", (event) => {
+        if (event.lengthComputable) {
+          const percent = Math.round((event.loaded / event.total) * 100);
+          setUploadProgress(percent);
         }
-      }
+      });
       
-      uploadedBytes = end;
-      setUploadProgress(Math.round((uploadedBytes / totalSize) * 100));
-    }
-    
-    return objectPath;
+      xhr.addEventListener("load", () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve(objectPath);
+        } else {
+          reject(new Error(`Upload failed with status ${xhr.status}: ${xhr.responseText}`));
+        }
+      });
+      
+      xhr.addEventListener("error", () => {
+        reject(new Error("Upload failed - network error"));
+      });
+      
+      xhr.addEventListener("timeout", () => {
+        reject(new Error("Upload timed out - please try again"));
+      });
+      
+      xhr.open("PUT", resumableUri);
+      xhr.setRequestHeader("Content-Type", file.type);
+      xhr.timeout = 600000; // 10 minutes timeout
+      xhr.send(file);
+    });
   };
 
   // Simple upload for small files (images)
