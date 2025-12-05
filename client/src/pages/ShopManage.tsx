@@ -165,10 +165,14 @@ export default function ShopManage() {
 
       if (!uploadRes.ok) throw new Error("Upload failed");
 
+      // Extract the object path from the signed GCS URL
+      // GCS URL format: https://storage.googleapis.com/bucket/.private/uploads/uuid?signature...
       const gcsUrl = uploadURL.split("?")[0];
-      const uploadsMatch = gcsUrl.match(/\/uploads\/([a-f0-9-]+)$/i);
-      const objectId = uploadsMatch ? uploadsMatch[1] : gcsUrl.split("/").pop();
-      const imageUrl = `/objects/uploads/${objectId}`;
+      const pathMatch = gcsUrl.match(/\/.private\/uploads\/([a-f0-9-]+)$/i);
+      if (!pathMatch) throw new Error("Invalid upload URL format");
+      
+      const objectId = pathMatch[1];
+      const imageUrl = `/objects/.private/uploads/${objectId}`;
       
       setProductForm(p => ({ ...p, media: [...p.media, imageUrl] }));
       toast({ title: "Image uploaded successfully" });
