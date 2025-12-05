@@ -51,6 +51,7 @@ import ShopDetail from "@/pages/ShopDetail";
 import ShopManage from "@/pages/ShopManage";
 import ProductDetail from "@/pages/ProductDetail";
 import Checkout from "@/pages/Checkout";
+import PostDetail from "@/pages/PostDetail";
 import { CartProvider } from "@/lib/cartContext";
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
@@ -118,6 +119,7 @@ function Router() {
       <Route path="/marketplace/shop/:slug/manage" component={() => <ProtectedRoute component={ShopManage} />} />
       <Route path="/marketplace/product/:id" component={ProductDetail} />
       <Route path="/marketplace/checkout" component={() => <ProtectedRoute component={Checkout} />} />
+      <Route path="/post/:id" component={PostDetail} />
       <Route path="/business" component={() => <ProtectedRoute component={BusinessDashboard} />} />
       <Route path="/settings">
         {() => <ProtectedRoute component={Settings} />}
