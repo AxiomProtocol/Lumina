@@ -116,14 +116,14 @@ export function StoryCreator({ open, onOpenChange }: StoryCreatorProps) {
     reader.readAsDataURL(file);
   };
   
-  // Resumable upload for videos with XMLHttpRequest for progress
-  const uploadResumable = async (file: File): Promise<string> => {
-    const sessionRes = await apiRequest("POST", "/api/objects/resumable-upload", {
-      contentType: file.type,
-    });
-    const { resumableUri, objectPath } = await sessionRes.json();
+  // Upload with progress tracking using XMLHttpRequest
+  const uploadWithProgress = async (file: File): Promise<string> => {
+    // Get signed URL from server
+    const uploadRes = await apiRequest("POST", "/api/objects/upload", {});
+    const { uploadURL } = await uploadRes.json();
     
-    return new Promise((resolve, reject) => {
+    // Upload with XMLHttpRequest for progress tracking
+    await new Promise<void>((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       
       xhr.upload.addEventListener("progress", (event) => {
@@ -135,44 +135,27 @@ export function StoryCreator({ open, onOpenChange }: StoryCreatorProps) {
       
       xhr.addEventListener("load", () => {
         if (xhr.status >= 200 && xhr.status < 300) {
-          resolve(objectPath);
+          resolve();
         } else {
-          reject(new Error(`Upload failed with status ${xhr.status}: ${xhr.responseText}`));
+          reject(new Error(`Upload failed with status ${xhr.status}`));
         }
       });
       
       xhr.addEventListener("error", () => {
-        reject(new Error("Upload failed - network error"));
+        reject(new Error("Upload failed - please check your connection and try again"));
       });
       
       xhr.addEventListener("timeout", () => {
-        reject(new Error("Upload timed out - please try again"));
+        reject(new Error("Upload timed out - video may be too large, try a shorter video"));
       });
       
-      xhr.open("PUT", resumableUri);
+      xhr.open("PUT", uploadURL);
       xhr.setRequestHeader("Content-Type", file.type);
       xhr.timeout = 600000; // 10 minutes timeout
       xhr.send(file);
     });
-  };
-
-  // Simple upload for images
-  const uploadSimple = async (file: File): Promise<string> => {
-    const uploadRes = await apiRequest("POST", "/api/objects/upload");
-    const { uploadURL } = await uploadRes.json();
     
-    const response = await fetch(uploadURL, {
-      method: "PUT",
-      headers: { "Content-Type": file.type },
-      body: file,
-    });
-    
-    if (!response.ok) {
-      throw new Error(`Upload failed with status ${response.status}`);
-    }
-    
-    setUploadProgress(100);
-    
+    // Set ACL and get object path
     const updateRes = await apiRequest("PUT", "/api/media", {
       mediaURL: uploadURL.split("?")[0],
     });
@@ -187,15 +170,7 @@ export function StoryCreator({ open, onOpenChange }: StoryCreatorProps) {
     setUploadProgress(0);
     
     try {
-      let objectPath: string;
-      
-      // Use resumable upload for videos, simple for images
-      if (mediaType === "video") {
-        objectPath = await uploadResumable(mediaFile);
-        await apiRequest("PUT", "/api/media", { mediaURL: objectPath });
-      } else {
-        objectPath = await uploadSimple(mediaFile);
-      }
+      const objectPath = await uploadWithProgress(mediaFile);
       
       await createStoryMutation.mutateAsync({
         mediaUrl: objectPath,

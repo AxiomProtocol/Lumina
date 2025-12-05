@@ -162,16 +162,14 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
     }
   };
 
-  // Resumable upload for large files (videos) with XMLHttpRequest for progress
-  const uploadResumable = async (file: File): Promise<string> => {
-    // Get resumable upload session from server
-    const sessionRes = await apiRequest("POST", "/api/objects/resumable-upload", {
-      contentType: file.type,
-    });
-    const { resumableUri, objectPath } = await sessionRes.json();
+  // Upload with progress tracking using XMLHttpRequest
+  const uploadWithProgress = async (file: File): Promise<string> => {
+    // Get signed URL from server
+    const uploadRes = await apiRequest("POST", "/api/objects/upload", {});
+    const { uploadURL } = await uploadRes.json();
     
-    // Upload entire file to resumable URI with progress tracking
-    return new Promise((resolve, reject) => {
+    // Upload with XMLHttpRequest for progress tracking
+    await new Promise<void>((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       
       xhr.upload.addEventListener("progress", (event) => {
@@ -183,47 +181,27 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
       
       xhr.addEventListener("load", () => {
         if (xhr.status >= 200 && xhr.status < 300) {
-          resolve(objectPath);
+          resolve();
         } else {
-          reject(new Error(`Upload failed with status ${xhr.status}: ${xhr.responseText}`));
+          reject(new Error(`Upload failed with status ${xhr.status}`));
         }
       });
       
       xhr.addEventListener("error", () => {
-        reject(new Error("Upload failed - network error"));
+        reject(new Error("Upload failed - please check your connection and try again"));
       });
       
       xhr.addEventListener("timeout", () => {
-        reject(new Error("Upload timed out - please try again"));
+        reject(new Error("Upload timed out - video may be too large, try a shorter video"));
       });
       
-      xhr.open("PUT", resumableUri);
+      xhr.open("PUT", uploadURL);
       xhr.setRequestHeader("Content-Type", file.type);
       xhr.timeout = 600000; // 10 minutes timeout
       xhr.send(file);
     });
-  };
-
-  // Simple upload for small files (images)
-  const uploadSimple = async (file: File): Promise<string> => {
-    const uploadRes = await apiRequest("POST", "/api/objects/upload", {});
-    const { uploadURL } = await uploadRes.json();
     
-    // Use fetch for simple uploads
-    const response = await fetch(uploadURL, {
-      method: "PUT",
-      headers: {
-        "Content-Type": file.type,
-      },
-      body: file,
-    });
-    
-    if (!response.ok) {
-      throw new Error(`Upload failed with status ${response.status}`);
-    }
-    
-    setUploadProgress(100);
-    
+    // Set ACL and get object path
     const updateRes = await apiRequest("PUT", "/api/media", {
       mediaURL: uploadURL.split("?")[0],
     });
@@ -253,17 +231,7 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
       
       if (mediaFile) {
         setIsUploading(true);
-        
-        // Use resumable upload for videos (more reliable for large files)
-        // Use simple upload for images
-        if (mediaType === "video") {
-          mediaUrl = await uploadResumable(mediaFile);
-          // Set ACL for resumable uploads
-          await apiRequest("PUT", "/api/media", { mediaURL: mediaUrl });
-        } else {
-          mediaUrl = await uploadSimple(mediaFile);
-        }
-        
+        mediaUrl = await uploadWithProgress(mediaFile);
         setIsUploading(false);
       }
 
