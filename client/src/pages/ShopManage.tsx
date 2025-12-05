@@ -535,6 +535,154 @@ export default function ShopManage() {
                   </div>
                 </DialogContent>
               </Dialog>
+
+              {/* Edit Product Dialog */}
+              <Dialog open={!!editingProduct} onOpenChange={(open) => !open && setEditingProduct(null)}>
+                <DialogContent className="max-w-lg">
+                  <DialogHeader>
+                    <DialogTitle>Edit Product</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 mt-4">
+                    <div>
+                      <Label htmlFor="edit-title">Title</Label>
+                      <Input 
+                        id="edit-title" 
+                        value={productForm.title} 
+                        onChange={(e) => setProductForm(p => ({ ...p, title: e.target.value }))}
+                        placeholder="Product title"
+                        data-testid="input-edit-product-title"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="edit-shortDescription">Short Description</Label>
+                      <Input 
+                        id="edit-shortDescription" 
+                        value={productForm.shortDescription} 
+                        onChange={(e) => setProductForm(p => ({ ...p, shortDescription: e.target.value }))}
+                        placeholder="Brief description"
+                        data-testid="input-edit-product-short-desc"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="edit-description">Full Description</Label>
+                      <Textarea 
+                        id="edit-description" 
+                        value={productForm.description} 
+                        onChange={(e) => setProductForm(p => ({ ...p, description: e.target.value }))}
+                        placeholder="Detailed product description"
+                        data-testid="input-edit-product-description"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="edit-priceAxm">Price (AXM)</Label>
+                        <Input 
+                          id="edit-priceAxm" 
+                          type="number"
+                          step="0.01"
+                          value={productForm.priceAxm} 
+                          onChange={(e) => setProductForm(p => ({ ...p, priceAxm: e.target.value }))}
+                          placeholder="0.00"
+                          data-testid="input-edit-product-price"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="edit-inventory">Inventory</Label>
+                        <Input 
+                          id="edit-inventory" 
+                          type="number"
+                          value={productForm.inventory} 
+                          onChange={(e) => setProductForm(p => ({ ...p, inventory: e.target.value }))}
+                          placeholder="Stock quantity"
+                          data-testid="input-edit-product-inventory"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label htmlFor="edit-category">Category</Label>
+                      <Select value={productForm.category} onValueChange={(v) => setProductForm(p => ({ ...p, category: v }))}>
+                        <SelectTrigger data-testid="select-edit-product-category">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {CATEGORIES.map(cat => (
+                            <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Product Image</Label>
+                      <div className="mt-2">
+                        {productForm.thumbnailUrl ? (
+                          <div className="relative w-32 h-32 rounded-md overflow-hidden border bg-muted">
+                            <img 
+                              src={productForm.thumbnailUrl} 
+                              alt="Product preview" 
+                              className="w-full h-full object-cover"
+                            />
+                            <Button
+                              variant="destructive"
+                              size="icon"
+                              className="absolute top-1 right-1 h-6 w-6"
+                              onClick={() => setProductForm(p => ({ ...p, thumbnailUrl: "" }))}
+                              data-testid="button-edit-remove-image"
+                            >
+                              <XCircle className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <label className="flex flex-col items-center justify-center w-32 h-32 border-2 border-dashed rounded-md cursor-pointer hover:border-primary transition-colors">
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/gif,image/webp"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleImageUpload(file);
+                              }}
+                              disabled={uploadingImage}
+                              data-testid="input-edit-product-image"
+                            />
+                            {uploadingImage ? (
+                              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                            ) : (
+                              <>
+                                <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+                                <span className="text-xs text-muted-foreground">Upload Image</span>
+                              </>
+                            )}
+                          </label>
+                        )}
+                      </div>
+                    </div>
+                    <Button 
+                      className="w-full gap-2" 
+                      onClick={() => {
+                        if (editingProduct) {
+                          updateProductMutation.mutate({
+                            id: editingProduct.id,
+                            title: productForm.title.trim(),
+                            description: productForm.description?.trim() || null,
+                            shortDescription: productForm.shortDescription?.trim() || null,
+                            priceAxm: productForm.priceAxm,
+                            category: productForm.category,
+                            inventory: productForm.inventory ? parseInt(productForm.inventory) : null,
+                            thumbnailUrl: productForm.thumbnailUrl || null,
+                            mediaUrls: productForm.thumbnailUrl ? [productForm.thumbnailUrl] : [],
+                          });
+                          setEditingProduct(null);
+                        }
+                      }}
+                      disabled={updateProductMutation.isPending || !productForm.title || !productForm.priceAxm}
+                      data-testid="button-save-product"
+                    >
+                      {updateProductMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                      Save Changes
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
 
             {productsLoading ? (
@@ -585,6 +733,25 @@ export default function ShopManage() {
                               <Eye className="h-4 w-4" />
                             </Button>
                           </Link>
+                          <Button 
+                            variant="ghost" 
+                            size="icon"
+                            onClick={() => {
+                              setEditingProduct(product);
+                              setProductForm({
+                                title: product.title || "",
+                                description: product.description || "",
+                                shortDescription: product.shortDescription || "",
+                                priceAxm: product.priceAxm || "",
+                                category: product.category || "other",
+                                inventory: product.inventory?.toString() || "",
+                                thumbnailUrl: product.thumbnailUrl || "",
+                              });
+                            }}
+                            data-testid={`button-edit-product-${product.id}`}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
                           <Button 
                             variant="ghost" 
                             size="icon"
