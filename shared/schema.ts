@@ -3157,7 +3157,8 @@ export const shopsRelations = relations(shops, ({ one, many }) => ({
 export const shopProducts = pgTable("shop_products", {
   id: serial("id").primaryKey(),
   shopId: integer("shop_id").notNull(),
-  title: text("title").notNull(),
+  name: text("name").notNull(),
+  title: text("title"),
   slug: text("slug").notNull(),
   description: text("description"),
   shortDescription: text("short_description"),
