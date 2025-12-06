@@ -300,6 +300,38 @@ export class ObjectStorageService {
     return `/objects/uploads/${objectId}`;
   }
 
+  // Upload file with specific path (for HLS segments)
+  async uploadFromBufferWithPath(
+    buffer: Buffer,
+    contentType: string,
+    relativePath: string
+  ): Promise<string> {
+    const privateObjectDir = this.getPrivateObjectDir();
+    if (!privateObjectDir) {
+      throw new Error("PRIVATE_OBJECT_DIR not set");
+    }
+    const fullPath = `${privateObjectDir}/${relativePath}`;
+    const { bucketName, objectName } = parseObjectPath(fullPath);
+    
+    const bucket = objectStorageClient.bucket(bucketName);
+    const file = bucket.file(objectName);
+    
+    await new Promise<void>((resolve, reject) => {
+      const stream = file.createWriteStream({
+        metadata: {
+          contentType,
+        },
+        resumable: false,
+      });
+      
+      stream.on("error", reject);
+      stream.on("finish", resolve);
+      stream.end(buffer);
+    });
+    
+    return `/objects/${relativePath}`;
+  }
+
   // Upload multiple chunk files directly to GCS - streams chunks sequentially without intermediate file
   // This avoids both memory exhaustion AND temp disk space issues
   async uploadFromChunkFiles(
