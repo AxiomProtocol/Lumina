@@ -1239,8 +1239,8 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  // Chunked upload storage - tracks in-progress uploads using DISK instead of memory
-  // This prevents memory exhaustion on production with limited RAM
+  // Chunked upload storage - tracks in-progress uploads with DISK-BACKED persistence
+  // Metadata is saved to disk so uploads survive server restarts
   const chunkedUploads = new Map<string, {
     tempDir: string;
     contentType: string;
@@ -1250,6 +1250,42 @@ export async function registerRoutes(app: Express): Promise<void> {
     createdAt: Date;
   }>();
 
+  // Helper to save upload metadata to disk
+  async function saveUploadMetadata(uploadId: string, upload: typeof chunkedUploads extends Map<string, infer V> ? V : never) {
+    const metaFile = path.join(upload.tempDir, "metadata.json");
+    const data = {
+      uploadId,
+      contentType: upload.contentType,
+      totalChunks: upload.totalChunks,
+      receivedChunks: Array.from(upload.receivedChunks),
+      userId: upload.userId,
+      createdAt: upload.createdAt.toISOString(),
+    };
+    await fs.promises.writeFile(metaFile, JSON.stringify(data), "utf-8");
+  }
+
+  // Helper to load upload metadata from disk if not in memory
+  async function loadUploadMetadata(uploadId: string): Promise<typeof chunkedUploads extends Map<string, infer V> ? V : never | null> {
+    const tempDir = path.join(os.tmpdir(), `chunked_upload_${uploadId}`);
+    const metaFile = path.join(tempDir, "metadata.json");
+    try {
+      const data = JSON.parse(await fs.promises.readFile(metaFile, "utf-8"));
+      const upload = {
+        tempDir,
+        contentType: data.contentType,
+        totalChunks: data.totalChunks,
+        receivedChunks: new Set<number>(data.receivedChunks),
+        userId: data.userId,
+        createdAt: new Date(data.createdAt),
+      };
+      chunkedUploads.set(uploadId, upload);
+      console.log(`Loaded upload metadata from disk: ${uploadId}, ${upload.receivedChunks.size}/${upload.totalChunks} chunks`);
+      return upload;
+    } catch {
+      return null;
+    }
+  }
+
   // Clean up old chunked uploads (older than 1 hour)
   setInterval(async () => {
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
@@ -1257,11 +1293,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       if (upload.createdAt < oneHourAgo) {
         // Clean up temp files
         try {
-          const files = await fs.promises.readdir(upload.tempDir);
-          for (const file of files) {
-            await fs.promises.unlink(path.join(upload.tempDir, file)).catch(() => {});
-          }
-          await fs.promises.rmdir(upload.tempDir).catch(() => {});
+          await fs.promises.rm(upload.tempDir, { recursive: true, force: true });
         } catch (e) {
           // Ignore cleanup errors
         }
@@ -1284,14 +1316,18 @@ export async function registerRoutes(app: Express): Promise<void> {
       const tempDir = path.join(os.tmpdir(), `chunked_upload_${uploadId}`);
       await fs.promises.mkdir(tempDir, { recursive: true });
       
-      chunkedUploads.set(uploadId, {
+      const upload = {
         tempDir,
         contentType,
         totalChunks,
-        receivedChunks: new Set(),
+        receivedChunks: new Set<number>(),
         userId: req.session.userId!,
         createdAt: new Date(),
-      });
+      };
+      chunkedUploads.set(uploadId, upload);
+      
+      // Save metadata to disk for resilience against server restarts
+      await saveUploadMetadata(uploadId, upload);
       
       console.log(`Chunked upload initialized: ${uploadId}, ${totalChunks} chunks expected`);
       res.json({ uploadId, objectPath: `/objects/uploads/${uploadId}` });
@@ -1325,7 +1361,11 @@ export async function registerRoutes(app: Express): Promise<void> {
         return res.status(400).json({ error: "uploadId and chunkIndex are required" });
       }
       
-      const upload = chunkedUploads.get(uploadId);
+      // Try memory first, then disk (for server restart resilience)
+      let upload = chunkedUploads.get(uploadId);
+      if (!upload) {
+        upload = await loadUploadMetadata(uploadId);
+      }
       if (!upload) {
         if (req.file?.path) await fs.promises.unlink(req.file.path).catch(() => {});
         return res.status(404).json({ error: "Upload not found" });
@@ -1348,6 +1388,9 @@ export async function registerRoutes(app: Express): Promise<void> {
       
       upload.receivedChunks.add(chunkIdx);
       
+      // Save updated metadata to disk for resilience
+      await saveUploadMetadata(uploadId, upload);
+      
       console.log(`Chunk ${chunkIdx + 1}/${upload.totalChunks} received for upload ${uploadId}`);
       res.json({ success: true, chunksReceived: upload.receivedChunks.size });
     } catch (error: any) {
@@ -1367,7 +1410,11 @@ export async function registerRoutes(app: Express): Promise<void> {
         return res.status(400).json({ error: "uploadId is required" });
       }
       
+      // Try memory first, then disk (for server restart resilience)
       upload = chunkedUploads.get(uploadId);
+      if (!upload) {
+        upload = await loadUploadMetadata(uploadId);
+      }
       if (!upload) {
         return res.status(404).json({ error: "Upload not found" });
       }
