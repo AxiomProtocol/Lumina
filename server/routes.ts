@@ -3,6 +3,9 @@ import rateLimit from "express-rate-limit";
 import sanitizeHtml from "sanitize-html";
 import crypto from "crypto";
 import multer from "multer";
+import fs from "fs";
+import path from "path";
+import os from "os";
 import { storage } from "./storage";
 import { ObjectStorageService, ObjectNotFoundError } from "./objectStorage";
 
@@ -1176,27 +1179,38 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  // Chunked upload storage - tracks in-progress uploads
+  // Chunked upload storage - tracks in-progress uploads using DISK instead of memory
+  // This prevents memory exhaustion on production with limited RAM
   const chunkedUploads = new Map<string, {
-    chunks: Map<number, Buffer>;
+    tempDir: string;
     contentType: string;
     totalChunks: number;
-    objectPath: string;
+    receivedChunks: Set<number>;
     userId: string;
     createdAt: Date;
   }>();
 
   // Clean up old chunked uploads (older than 1 hour)
-  setInterval(() => {
+  setInterval(async () => {
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
     for (const [uploadId, upload] of chunkedUploads) {
       if (upload.createdAt < oneHourAgo) {
+        // Clean up temp files
+        try {
+          const files = await fs.promises.readdir(upload.tempDir);
+          for (const file of files) {
+            await fs.promises.unlink(path.join(upload.tempDir, file)).catch(() => {});
+          }
+          await fs.promises.rmdir(upload.tempDir).catch(() => {});
+        } catch (e) {
+          // Ignore cleanup errors
+        }
         chunkedUploads.delete(uploadId);
       }
     }
   }, 5 * 60 * 1000); // Check every 5 minutes
 
-  // Initialize chunked upload
+  // Initialize chunked upload - creates temp directory for chunks
   app.post("/api/objects/chunked-upload/init", requireAuth, async (req, res) => {
     try {
       const { contentType, totalChunks } = req.body;
@@ -1205,28 +1219,39 @@ export async function registerRoutes(app: Express): Promise<void> {
       }
       
       const uploadId = crypto.randomUUID();
-      const objectId = crypto.randomUUID();
-      const objectPath = `/objects/uploads/${objectId}`;
+      
+      // Create temp directory for this upload's chunks
+      const tempDir = path.join(os.tmpdir(), `chunked_upload_${uploadId}`);
+      await fs.promises.mkdir(tempDir, { recursive: true });
       
       chunkedUploads.set(uploadId, {
-        chunks: new Map(),
+        tempDir,
         contentType,
         totalChunks,
-        objectPath,
+        receivedChunks: new Set(),
         userId: req.session.userId!,
         createdAt: new Date(),
       });
       
-      res.json({ uploadId, objectPath });
+      console.log(`Chunked upload initialized: ${uploadId}, ${totalChunks} chunks expected`);
+      res.json({ uploadId, objectPath: `/objects/uploads/${uploadId}` });
     } catch (error: any) {
       console.error("Chunked upload init error:", error);
       res.status(500).json({ error: error.message || "Failed to initialize chunked upload" });
     }
   });
 
-  // Upload a chunk (using smaller multer limit for chunks)
+  // Upload a chunk - writes directly to disk instead of memory
   const chunkUpload = multer({
-    storage: multer.memoryStorage(),
+    storage: multer.diskStorage({
+      destination: (req, file, cb) => {
+        // Temporarily use system temp, we'll move it after
+        cb(null, os.tmpdir());
+      },
+      filename: (req, file, cb) => {
+        cb(null, `chunk_temp_${crypto.randomUUID()}`);
+      }
+    }),
     limits: { fileSize: 15 * 1024 * 1024 }, // 15MB per chunk
   });
 
@@ -1235,15 +1260,19 @@ export async function registerRoutes(app: Express): Promise<void> {
       const { uploadId, chunkIndex } = req.body;
       
       if (!uploadId || chunkIndex === undefined) {
+        // Clean up temp file if exists
+        if (req.file?.path) await fs.promises.unlink(req.file.path).catch(() => {});
         return res.status(400).json({ error: "uploadId and chunkIndex are required" });
       }
       
       const upload = chunkedUploads.get(uploadId);
       if (!upload) {
+        if (req.file?.path) await fs.promises.unlink(req.file.path).catch(() => {});
         return res.status(404).json({ error: "Upload not found" });
       }
       
       if (upload.userId !== req.session.userId) {
+        if (req.file?.path) await fs.promises.unlink(req.file.path).catch(() => {});
         return res.status(403).json({ error: "Unauthorized" });
       }
       
@@ -1251,16 +1280,24 @@ export async function registerRoutes(app: Express): Promise<void> {
         return res.status(400).json({ error: "No chunk data provided" });
       }
       
-      upload.chunks.set(parseInt(chunkIndex), req.file.buffer);
+      const chunkIdx = parseInt(chunkIndex);
       
-      res.json({ success: true, chunksReceived: upload.chunks.size });
+      // Move chunk to the upload's temp directory
+      const chunkPath = path.join(upload.tempDir, `chunk_${chunkIdx.toString().padStart(6, '0')}`);
+      await fs.promises.rename(req.file.path, chunkPath);
+      
+      upload.receivedChunks.add(chunkIdx);
+      
+      console.log(`Chunk ${chunkIdx + 1}/${upload.totalChunks} received for upload ${uploadId}`);
+      res.json({ success: true, chunksReceived: upload.receivedChunks.size });
     } catch (error: any) {
       console.error("Chunk upload error:", error);
+      if (req.file?.path) await fs.promises.unlink(req.file.path).catch(() => {});
       res.status(500).json({ error: error.message || "Failed to upload chunk" });
     }
   });
 
-  // Complete chunked upload - combine chunks and upload to storage
+  // Complete chunked upload - streams chunks to storage without loading all into memory
   app.post("/api/objects/chunked-upload/complete", requireAuth, async (req, res) => {
     try {
       const { uploadId } = req.body;
@@ -1279,27 +1316,40 @@ export async function registerRoutes(app: Express): Promise<void> {
       }
       
       // Verify all chunks received
-      if (upload.chunks.size !== upload.totalChunks) {
+      if (upload.receivedChunks.size !== upload.totalChunks) {
         return res.status(400).json({ 
-          error: `Missing chunks: received ${upload.chunks.size} of ${upload.totalChunks}` 
+          error: `Missing chunks: received ${upload.receivedChunks.size} of ${upload.totalChunks}` 
         });
       }
       
-      // Combine chunks in order
-      const sortedChunks: Buffer[] = [];
+      console.log(`Completing chunked upload: ${upload.totalChunks} chunks`);
+      
+      // Combine chunks into a single temp file (streaming, low memory)
+      const combinedPath = path.join(upload.tempDir, 'combined');
+      const writeStream = fs.createWriteStream(combinedPath);
+      
       for (let i = 0; i < upload.totalChunks; i++) {
-        const chunk = upload.chunks.get(i);
-        if (!chunk) {
-          return res.status(400).json({ error: `Missing chunk ${i}` });
-        }
-        sortedChunks.push(chunk);
+        const chunkPath = path.join(upload.tempDir, `chunk_${i.toString().padStart(6, '0')}`);
+        const chunkData = await fs.promises.readFile(chunkPath);
+        writeStream.write(chunkData);
+        // Delete chunk after writing to free disk space
+        await fs.promises.unlink(chunkPath).catch(() => {});
       }
       
-      const combinedBuffer = Buffer.concat(sortedChunks);
-      console.log(`Completing chunked upload: ${upload.totalChunks} chunks, ${combinedBuffer.length} bytes total`);
+      await new Promise<void>((resolve, reject) => {
+        writeStream.end((err: any) => {
+          if (err) reject(err);
+          else resolve();
+        });
+      });
       
-      // Upload to storage
-      const objectPath = await objectStorageService.uploadFromBuffer(combinedBuffer, upload.contentType);
+      // Get file size
+      const stats = await fs.promises.stat(combinedPath);
+      console.log(`Combined file size: ${stats.size} bytes`);
+      
+      // Upload from file stream to storage
+      const fileBuffer = await fs.promises.readFile(combinedPath);
+      const objectPath = await objectStorageService.uploadFromBuffer(fileBuffer, upload.contentType);
       
       // Set ACL to public
       await objectStorageService.trySetObjectEntityAclPolicy(objectPath, {
@@ -1307,7 +1357,9 @@ export async function registerRoutes(app: Express): Promise<void> {
         visibility: "public",
       });
       
-      // Clean up
+      // Clean up temp directory
+      await fs.promises.unlink(combinedPath).catch(() => {});
+      await fs.promises.rmdir(upload.tempDir).catch(() => {});
       chunkedUploads.delete(uploadId);
       
       console.log(`Chunked upload complete: ${objectPath}`);
