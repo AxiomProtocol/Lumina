@@ -21,14 +21,31 @@ interface FrameExtractionResult {
 }
 
 async function downloadVideoToTemp(videoPath: string): Promise<string> {
-  // Use the ObjectStorageService method to get the file properly
-  const file = await objectStorageService.getObjectEntityFile(videoPath);
+  console.log(`Downloading video from storage: ${videoPath}`);
   
-  const tempDir = os.tmpdir();
-  const tempFile = path.join(tempDir, `video_${randomUUID()}.mp4`);
-  
-  await file.download({ destination: tempFile });
-  return tempFile;
+  try {
+    // Use the ObjectStorageService method to get the file properly
+    const file = await objectStorageService.getObjectEntityFile(videoPath);
+    
+    const tempDir = os.tmpdir();
+    const tempFile = path.join(tempDir, `video_${randomUUID()}.mp4`);
+    
+    console.log(`Downloading to temp file: ${tempFile}`);
+    await file.download({ destination: tempFile });
+    
+    // Verify file exists and has content
+    const stats = await fs.stat(tempFile);
+    console.log(`Downloaded video: ${stats.size} bytes`);
+    
+    if (stats.size === 0) {
+      throw new Error("Downloaded video file is empty");
+    }
+    
+    return tempFile;
+  } catch (error: any) {
+    console.error(`Failed to download video from storage:`, error);
+    throw new Error(`Failed to download video: ${error.message || 'Unknown error'}`);
+  }
 }
 
 async function extractFrameWithFfmpeg(
