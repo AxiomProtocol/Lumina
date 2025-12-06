@@ -1498,7 +1498,8 @@ export async function registerRoutes(app: Express): Promise<void> {
         return res.status(403).json({ error: "Access denied" });
       }
 
-      await objectStorageService.downloadObject(objectFile, res);
+      // Pass request for range request handling (needed for video playback)
+      await objectStorageService.downloadObject(objectFile, res, 3600, req);
     } catch (error) {
       if (error instanceof ObjectNotFoundError) {
         return res.status(404).json({ error: "Object not found" });

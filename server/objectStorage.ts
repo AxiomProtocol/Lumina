@@ -1,5 +1,5 @@
 import { Storage, File } from "@google-cloud/storage";
-import { Response } from "express";
+import { Request, Response } from "express";
 import { randomUUID } from "crypto";
 import {
   ObjectAclPolicy,
@@ -110,24 +110,66 @@ export class ObjectStorageService {
     return null;
   }
 
-  async downloadObject(file: File, res: Response, cacheTtlSec: number = 3600) {
+  async downloadObject(file: File, res: Response, cacheTtlSec: number = 3600, req?: Request) {
     try {
       const [metadata] = await file.getMetadata();
       const aclPolicy = await getObjectAclPolicy(file);
       const isPublic = aclPolicy?.visibility === "public";
-      res.set({
-        "Content-Type": metadata.contentType || "application/octet-stream",
-        "Content-Length": metadata.size,
-        "Cache-Control": `${isPublic ? "public" : "private"}, max-age=${cacheTtlSec}`,
-      });
-      const stream = file.createReadStream();
-      stream.on("error", (err) => {
-        console.error("Stream error:", err);
-        if (!res.headersSent) {
-          res.status(500).json({ error: "Error streaming file" });
+      const contentType = metadata.contentType || "application/octet-stream";
+      const fileSize = parseInt(metadata.size as string, 10);
+      
+      // Check if this is a range request (needed for video seeking)
+      const rangeHeader = req?.headers?.range;
+      
+      if (rangeHeader && contentType.startsWith("video/")) {
+        // Parse range header: "bytes=start-end"
+        const parts = rangeHeader.replace(/bytes=/, "").split("-");
+        const start = parseInt(parts[0], 10);
+        const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+        
+        // Validate range
+        if (start >= fileSize || end >= fileSize || start > end) {
+          res.status(416).set({
+            "Content-Range": `bytes */${fileSize}`,
+          }).end();
+          return;
         }
-      });
-      stream.pipe(res);
+        
+        const chunkSize = end - start + 1;
+        
+        res.status(206).set({
+          "Content-Type": contentType,
+          "Content-Length": chunkSize,
+          "Content-Range": `bytes ${start}-${end}/${fileSize}`,
+          "Accept-Ranges": "bytes",
+          "Cache-Control": `${isPublic ? "public" : "private"}, max-age=${cacheTtlSec}`,
+        });
+        
+        const stream = file.createReadStream({ start, end });
+        stream.on("error", (err) => {
+          console.error("Stream error:", err);
+          if (!res.headersSent) {
+            res.status(500).json({ error: "Error streaming file" });
+          }
+        });
+        stream.pipe(res);
+      } else {
+        // Regular download (not a range request)
+        res.set({
+          "Content-Type": contentType,
+          "Content-Length": fileSize,
+          "Accept-Ranges": "bytes",
+          "Cache-Control": `${isPublic ? "public" : "private"}, max-age=${cacheTtlSec}`,
+        });
+        const stream = file.createReadStream();
+        stream.on("error", (err) => {
+          console.error("Stream error:", err);
+          if (!res.headersSent) {
+            res.status(500).json({ error: "Error streaming file" });
+          }
+        });
+        stream.pipe(res);
+      }
     } catch (error) {
       console.error("Error downloading file:", error);
       if (!res.headersSent) {
