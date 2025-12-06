@@ -228,12 +228,14 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
       });
     }
     
-    // Finalize the upload
-    await apiRequest("POST", "/api/objects/chunked-upload/complete", {
+    // Finalize the upload and get the actual storage path
+    const completeResponse = await apiRequest("POST", "/api/objects/chunked-upload/complete", {
       uploadId,
     });
+    const completeData = await completeResponse.json();
     
-    return objectPath;
+    // Use the actual path from the complete response (where the video was stored)
+    return completeData.objectPath;
   };
 
   // Proxy upload for smaller videos - goes through server
