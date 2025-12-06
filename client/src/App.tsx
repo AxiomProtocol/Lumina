@@ -53,6 +53,7 @@ import ProductDetail from "@/pages/ProductDetail";
 import Checkout from "@/pages/Checkout";
 import PostDetail from "@/pages/PostDetail";
 import Feedback from "@/pages/Feedback";
+import About from "@/pages/About";
 import { CartProvider } from "@/lib/cartContext";
 import { AffiliateProvider } from "@/lib/affiliateContext";
 
@@ -81,6 +82,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Landing} />
+      <Route path="/about" component={About} />
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
       <Route path="/feed">

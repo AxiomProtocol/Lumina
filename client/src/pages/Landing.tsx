@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { 
   Wallet, 
   Coins, 
@@ -20,7 +21,8 @@ import {
   GraduationCap,
   ArrowLeftRight,
   Video,
-  MessageSquare
+  MessageSquare,
+  Target
 } from "lucide-react";
 import luminaLogo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
@@ -98,9 +100,22 @@ const prohibitedContent = [
   "Misinformation & spam",
 ];
 
+interface PlatformBranding {
+  name: string;
+  logo: string | null;
+  tagline: string;
+  aboutUs: string | null;
+  mission: string | null;
+  introduction: string | null;
+}
+
 export default function Landing() {
   const { user } = useAuth();
   const { connect, isConnected, isConnecting } = useWallet();
+  
+  const { data: branding } = useQuery<PlatformBranding>({
+    queryKey: ["/api/platform/branding"],
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -628,6 +643,84 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* About Section - Platform Content from Admin */}
+        {(branding?.introduction || branding?.aboutUs || branding?.mission) && (
+          <section className="py-24 bg-gradient-to-b from-transparent via-background to-transparent" data-testid="section-about">
+            <div className="max-w-7xl mx-auto px-4">
+              <div className="text-center mb-16">
+                <Badge variant="outline" className="mb-6 border-primary/30 text-primary">
+                  About Us
+                </Badge>
+                <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+                  Our <span className="text-primary">Story & Mission</span>
+                </h2>
+                <p className="text-muted-foreground max-w-2xl mx-auto">
+                  Learn about what drives us and our vision for the future of social media.
+                </p>
+              </div>
+              
+              <div className="grid md:grid-cols-1 lg:grid-cols-3 gap-8">
+                {branding?.introduction && (
+                  <Card className="hover-elevate border-primary/10" data-testid="card-landing-introduction">
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 rounded-lg bg-primary/10">
+                          <Sparkles className="h-5 w-5 text-primary" />
+                        </div>
+                        <h3 className="text-xl font-semibold">Welcome</h3>
+                      </div>
+                      <p className="text-muted-foreground leading-relaxed line-clamp-6" data-testid="text-landing-introduction">
+                        {branding.introduction}
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
+                
+                {branding?.aboutUs && (
+                  <Card className="hover-elevate border-emerald-500/10" data-testid="card-landing-about">
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 rounded-lg bg-emerald-500/10">
+                          <Heart className="h-5 w-5 text-emerald-500" />
+                        </div>
+                        <h3 className="text-xl font-semibold">About Us</h3>
+                      </div>
+                      <p className="text-muted-foreground leading-relaxed line-clamp-6" data-testid="text-landing-about">
+                        {branding.aboutUs}
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
+                
+                {branding?.mission && (
+                  <Card className="hover-elevate border-amber-500/10" data-testid="card-landing-mission">
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 rounded-lg bg-amber-500/10">
+                          <Target className="h-5 w-5 text-amber-500" />
+                        </div>
+                        <h3 className="text-xl font-semibold">Our Mission</h3>
+                      </div>
+                      <p className="text-muted-foreground leading-relaxed line-clamp-6" data-testid="text-landing-mission">
+                        {branding.mission}
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+              
+              <div className="text-center mt-8">
+                <Link href="/about">
+                  <Button variant="outline" size="lg" className="gap-2 border-primary/30" data-testid="button-read-more-about">
+                    Read More About Us
+                    <ChevronRight className="h-5 w-5" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* CTA Section */}
         <section className="py-24">
           <div className="max-w-7xl mx-auto px-4">
@@ -709,6 +802,7 @@ export default function Landing() {
               <div>
                 <h4 className="font-semibold mb-4">Learn & Support</h4>
                 <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li><Link href="/about" className="hover:text-primary transition-colors">About Us</Link></li>
                   <li><Link href="/academy" className="hover:text-primary transition-colors">The Forge Academy</Link></li>
                   <li><Link href="/guidelines" className="hover:text-primary transition-colors">Guidelines</Link></li>
                   <li><Link href="/whitepaper" className="hover:text-primary transition-colors">Whitepaper</Link></li>
