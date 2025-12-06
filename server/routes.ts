@@ -820,6 +820,21 @@ export async function registerRoutes(app: Express): Promise<void> {
         metadata: { postId: post.id },
       });
 
+      // Trigger HLS transcoding for video posts in the background (don't await)
+      if (postType === "video" && mediaUrl) {
+        (async () => {
+          try {
+            const { transcodeVideoToHLS } = await import("./hlsTranscode");
+            console.log(`[HLS] Auto-transcoding video post ${post.id}`);
+            const hlsResult = await transcodeVideoToHLS(mediaUrl, req.session.userId!);
+            await storage.updatePost(post.id, { hlsUrl: hlsResult.manifestPath });
+            console.log(`[HLS] Auto-transcode complete for post ${post.id}: ${hlsResult.manifestPath}`);
+          } catch (err) {
+            console.error(`[HLS] Auto-transcode failed for post ${post.id}:`, err);
+          }
+        })();
+      }
+
       res.status(201).json({ post });
     } catch (error) {
       console.error("Create post error:", error);
