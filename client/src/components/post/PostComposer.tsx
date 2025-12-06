@@ -176,17 +176,21 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
 
   // Chunked upload for large videos - uploads in smaller pieces to bypass size limits
   const uploadChunked = async (file: File): Promise<string> => {
+    console.log("[Upload] Starting chunked upload for file:", file.name, "size:", file.size);
     const CHUNK_SIZE = 10 * 1024 * 1024; // 10MB chunks
     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
     const csrfToken = await getCsrfToken();
+    console.log("[Upload] Total chunks:", totalChunks, "CSRF token:", csrfToken ? "present" : "missing");
     
     // First, initialize the upload and get an upload ID
+    console.log("[Upload] Initializing chunked upload...");
     const initResponse = await apiRequest("POST", "/api/objects/chunked-upload/init", {
       contentType: file.type,
       totalSize: file.size,
       totalChunks,
     });
     const { uploadId, objectPath } = await initResponse.json();
+    console.log("[Upload] Got uploadId:", uploadId);
     
     // Upload each chunk
     for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
@@ -214,10 +218,12 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
           }
         });
         
-        xhr.addEventListener("error", () => {
+        xhr.addEventListener("error", (e) => {
+          console.error("[Upload] Chunk XHR error:", e);
           reject(new Error("Upload failed - please check your connection"));
         });
         
+        console.log("[Upload] Sending chunk", chunkIndex, "of", totalChunks);
         xhr.open("POST", "/api/objects/chunked-upload/chunk");
         xhr.withCredentials = true;
         if (csrfToken) {
@@ -240,8 +246,10 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
 
   // Proxy upload for smaller videos - goes through server
   const uploadViaProxy = async (file: File): Promise<string> => {
+    console.log("[Upload] Starting proxy upload for file:", file.name, "size:", file.size);
     // Get CSRF token before starting upload
     const csrfToken = await getCsrfToken();
+    console.log("[Upload] CSRF token for proxy:", csrfToken ? "present" : "missing");
     
     return new Promise((resolve, reject) => {
       const formData = new FormData();
@@ -274,14 +282,17 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
         }
       });
       
-      xhr.addEventListener("error", () => {
+      xhr.addEventListener("error", (e) => {
+        console.error("[Upload] Proxy XHR error:", e);
         reject(new Error("Upload failed - please check your connection and try again"));
       });
       
       xhr.addEventListener("timeout", () => {
+        console.error("[Upload] Proxy XHR timeout");
         reject(new Error("Upload timed out - video may be too large, try a shorter video"));
       });
       
+      console.log("[Upload] Opening proxy upload connection...");
       xhr.open("POST", "/api/objects/upload-proxy");
       xhr.withCredentials = true; // Include cookies
       if (csrfToken) {
@@ -341,6 +352,7 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
 
   // Upload video and show thumbnail selector
   const handleVideoUpload = async () => {
+    console.log("[Upload] handleVideoUpload called, mediaFile:", mediaFile?.name, "mediaType:", mediaType);
     if (!mediaFile || mediaType !== "video") return;
     
     setIsSubmitting(true);
@@ -350,12 +362,15 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
     try {
       // Use chunked upload for files over 50MB to bypass server limits
       const LARGE_FILE_THRESHOLD = 50 * 1024 * 1024; // 50MB
+      console.log("[Upload] File size:", mediaFile.size, "bytes, threshold:", LARGE_FILE_THRESHOLD);
       let videoPath: string;
       
       if (mediaFile.size > LARGE_FILE_THRESHOLD) {
+        console.log("[Upload] Using chunked upload (large file)");
         // Large file - use chunked upload
         videoPath = await uploadChunked(mediaFile);
       } else {
+        console.log("[Upload] Using proxy upload (smaller file)");
         // Smaller file - use proxy upload
         videoPath = await uploadViaProxy(mediaFile);
       }
@@ -368,6 +383,7 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
         description: "Now choose a thumbnail for your video!",
       });
     } catch (error: any) {
+      console.error("[Upload] Video upload failed:", error);
       toast({
         title: "Upload failed",
         description: error.message || "Failed to upload video",
