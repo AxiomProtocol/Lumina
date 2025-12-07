@@ -160,9 +160,12 @@ export function PostCard({ post, onLike, onComment, onShare, onRepost }: PostCar
       };
       
       // Preserve the original media for image/video reposts
-      if (post.postType === "video" && post.mediaUrl) {
+      // Check for hlsUrl (Mux videos) or mediaUrl (legacy videos)
+      const hlsUrl = (post as any).hlsUrl as string | null;
+      if (post.postType === "video" && (post.mediaUrl || hlsUrl)) {
         repostData.postType = "video";
         repostData.mediaUrl = post.mediaUrl;
+        repostData.hlsUrl = hlsUrl;
         repostData.thumbnailUrl = post.thumbnailUrl;
         repostData.videoDuration = post.videoDuration;
       } else if (post.postType === "image" && post.mediaUrl) {
