@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { Heart, MessageCircle, Share2, Repeat2, MoreHorizontal, Coins, Play, Copy, Check, Twitter, Facebook, Link as LinkIcon, Trash2, Loader2 } from "lucide-react";
+import { Heart, MessageCircle, Share2, Repeat2, MoreHorizontal, Coins, Play, Copy, Check, Twitter, Facebook, Link as LinkIcon, Trash2, Loader2, Pencil } from "lucide-react";
 import MuxPlayer from "@mux/mux-player-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { TipModal } from "@/components/modals/TipModal";
 import { CommentModal } from "@/components/modals/CommentModal";
 import { useAuth } from "@/lib/authContext";
@@ -63,8 +64,11 @@ export function PostCard({ post, onLike, onComment, onShare, onRepost }: PostCar
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [showRepostDialog, setShowRepostDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
   const [isReposting, setIsReposting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editContent, setEditContent] = useState(post.content || "");
   const [copied, setCopied] = useState(false);
 
   const postUrl = `${window.location.origin}/post/${post.id}`;
@@ -219,6 +223,34 @@ export function PostCard({ post, onLike, onComment, onShare, onRepost }: PostCar
     }
   };
 
+  const handleEdit = async () => {
+    if (!user || user.id !== post.author.id) return;
+
+    setIsEditing(true);
+    try {
+      await apiRequest("PATCH", `/api/posts/${post.id}`, { content: editContent });
+      
+      await queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/posts/for-you"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/users", post.author.username, "posts"] });
+      
+      toast({
+        title: "Post updated",
+        description: "Your caption has been saved.",
+      });
+      
+      setShowEditDialog(false);
+    } catch (err) {
+      toast({
+        title: "Update failed",
+        description: "Could not update the post. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsEditing(false);
+    }
+  };
+
   return (
     <>
       <Card className="overflow-hidden hover-elevate" data-testid={`post-card-${post.id}`}>
@@ -265,6 +297,16 @@ export function PostCard({ post, onLike, onComment, onShare, onRepost }: PostCar
                     {user?.id === post.author.id && (
                       <>
                         <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                          onClick={() => {
+                            setEditContent(post.content || "");
+                            setShowEditDialog(true);
+                          }}
+                          data-testid="menu-edit-post"
+                        >
+                          <Pencil className="h-4 w-4 mr-2" />
+                          Edit caption
+                        </DropdownMenuItem>
                         <DropdownMenuItem 
                           onClick={() => setShowDeleteDialog(true)}
                           className="text-destructive focus:text-destructive"
@@ -546,6 +588,56 @@ export function PostCard({ post, onLike, onComment, onShare, onRepost }: PostCar
                   <Trash2 className="h-4 w-4 mr-2" />
                   Delete
                 </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent data-testid="edit-post-dialog">
+          <DialogHeader>
+            <DialogTitle>Edit caption</DialogTitle>
+            <DialogDescription>
+              Update your post caption. Media cannot be changed.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <Textarea
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              placeholder="What's on your mind?"
+              className="min-h-[100px] resize-none"
+              maxLength={500}
+              data-testid="input-edit-caption"
+            />
+            <div className="text-xs text-muted-foreground text-right">
+              {editContent.length}/500
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowEditDialog(false)}
+              disabled={isEditing}
+              data-testid="button-cancel-edit"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleEdit}
+              disabled={isEditing}
+              data-testid="button-save-edit"
+            >
+              {isEditing ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Saving...
+                </>
+              ) : (
+                "Save changes"
               )}
             </Button>
           </DialogFooter>

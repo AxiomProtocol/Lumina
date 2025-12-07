@@ -926,6 +926,36 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Edit own post (update caption/content)
+  app.patch("/api/posts/:id", requireAuth, async (req, res) => {
+    try {
+      const postId = req.params.id;
+      const userId = req.session.userId!;
+      const { content } = req.body;
+
+      const post = await storage.getPost(postId);
+      if (!post) {
+        return res.status(404).json({ error: "Post not found" });
+      }
+
+      if (post.authorId !== userId) {
+        return res.status(403).json({ error: "You can only edit your own posts" });
+      }
+
+      // Sanitize content
+      const sanitizedContent = sanitizeText(content || "");
+
+      const updatedPost = await storage.updatePost(postId, { 
+        content: sanitizedContent,
+      });
+
+      res.json(updatedPost);
+    } catch (error) {
+      console.error("Edit post error:", error);
+      res.status(500).json({ error: "Failed to edit post" });
+    }
+  });
+
   // Delete own post
   app.delete("/api/posts/:id", requireAuth, async (req, res) => {
     try {
