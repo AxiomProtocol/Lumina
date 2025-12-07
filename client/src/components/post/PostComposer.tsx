@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Image, Video, X, Loader2, Globe, Users, AlertTriangle, ShieldCheck, Shield, Upload } from "lucide-react";
-// Note: Removed UpChunk - using native fetch streaming instead to avoid FileReader memory issues
+import * as tus from "tus-js-client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -370,7 +370,7 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
     return objectPath;
   };
 
-  // Upload video via Mux - handles all sizes reliably using native fetch streaming
+  // Upload video via Mux - handles all sizes reliably using tus resumable protocol
   const uploadViaMux = async (file: File): Promise<{ hlsUrl: string; thumbnailUrl: string }> => {
     console.log("[Mux Upload] Starting Mux upload for file:", file.name, "size:", file.size);
     
@@ -386,41 +386,34 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
     const { uploadId, uploadUrl } = initData;
     console.log("[Mux Upload] Got upload URL, uploadId:", uploadId);
     
-    // Step 2: Upload file directly to Mux using XMLHttpRequest for progress tracking
-    // This streams the file without loading it entirely into memory (unlike UpChunk's fallback)
+    // Step 2: Upload file using tus-js-client for true resumable/streaming uploads
+    // This properly streams the file without loading it entirely into memory
     await new Promise<void>((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      
-      xhr.upload.addEventListener("progress", (e) => {
-        if (e.lengthComputable) {
-          const percent = Math.round((e.loaded / e.total) * 100);
+      const upload = new tus.Upload(file, {
+        endpoint: uploadUrl,
+        chunkSize: 5 * 1024 * 1024, // 5MB chunks
+        retryDelays: [0, 1000, 3000, 5000, 10000], // Retry on failure
+        metadata: {
+          filename: file.name,
+          filetype: file.type,
+        },
+        onError: (error) => {
+          console.error("[Mux Upload] tus error:", error);
+          reject(new Error(error.message || "Upload to Mux failed"));
+        },
+        onProgress: (bytesUploaded, bytesTotal) => {
+          const percent = Math.round((bytesUploaded / bytesTotal) * 100);
           console.log("[Mux Upload] Progress:", percent + "%");
           setUploadProgress(percent);
-        }
-      });
-      
-      xhr.addEventListener("load", () => {
-        if (xhr.status >= 200 && xhr.status < 300) {
+        },
+        onSuccess: () => {
           console.log("[Mux Upload] Upload complete, waiting for processing...");
           resolve();
-        } else {
-          reject(new Error(`Upload failed with status ${xhr.status}: ${xhr.statusText}`));
-        }
+        },
       });
       
-      xhr.addEventListener("error", () => {
-        console.error("[Mux Upload] Network error during upload");
-        reject(new Error("Network error during upload - please check your connection"));
-      });
-      
-      xhr.addEventListener("timeout", () => {
-        reject(new Error("Upload timed out"));
-      });
-      
-      // Mux direct upload expects a PUT request with the raw file
-      xhr.open("PUT", uploadUrl);
-      xhr.timeout = 600000; // 10 minutes timeout for large files
-      xhr.send(file); // Browser streams the file efficiently without loading into memory
+      // Start the upload
+      upload.start();
     });
     
     // Step 3: Poll for asset to be ready (Mux processes the video)
