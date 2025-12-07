@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback, createContext, useContext } from "react";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import Hls from "hls.js";
+import MuxPlayer from "@mux/mux-player-react";
 import { Heart, MessageCircle, Share2, Coins, User, Play, Pause, Volume2, VolumeX, ChevronUp, ChevronDown, Sparkles, Award, Loader2, Copy, Check, Twitter, Facebook, Link as LinkIcon, Trash2, MoreVertical } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Link } from "wouter";
@@ -64,21 +65,44 @@ function VideoCard({
   const [videoSrc, setVideoSrc] = useState<string | null>(null);
   const [videoLoading, setVideoLoading] = useState(false);
   const [useHls, setUseHls] = useState(false);
+  const [muxPlaybackId, setMuxPlaybackId] = useState<string | null>(null);
   const hlsRef = useRef<Hls | null>(null);
+  const muxPlayerRef = useRef<any>(null);
 
   const postUrl = `${window.location.origin}/post/${post.id}`;
+
+  // Extract Mux playback ID from HLS URL if it's a Mux stream
+  const extractMuxPlaybackId = (url: string): string | null => {
+    // Match https://stream.mux.com/{playbackId}.m3u8
+    const match = url.match(/stream\.mux\.com\/([a-zA-Z0-9]+)\.m3u8/);
+    return match ? match[1] : null;
+  };
 
   // Check if HLS URL is available and set up video source
   useEffect(() => {
     const setupVideoSource = async () => {
-      // If post has an HLS URL, use that
+      // If post has an HLS URL, check if it's Mux
       if ((post as any).hlsUrl) {
-        setVideoSrc((post as any).hlsUrl);
+        const hlsUrl = (post as any).hlsUrl;
+        const playbackId = extractMuxPlaybackId(hlsUrl);
+        
+        if (playbackId) {
+          // It's a Mux video - use MuxPlayer
+          setMuxPlaybackId(playbackId);
+          setVideoSrc(null);
+          setUseHls(false);
+          return;
+        }
+        
+        // Non-Mux HLS URL
+        setVideoSrc(hlsUrl);
         setUseHls(true);
+        setMuxPlaybackId(null);
         return;
       }
       
       // Otherwise fall back to direct video URL
+      setMuxPlaybackId(null);
       if (!post.mediaUrl || !post.mediaUrl.startsWith("/objects/")) {
         setVideoSrc(post.mediaUrl);
         return;
@@ -231,6 +255,18 @@ function VideoCard({
   }, [userInteracted, soundEnabled]);
 
   useEffect(() => {
+    // For MuxPlayer, autoPlay prop handles this
+    if (muxPlaybackId) {
+      if (!isActive) {
+        const player = muxPlayerRef.current;
+        if (player) {
+          player.pause?.();
+          setIsPlaying(false);
+        }
+      }
+      return;
+    }
+    
     if (!videoRef.current) return;
     
     if (isActive) {
@@ -257,13 +293,27 @@ function VideoCard({
       videoRef.current.currentTime = 0;
       setIsPlaying(false);
     }
-  }, [isActive, soundEnabled, userInteracted]);
+  }, [isActive, soundEnabled, userInteracted, muxPlaybackId]);
 
   const togglePlay = () => {
-    if (!videoRef.current) return;
-    
     // Any interaction enables sound
     enableSound();
+    
+    // Handle MuxPlayer
+    if (muxPlaybackId && muxPlayerRef.current) {
+      const player = muxPlayerRef.current;
+      if (isPlaying) {
+        player.pause?.();
+      } else {
+        player.muted = false;
+        setIsMuted(false);
+        player.play?.();
+      }
+      setIsPlaying(!isPlaying);
+      return;
+    }
+    
+    if (!videoRef.current) return;
     
     if (isPlaying) {
       videoRef.current.pause();
@@ -276,8 +326,17 @@ function VideoCard({
   };
 
   const toggleMute = () => {
-    if (!videoRef.current) return;
     enableSound(); // Mark user interaction
+    
+    // Handle MuxPlayer
+    if (muxPlaybackId && muxPlayerRef.current) {
+      muxPlayerRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+      setShowSoundPrompt(false);
+      return;
+    }
+    
+    if (!videoRef.current) return;
     videoRef.current.muted = !isMuted;
     setIsMuted(!isMuted);
     setShowSoundPrompt(false);
@@ -320,7 +379,35 @@ function VideoCard({
   return (
     <>
       <div className="relative w-full h-full bg-black flex items-center justify-center">
-        {videoSrc ? (
+        {muxPlaybackId ? (
+          <div 
+            className="w-full h-full cursor-pointer"
+            onClick={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const clickX = e.clientX - rect.left;
+              const width = rect.width;
+              if (clickX < width * 0.85) {
+                togglePlay();
+              }
+            }}
+          >
+            <MuxPlayer
+              ref={muxPlayerRef}
+              playbackId={muxPlaybackId}
+              poster={post.thumbnailUrl || undefined}
+              loop
+              muted={isMuted}
+              autoPlay={isActive}
+              streamType="on-demand"
+              primaryColor="#10b981"
+              secondaryColor="#000000"
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+              style={{ width: '100%', height: '100%', aspectRatio: '9/16', pointerEvents: 'none' }}
+              data-testid={`mux-video-${post.id}`}
+            />
+          </div>
+        ) : videoSrc ? (
           <video
             ref={videoRef}
             src={useHls ? undefined : videoSrc}
