@@ -413,7 +413,7 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
       await new Promise(r => setTimeout(r, pollDelay));
       
       try {
-        const statusResponse = await apiRequest("GET", `/api/mux/upload/${uploadId}/status`, {});
+        const statusResponse = await apiRequest("GET", `/api/mux/upload/${uploadId}/status`);
         const status = await statusResponse.json();
         console.log("[Mux Upload] Status:", status.status, "Asset:", status.assetStatus);
         
