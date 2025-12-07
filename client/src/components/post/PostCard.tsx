@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { Heart, MessageCircle, Share2, Repeat2, MoreHorizontal, Coins, Play, Copy, Check, Twitter, Facebook, Link as LinkIcon, Trash2, Loader2 } from "lucide-react";
+import MuxPlayer from "@mux/mux-player-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -303,25 +304,44 @@ export function PostCard({ post, onLike, onComment, onShare, onRepost }: PostCar
                 </div>
               )}
 
-              {post.mediaUrl && post.postType === "video" && (
-                <div className="mt-3 rounded-xl overflow-hidden bg-black relative aspect-video border border-border/50">
-                  <video
-                    src={post.mediaUrl}
-                    poster={post.thumbnailUrl || undefined}
-                    controls
-                    playsInline
-                    preload="metadata"
-                    className="w-full h-full object-contain"
-                    data-testid="video-post-media"
-                  />
-                  {post.videoDuration && (
-                    <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/70 text-white text-xs flex items-center gap-1 pointer-events-none">
-                      <Play className="h-3 w-3" />
-                      {Math.floor(post.videoDuration / 60)}:{(post.videoDuration % 60).toString().padStart(2, "0")}
-                    </div>
-                  )}
-                </div>
-              )}
+              {post.postType === "video" && (post.mediaUrl || (post as any).hlsUrl) && (() => {
+                const hlsUrl = (post as any).hlsUrl as string | null;
+                const isMuxVideo = hlsUrl?.includes('stream.mux.com');
+                const muxPlaybackId = isMuxVideo ? hlsUrl?.match(/stream\.mux\.com\/([a-zA-Z0-9]+)\.m3u8/)?.[1] : null;
+                
+                return (
+                  <div className="mt-3 rounded-xl overflow-hidden bg-black relative aspect-video border border-border/50">
+                    {muxPlaybackId ? (
+                      <MuxPlayer
+                        playbackId={muxPlaybackId}
+                        poster={post.thumbnailUrl || undefined}
+                        streamType="on-demand"
+                        primaryColor="#10b981"
+                        accentColor="#10b981"
+                        className="w-full h-full"
+                        style={{ width: '100%', height: '100%' }}
+                        data-testid="mux-video-post-media"
+                      />
+                    ) : (
+                      <video
+                        src={post.mediaUrl || undefined}
+                        poster={post.thumbnailUrl || undefined}
+                        controls
+                        playsInline
+                        preload="metadata"
+                        className="w-full h-full object-contain"
+                        data-testid="video-post-media"
+                      />
+                    )}
+                    {post.videoDuration && (
+                      <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/70 text-white text-xs flex items-center gap-1 pointer-events-none">
+                        <Play className="h-3 w-3" />
+                        {Math.floor(post.videoDuration / 60)}:{(post.videoDuration % 60).toString().padStart(2, "0")}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
 
               <div className="flex items-center justify-between mt-4 -ml-2">
                 <div className="flex items-center gap-1">
