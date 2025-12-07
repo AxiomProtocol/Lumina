@@ -2330,6 +2330,82 @@ export async function registerRoutes(app: Express): Promise<void> {
     });
   });
 
+  // ==================== Mux Video Upload API ====================
+  // Create a Mux direct upload URL for video posts
+  app.post("/api/mux/upload", requireAuth, async (req, res) => {
+    try {
+      const muxService = await import("./services/mux");
+      
+      if (!muxService.isMuxConfigured()) {
+        return res.status(503).json({ error: "Mux is not configured", muxNotConfigured: true });
+      }
+      
+      // Use allowed origins only - production domain or wildcard for dev
+      const allowedOrigins = [
+        "https://joinlumina.io",
+        "https://www.joinlumina.io",
+        process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : null,
+      ].filter(Boolean);
+      
+      const requestOrigin = req.headers.origin;
+      const corsOrigin = requestOrigin && allowedOrigins.includes(requestOrigin) 
+        ? requestOrigin 
+        : "https://joinlumina.io"; // Default to production
+      
+      const upload = await muxService.createDirectUpload(corsOrigin);
+      
+      console.log("Mux direct upload created:", upload.id);
+      res.json({
+        uploadId: upload.id,
+        uploadUrl: upload.url,
+      });
+    } catch (error: any) {
+      console.error("Error creating Mux upload:", error);
+      res.status(500).json({ error: error.message || "Failed to create upload" });
+    }
+  });
+
+  // Get upload status and asset info
+  app.get("/api/mux/upload/:uploadId/status", requireAuth, async (req, res) => {
+    try {
+      const muxService = await import("./services/mux");
+      
+      if (!muxService.isMuxConfigured()) {
+        return res.status(503).json({ error: "Mux is not configured" });
+      }
+      
+      const { uploadId } = req.params;
+      const uploadStatus = await muxService.getUploadStatus(uploadId);
+      
+      // If asset is created, get playback ID
+      if (uploadStatus.assetId) {
+        const asset = await muxService.getAsset(uploadStatus.assetId);
+        res.json({
+          status: uploadStatus.status,
+          assetId: uploadStatus.assetId,
+          assetStatus: asset.status,
+          playbackId: asset.playbackId,
+          duration: asset.duration,
+          hlsUrl: asset.playbackId ? `https://stream.mux.com/${asset.playbackId}.m3u8` : null,
+          thumbnailUrl: asset.playbackId ? `https://image.mux.com/${asset.playbackId}/thumbnail.jpg` : null,
+        });
+      } else {
+        res.json({
+          status: uploadStatus.status,
+          assetId: null,
+          assetStatus: null,
+          playbackId: null,
+          duration: null,
+          hlsUrl: null,
+          thumbnailUrl: null,
+        });
+      }
+    } catch (error: any) {
+      console.error("Error getting Mux upload status:", error);
+      res.status(500).json({ error: error.message || "Failed to get upload status" });
+    }
+  });
+
   // Get stream playback info (Mux HLS or Cloudflare WHEP)
   app.get("/api/streams/:id/token", requireAuth, async (req, res) => {
     try {

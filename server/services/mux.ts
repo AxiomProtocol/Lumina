@@ -87,6 +87,74 @@ export async function resetMuxStreamKey(liveStreamId: string): Promise<string> {
   return result.stream_key!;
 }
 
+// Direct Upload functions for user video uploads
+export interface MuxDirectUpload {
+  id: string;
+  url: string; // The URL to upload the video to
+}
+
+export interface MuxAsset {
+  id: string;
+  playbackId: string | null;
+  status: string;
+  duration: number | null;
+}
+
+export async function createDirectUpload(corsOrigin: string = "*"): Promise<MuxDirectUpload> {
+  const mux = getMuxClient();
+  const upload = await mux.video.uploads.create({
+    cors_origin: corsOrigin,
+    new_asset_settings: {
+      playback_policy: ["public"],
+      video_quality: "basic",
+    },
+  });
+
+  return {
+    id: upload.id,
+    url: upload.url!,
+  };
+}
+
+export async function getUploadStatus(uploadId: string): Promise<{ status: string; assetId: string | null }> {
+  const mux = getMuxClient();
+  const upload = await mux.video.uploads.retrieve(uploadId);
+  
+  return {
+    status: upload.status || "unknown",
+    assetId: upload.asset_id || null,
+  };
+}
+
+export async function getAsset(assetId: string): Promise<MuxAsset> {
+  const mux = getMuxClient();
+  const asset = await mux.video.assets.retrieve(assetId);
+  
+  const playbackId = asset.playback_ids?.[0]?.id || null;
+  
+  return {
+    id: asset.id,
+    playbackId,
+    status: asset.status || "unknown",
+    duration: asset.duration || null,
+  };
+}
+
+export async function waitForAssetReady(assetId: string, maxAttempts: number = 60): Promise<MuxAsset> {
+  for (let i = 0; i < maxAttempts; i++) {
+    const asset = await getAsset(assetId);
+    if (asset.status === "ready") {
+      return asset;
+    }
+    if (asset.status === "errored") {
+      throw new Error("Mux asset processing failed");
+    }
+    // Wait 2 seconds before checking again
+    await new Promise(resolve => setTimeout(resolve, 2000));
+  }
+  throw new Error("Timeout waiting for Mux asset to be ready");
+}
+
 export function getPlaybackUrl(playbackId: string): string {
   return `https://stream.mux.com/${playbackId}.m3u8`;
 }
@@ -109,4 +177,8 @@ export default {
   getPlaybackUrl,
   getThumbnailUrl,
   getAnimatedGifUrl,
+  createDirectUpload,
+  getUploadStatus,
+  getAsset,
+  waitForAssetReady,
 };
