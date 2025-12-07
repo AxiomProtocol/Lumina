@@ -106,8 +106,9 @@ export async function createDirectUpload(corsOrigin: string = "*"): Promise<MuxD
     cors_origin: corsOrigin,
     new_asset_settings: {
       playback_policy: ["public"],
-      video_quality: "basic",
-      mp4_support: "standard", // Enable MP4 for Facebook/social sharing
+      // Removed video_quality: "basic" to allow MP4 support for Facebook sharing
+      // Default quality tier supports MP4 renditions
+      mp4_support: "standard",
     },
   });
 
