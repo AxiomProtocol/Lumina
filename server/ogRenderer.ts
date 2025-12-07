@@ -85,9 +85,13 @@ function generateOgHtml(post: PostWithAuthor, req: Request): string {
   const rawMediaUrl = getFullMediaUrl(post.mediaUrl, req);
   const rawThumbnailUrl = getFullMediaUrl(post.thumbnailUrl, req);
   const rawAuthorAvatar = getFullMediaUrl(post.author.avatarUrl, req);
+  // Get hlsUrl for Mux videos (cast to access property not in type)
+  const rawHlsUrl = (post as any).hlsUrl as string | null;
   
   const mediaUrl = rawMediaUrl ? escapeUrl(rawMediaUrl) : null;
   const authorAvatar = rawAuthorAvatar ? escapeUrl(rawAuthorAvatar) : null;
+  // For Mux videos, use the hlsUrl; for legacy videos use mediaUrl
+  const videoStreamUrl = rawHlsUrl ? escapeUrl(rawHlsUrl) : mediaUrl;
   
   const isVideo = post.postType === 'video';
   const ogType = isVideo ? 'video.other' : 'article';
@@ -108,12 +112,15 @@ function generateOgHtml(post: PostWithAuthor, req: Request): string {
     imageUrl = defaultOgImage;
   }
   
+  // Determine video type based on URL (HLS for Mux, MP4 for legacy)
+  const videoType = rawHlsUrl ? 'application/x-mpegURL' : 'video/mp4';
+  
   let videoTags = '';
-  if (isVideo && mediaUrl) {
+  if (isVideo && videoStreamUrl) {
     videoTags = `
-    <meta property="og:video" content="${mediaUrl}" />
-    <meta property="og:video:secure_url" content="${mediaUrl}" />
-    <meta property="og:video:type" content="video/mp4" />
+    <meta property="og:video" content="${videoStreamUrl}" />
+    <meta property="og:video:secure_url" content="${videoStreamUrl}" />
+    <meta property="og:video:type" content="${videoType}" />
     <meta property="og:video:width" content="1280" />
     <meta property="og:video:height" content="720" />
     <meta name="twitter:card" content="player" />
