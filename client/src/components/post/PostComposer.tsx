@@ -390,28 +390,62 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
     const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB chunks
     const totalSize = file.size;
     let uploadedBytes = 0;
+    const MAX_RETRIES = 3;
+    const CHUNK_TIMEOUT = 60000; // 60 second timeout per chunk
+    
+    // Helper to upload a single chunk with timeout and retries
+    const uploadChunk = async (start: number, end: number, retryCount = 0): Promise<void> => {
+      const chunk = file.slice(start, end);
+      
+      console.log(`[Mux Upload] Uploading chunk ${start}-${end-1}/${totalSize} (attempt ${retryCount + 1})`);
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), CHUNK_TIMEOUT);
+      
+      try {
+        const response = await fetch(uploadUrl, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/octet-stream",
+            "Content-Range": `bytes ${start}-${end - 1}/${totalSize}`,
+          },
+          body: chunk,
+          signal: controller.signal,
+        });
+        
+        clearTimeout(timeoutId);
+        
+        // Accept 200, 201, 204, 308 as success
+        if (!response.ok && response.status !== 308) {
+          const errorText = await response.text().catch(() => "Unknown error");
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+        
+        console.log(`[Mux Upload] Chunk ${start}-${end-1} completed with status ${response.status}`);
+      } catch (error: any) {
+        clearTimeout(timeoutId);
+        
+        const isTimeout = error.name === 'AbortError';
+        const errorMsg = isTimeout ? 'Timeout' : error.message;
+        console.error(`[Mux Upload] Chunk failed: ${errorMsg}`);
+        
+        if (retryCount < MAX_RETRIES) {
+          // Exponential backoff: 1s, 2s, 4s
+          const delay = Math.pow(2, retryCount) * 1000;
+          console.log(`[Mux Upload] Retrying in ${delay}ms...`);
+          await new Promise(r => setTimeout(r, delay));
+          return uploadChunk(start, end, retryCount + 1);
+        }
+        
+        throw new Error(`Chunk upload failed after ${MAX_RETRIES + 1} attempts: ${errorMsg}`);
+      }
+    };
     
     while (uploadedBytes < totalSize) {
       const start = uploadedBytes;
       const end = Math.min(uploadedBytes + CHUNK_SIZE, totalSize);
-      const chunk = file.slice(start, end);
       
-      console.log(`[Mux Upload] Uploading chunk ${start}-${end-1}/${totalSize}`);
-      
-      const response = await fetch(uploadUrl, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/octet-stream",
-          "Content-Range": `bytes ${start}-${end - 1}/${totalSize}`,
-        },
-        body: chunk,
-      });
-      
-      if (!response.ok && response.status !== 308) {
-        // 308 is "Resume Incomplete" - expected for chunks
-        const errorText = await response.text().catch(() => "Unknown error");
-        throw new Error(`Chunk upload failed: ${response.status} - ${errorText}`);
-      }
+      await uploadChunk(start, end);
       
       uploadedBytes = end;
       const percent = Math.round((uploadedBytes / totalSize) * 100);
