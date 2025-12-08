@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/lib/authContext";
 import { queryClient, apiRequest } from "@/lib/queryClient";
+import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -104,8 +105,8 @@ export default function GrowthHub() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container max-w-6xl mx-auto py-8 px-4">
+    <MainLayout>
+      <div className="container max-w-4xl mx-auto py-8 px-4">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 rounded-lg bg-primary/10">
@@ -397,7 +398,7 @@ export default function GrowthHub() {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+    </MainLayout>
   );
 }
 
