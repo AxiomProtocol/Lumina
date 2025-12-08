@@ -411,7 +411,6 @@ export class ObjectStorageService {
         
         console.log(`[GCS Compose] Composing batch of ${batch.length} files -> temp file ${tempFileIndex}`);
         await bucket.combine(batch, tempFile);
-        // Set content type on the combined file
         await tempFile.setMetadata({ contentType });
         newSources.push(tempFile);
         
@@ -428,7 +427,6 @@ export class ObjectStorageService {
     const destFile = bucket.file(finalObjectName);
     console.log(`[GCS Compose] Final compose of ${currentSources.length} files -> ${finalObjectName}`);
     await bucket.combine(currentSources, destFile);
-    // Set content type on the final file
     await destFile.setMetadata({ contentType });
     
     // Clean up remaining temp files
