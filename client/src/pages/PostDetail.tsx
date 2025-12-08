@@ -1,6 +1,6 @@
 import { useParams, useLocation, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Loader2, Heart, MessageCircle, Share2, Coins, Play, Copy, Check, Twitter, Facebook } from "lucide-react";
+import { ArrowLeft, Loader2, Heart, MessageCircle, Share2, Coins, Play, Copy, Check, Twitter, Facebook, Maximize, Minimize, Trash2 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import MuxPlayer from "@mux/mux-player-react";
 import Hls from "hls.js";
@@ -15,6 +15,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { TipModal } from "@/components/modals/TipModal";
 import { CommentModal } from "@/components/modals/CommentModal";
 import { useAuth } from "@/lib/authContext";
@@ -53,8 +63,12 @@ export default function PostDetail() {
   const [videoSrc, setVideoSrc] = useState<string | null>(null);
   const [muxPlaybackId, setMuxPlaybackId] = useState<string | null>(null);
   const [useHls, setUseHls] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const muxPlayerRef = useRef<any>(null);
+  const videoContainerRef = useRef<HTMLDivElement>(null);
   const hlsRef = useRef<Hls | null>(null);
   const copyTimeoutRef = useRef<NodeJS.Timeout>();
 
@@ -242,6 +256,57 @@ export default function PostDetail() {
     }
   };
 
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        if (muxPlaybackId && muxPlayerRef.current) {
+          await muxPlayerRef.current.requestFullscreen?.();
+        } else if (videoContainerRef.current) {
+          await videoContainerRef.current.requestFullscreen();
+        }
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch (err) {
+      console.error("Fullscreen error:", err);
+    }
+  };
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+
+  const handleDelete = async () => {
+    if (!user || !post) return;
+    
+    setIsDeleting(true);
+    try {
+      await apiRequest("DELETE", `/api/posts/${post.id}`);
+      toast({
+        title: "Post deleted",
+        description: "Your post has been deleted successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users", post.author?.username] });
+      navigate("/feed");
+    } catch (err) {
+      toast({
+        title: "Failed to delete",
+        description: "Could not delete the post. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
+
+  const isAuthor = user?.id === post?.authorId;
+
   if (isLoading) {
     return (
       <MainLayout>
@@ -317,7 +382,8 @@ export default function PostDetail() {
 
             {post.postType === "video" && (
               <div 
-                className="relative rounded-lg overflow-hidden bg-black aspect-video mb-4 cursor-pointer"
+                ref={videoContainerRef}
+                className="relative rounded-lg overflow-hidden bg-black aspect-video mb-4 cursor-pointer group"
                 onClick={muxPlaybackId ? undefined : togglePlayPause}
               >
                 {muxPlaybackId ? (
@@ -354,12 +420,24 @@ export default function PostDetail() {
                   </div>
                 )}
                 {!isPlaying && !muxPlaybackId && videoSrc && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none">
                     <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center">
                       <Play className="w-8 h-8 text-black fill-black ml-1" />
                     </div>
                   </div>
                 )}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute bottom-3 right-3 bg-black/50 hover:bg-black/70 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFullscreen();
+                  }}
+                  data-testid="button-fullscreen"
+                >
+                  {isFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
+                </Button>
               </div>
             )}
 
@@ -431,6 +509,19 @@ export default function PostDetail() {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
+
+                {isAuthor && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowDeleteConfirm(true)}
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    data-testid="button-delete"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                    Delete
+                  </Button>
+                )}
               </div>
             </div>
           </CardContent>
@@ -469,6 +560,37 @@ export default function PostDetail() {
         onOpenChange={setShowCommentModal}
         post={post}
       />
+
+      <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this post?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your post and remove it from your profile.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting} data-testid="button-cancel-delete">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              data-testid="button-confirm-delete"
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </MainLayout>
   );
 }
