@@ -53,7 +53,8 @@ export async function generateImage(options: GenerateImageOptions): Promise<Gene
 
   const buffer = Buffer.from(base64, "base64");
   
-  const objectPath = await objectStorageService.uploadBufferWithReplitSDK(buffer, "image/png");
+  // Use uploadFromBuffer which stores in the correct path (.private/uploads/) with proper content-type
+  const objectPath = await objectStorageService.uploadFromBuffer(buffer, "image/png");
   
   return {
     url: objectPath

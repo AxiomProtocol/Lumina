@@ -647,6 +647,7 @@ export class ObjectStorageService {
 
   /**
    * Upload a buffer directly using Replit SDK (production-safe)
+   * Uses GCS client to set proper content-type metadata after upload
    */
   async uploadBufferWithReplitSDK(
     buffer: Buffer,
@@ -666,6 +667,23 @@ export class ObjectStorageService {
       }
       
       console.log(`[Replit SDK] Uploaded buffer to ${objectPath}: ${buffer.length} bytes`);
+      
+      // Set content-type metadata using GCS client so files are served correctly
+      try {
+        const privateObjectDir = this.getPrivateObjectDir();
+        if (privateObjectDir) {
+          const fullPath = `${privateObjectDir}/${objectPath}`;
+          const { bucketName, objectName } = parseObjectPath(fullPath);
+          const bucket = objectStorageClient.bucket(bucketName);
+          const file = bucket.file(objectName);
+          await file.setMetadata({ contentType });
+          console.log(`[Replit SDK] Set content-type metadata: ${contentType}`);
+        }
+      } catch (metadataError) {
+        console.warn(`[Replit SDK] Failed to set content-type metadata:`, metadataError);
+        // Continue anyway - the file is uploaded, just might have wrong content-type
+      }
+      
       return `/objects/uploads/${objectId}`;
     } catch (error) {
       console.error(`[Replit SDK] Buffer upload error, falling back to GCS:`, error);
