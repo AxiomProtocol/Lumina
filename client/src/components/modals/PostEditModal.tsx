@@ -27,6 +27,7 @@ export function PostEditModal({ open, onOpenChange, post }: PostEditModalProps) 
   const { toast } = useToast();
   const [content, setContent] = useState(post.content || "");
   const [additionalMedia, setAdditionalMedia] = useState<PostMediaItem[]>([]);
+  const [mediaSignedUrls, setMediaSignedUrls] = useState<Record<string, string>>({});
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -35,10 +36,54 @@ export function PostEditModal({ open, onOpenChange, post }: PostEditModalProps) 
     if (open) {
       setContent(post.content || "");
       setAdditionalMedia((post as any).additionalMedia || []);
+      setMediaSignedUrls({});
     }
   }, [open, post.content, (post as any).additionalMedia]);
 
-  const uploadImage = async (file: File): Promise<string> => {
+  // Fetch signed URLs for additional media preview
+  useEffect(() => {
+    const fetchSignedUrls = async () => {
+      if (additionalMedia.length === 0) return;
+
+      const urlMap: Record<string, string> = {};
+      
+      await Promise.all(
+        additionalMedia.map(async (media, index) => {
+          if (!media.url) return;
+          
+          const mediaKey = media.id || `index-${index}`;
+          let pathToFetch = media.url;
+          
+          // Handle legacy broken paths
+          if (media.url.includes("/.private/uploads/") && !media.url.startsWith("/objects/")) {
+            const parts = media.url.split("/");
+            const uuid = parts[parts.length - 1];
+            pathToFetch = `/objects/uploads/${uuid}`;
+          }
+          
+          if (pathToFetch.startsWith("/objects/")) {
+            try {
+              const response = await fetch(`/api/objects/signed-url?path=${encodeURIComponent(pathToFetch)}`);
+              if (response.ok) {
+                const data = await response.json();
+                urlMap[mediaKey] = data.signedUrl;
+              }
+            } catch (error) {
+              console.error("Failed to fetch signed URL:", error);
+            }
+          } else if (media.url.startsWith("http")) {
+            urlMap[mediaKey] = media.url;
+          }
+        })
+      );
+
+      setMediaSignedUrls(prev => ({ ...prev, ...urlMap }));
+    };
+
+    fetchSignedUrls();
+  }, [additionalMedia]);
+
+  const uploadImage = async (file: File): Promise<{ objectPath: string; signedUrl: string }> => {
     const uploadRes = await apiRequest("POST", "/api/objects/upload", {});
     const { uploadURL } = await uploadRes.json();
     
@@ -74,7 +119,13 @@ export function PostEditModal({ open, onOpenChange, post }: PostEditModalProps) 
     const urlParts = new URL(uploadURL);
     const pathParts = urlParts.pathname.split('/');
     const uuid = pathParts[pathParts.length - 1];
-    return `/objects/uploads/${uuid}`;
+    const objectPath = `/objects/uploads/${uuid}`;
+    
+    // Fetch signed URL for preview
+    const signedRes = await fetch(`/api/objects/signed-url?path=${encodeURIComponent(objectPath)}`);
+    const signedData = await signedRes.json();
+    
+    return { objectPath, signedUrl: signedData.signedUrl || uploadURL };
   };
 
   const handleAddMedia = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,15 +159,18 @@ export function PostEditModal({ open, onOpenChange, post }: PostEditModalProps) 
           continue;
         }
 
-        const url = await uploadImage(file);
+        const { objectPath, signedUrl } = await uploadImage(file);
         
+        const mediaId = crypto.randomUUID();
         const newMedia: PostMediaItem = {
-          id: crypto.randomUUID(),
+          id: mediaId,
           type: "image",
-          url: url,
+          url: objectPath,
         };
 
         setAdditionalMedia(prev => [...prev, newMedia]);
+        // Store signed URL for immediate preview
+        setMediaSignedUrls(prev => ({ ...prev, [mediaId]: signedUrl }));
       }
 
       toast({
@@ -223,46 +277,56 @@ export function PostEditModal({ open, onOpenChange, post }: PostEditModalProps) 
               
               {allMedia.length > 0 && (
                 <div className={`grid gap-2 ${allMedia.length === 1 ? 'grid-cols-1' : 'grid-cols-2 sm:grid-cols-3'}`}>
-                  {allMedia.map((media) => (
-                    <div key={media.id} className="relative group rounded-lg overflow-hidden border bg-muted aspect-square">
-                      {media.type === "video" ? (
-                        <div className="w-full h-full flex items-center justify-center bg-black">
-                          {(media as any).thumbnailUrl ? (
-                            <img
-                              src={(media as any).thumbnailUrl}
-                              alt="Video thumbnail"
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <Video className="h-8 w-8 text-white/60" />
-                          )}
-                          <div className="absolute top-2 left-2">
-                            <span className="bg-black/70 text-white text-xs px-2 py-1 rounded">
-                              Video
-                            </span>
+                  {allMedia.map((media, index) => {
+                    const mediaKey = media.id || `index-${index}`;
+                    const displayUrl = media.id === "primary" 
+                      ? media.url 
+                      : (mediaSignedUrls[mediaKey] || media.url);
+                    
+                    return (
+                      <div key={mediaKey} className="relative group rounded-lg overflow-hidden border bg-muted aspect-square">
+                        {media.type === "video" ? (
+                          <div className="w-full h-full flex items-center justify-center bg-black">
+                            {(media as any).thumbnailUrl ? (
+                              <img
+                                src={(media as any).thumbnailUrl}
+                                alt="Video thumbnail"
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <Video className="h-8 w-8 text-white/60" />
+                            )}
+                            <div className="absolute top-2 left-2">
+                              <span className="bg-black/70 text-white text-xs px-2 py-1 rounded">
+                                Video
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                      ) : (
-                        <img
-                          src={media.url}
-                          alt="Post media"
-                          className="w-full h-full object-cover"
-                        />
-                      )}
-                      {media.id !== "primary" && (
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="icon"
-                          className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => handleRemoveMedia(media.id)}
-                          data-testid={`button-remove-media-${media.id}`}
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      )}
-                    </div>
-                  ))}
+                        ) : (
+                          <img
+                            src={displayUrl}
+                            alt="Post media"
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = 'none';
+                            }}
+                          />
+                        )}
+                        {media.id !== "primary" && (
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => handleRemoveMedia(media.id)}
+                            data-testid={`button-remove-media-${media.id}`}
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               )}
 
