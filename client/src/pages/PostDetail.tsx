@@ -163,10 +163,19 @@ export default function PostDetail() {
         additionalMedia.map(async (media: any) => {
           if (!media.url) return;
           
+          let pathToFetch = media.url;
+          
+          // Handle legacy broken paths like /replit-objstore-.../...uploads/UUID
+          if (media.url.includes("/.private/uploads/") && !media.url.startsWith("/objects/")) {
+            const parts = media.url.split("/");
+            const uuid = parts[parts.length - 1];
+            pathToFetch = `/objects/uploads/${uuid}`;
+          }
+          
           // If it's an object storage path, fetch signed URL
-          if (media.url.startsWith("/objects/")) {
+          if (pathToFetch.startsWith("/objects/")) {
             try {
-              const response = await fetch(`/api/objects/signed-url?path=${encodeURIComponent(media.url)}`);
+              const response = await fetch(`/api/objects/signed-url?path=${encodeURIComponent(pathToFetch)}`);
               if (response.ok) {
                 const data = await response.json();
                 urlMap[media.id] = data.signedUrl;
