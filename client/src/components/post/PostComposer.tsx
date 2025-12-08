@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
-import { Image, Video, X, Loader2, Globe, Users, AlertTriangle, ShieldCheck, Shield, Upload } from "lucide-react";
+import { Image, Video, X, Loader2, Globe, Users, AlertTriangle, ShieldCheck, Shield, Upload, Cloud } from "lucide-react";
+import * as UpChunk from "@mux/upchunk";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -51,6 +52,11 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
   const [videoDuration, setVideoDuration] = useState<number>(0);
   const [selectedThumbnail, setSelectedThumbnail] = useState<string | null>(null);
   const [showThumbnailSelector, setShowThumbnailSelector] = useState(false);
+  
+  // Mux upload states
+  const [muxUploadId, setMuxUploadId] = useState<string | null>(null);
+  const [muxPlaybackId, setMuxPlaybackId] = useState<string | null>(null);
+  const [uploadStatus, setUploadStatus] = useState<string>("");
 
   const maxLength = 500;
   const charCount = content.length;
@@ -156,6 +162,10 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
     setVideoDuration(0);
     setSelectedThumbnail(null);
     setShowThumbnailSelector(false);
+    // Clear Mux states
+    setMuxUploadId(null);
+    setMuxPlaybackId(null);
+    setUploadStatus("");
     if (imageInputRef.current) imageInputRef.current.value = "";
     if (videoInputRef.current) videoInputRef.current.value = "";
   };
@@ -400,17 +410,101 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
     return objectPath;
   };
 
-  // Upload video to Object Storage (MP4 direct playback) - returns the video path
+  // Upload video directly to Mux (browser -> Mux, bypasses server)
+  // Returns HLS URL for playback + sets Mux thumbnail
+  const uploadVideoToMux = async (file: File): Promise<{ hlsUrl: string; mp4Url: string; thumbnailUrl: string }> => {
+    console.log("[Mux Upload] Starting direct upload to Mux, size:", file.size);
+    setUploadStatus("Initializing upload...");
+    
+    // Step 1: Get upload URL from our server
+    const createResponse = await apiRequest("POST", "/api/mux/upload");
+    const { uploadId, uploadUrl } = await createResponse.json();
+    setMuxUploadId(uploadId);
+    console.log("[Mux Upload] Got upload URL, uploadId:", uploadId);
+    
+    // Step 2: Upload directly to Mux using UpChunk (resumable uploads)
+    setUploadStatus("Uploading video...");
+    
+    await new Promise<void>((resolve, reject) => {
+      const upload = UpChunk.createUpload({
+        endpoint: uploadUrl,
+        file: file,
+        chunkSize: 30720, // 30MB chunks for faster upload
+      });
+      
+      upload.on("progress", (progress: { detail: number }) => {
+        const percent = Math.round(progress.detail);
+        setUploadProgress(Math.min(percent, 95)); // Cap at 95% until processing complete
+        console.log(`[Mux Upload] Progress: ${percent}%`);
+      });
+      
+      upload.on("success", () => {
+        console.log("[Mux Upload] Upload complete, waiting for processing...");
+        setUploadStatus("Processing video...");
+        resolve();
+      });
+      
+      upload.on("error", (error: { detail: string }) => {
+        console.error("[Mux Upload] Upload failed:", error.detail);
+        reject(new Error(error.detail || "Upload failed"));
+      });
+    });
+    
+    // Step 3: Poll for asset ready status
+    setUploadStatus("Generating playback URLs...");
+    let assetReady = false;
+    let attempts = 0;
+    const maxAttempts = 120; // 4 minutes max (2 second intervals)
+    let playbackData: { hlsUrl: string; mp4Url: string; thumbnailUrl: string } | null = null;
+    
+    while (!assetReady && attempts < maxAttempts) {
+      attempts++;
+      await new Promise(r => setTimeout(r, 2000)); // Wait 2 seconds
+      
+      try {
+        const statusResponse = await apiRequest("GET", `/api/mux/upload/${uploadId}/status`);
+        const status = await statusResponse.json();
+        console.log(`[Mux Upload] Status check ${attempts}:`, status.status, status.assetStatus);
+        
+        if (status.assetStatus === "ready" && status.playbackId) {
+          setMuxPlaybackId(status.playbackId);
+          playbackData = {
+            hlsUrl: status.hlsUrl,
+            mp4Url: status.mp4Url,
+            thumbnailUrl: status.thumbnailUrl,
+          };
+          assetReady = true;
+          console.log("[Mux Upload] Asset ready:", playbackData);
+        } else if (status.assetStatus === "errored") {
+          throw new Error("Video processing failed");
+        }
+        
+        // Update progress to show we're processing
+        setUploadProgress(95 + Math.min(attempts / 2, 4)); // 95-99%
+      } catch (error) {
+        console.error("[Mux Upload] Status check error:", error);
+        // Continue polling unless it's a fatal error
+      }
+    }
+    
+    if (!playbackData) {
+      throw new Error("Video processing timed out. Please try again.");
+    }
+    
+    setUploadProgress(100);
+    setUploadStatus("Complete!");
+    return playbackData;
+  };
+
+  // Fallback: Upload video to Object Storage (for when Mux is unavailable)
   const uploadVideoToStorage = async (file: File): Promise<string> => {
-    console.log("[Upload] Starting video upload, size:", file.size);
+    console.log("[Upload] Starting fallback video upload, size:", file.size);
     
     const LARGE_FILE_THRESHOLD = 50 * 1024 * 1024; // 50MB
     
     if (file.size > LARGE_FILE_THRESHOLD) {
-      // Use chunked upload for large files to avoid memory issues
       return await uploadChunked(file);
     } else {
-      // Use proxy upload for smaller files (simpler, still reliable)
       return await uploadViaProxy(file);
     }
   };
@@ -469,11 +563,39 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
       let mediaUrl: string | null = uploadedVideoPath;
       let thumbnailUrl = selectedThumbnail;
       
-      // Upload video if not already uploaded
+      // Upload video using Mux Direct Upload (browser -> Mux, bypasses server)
       if (mediaType === "video" && mediaFile && !mediaUrl) {
-        console.log("[Submit] Uploading video...");
-        mediaUrl = await uploadVideoToStorage(mediaFile);
-        setUploadedVideoPath(mediaUrl);
+        console.log("[Submit] Uploading video via Mux Direct Upload...");
+        try {
+          const muxResult = await uploadVideoToMux(mediaFile);
+          // Use MP4 URL for social media compatibility (Facebook OG tags)
+          mediaUrl = muxResult.mp4Url;
+          thumbnailUrl = muxResult.thumbnailUrl;
+          setUploadedVideoPath(mediaUrl);
+          setSelectedThumbnail(thumbnailUrl);
+          console.log("[Submit] Mux upload complete:", { mediaUrl, thumbnailUrl });
+        } catch (muxError: any) {
+          // Check if Mux is not configured - fall back to Object Storage
+          if (muxError.message?.includes("503") || muxError.message?.includes("not configured")) {
+            console.log("[Submit] Mux unavailable, falling back to Object Storage...");
+            mediaUrl = await uploadVideoToStorage(mediaFile);
+            setUploadedVideoPath(mediaUrl);
+            // Try auto-generating thumbnail for fallback
+            try {
+              const thumbResponse = await apiRequest("POST", "/api/video/auto-thumbnail", {
+                videoPath: mediaUrl,
+              });
+              const thumbData = await thumbResponse.json();
+              if (thumbData.thumbnailPath) {
+                thumbnailUrl = thumbData.thumbnailPath;
+              }
+            } catch {
+              console.error("Auto-thumbnail generation failed");
+            }
+          } else {
+            throw muxError;
+          }
+        }
       }
       
       // Upload images directly
@@ -482,27 +604,11 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
         mediaUrl = await uploadDirect(mediaFile);
       }
 
-      // Auto-generate thumbnail for videos if not already selected
-      if (mediaType === "video" && mediaUrl && !thumbnailUrl) {
-        try {
-          const thumbResponse = await apiRequest("POST", "/api/video/auto-thumbnail", {
-            videoPath: mediaUrl,
-          });
-          const thumbData = await thumbResponse.json();
-          if (thumbData.thumbnailPath) {
-            thumbnailUrl = thumbData.thumbnailPath;
-          }
-        } catch (error) {
-          console.error("Auto-thumbnail generation failed:", error);
-          // Continue without thumbnail if generation fails
-        }
-      }
-
       await apiRequest("POST", "/api/posts", {
         content: content.trim(),
         postType: mediaType || "text",
-        mediaUrl, // Direct MP4 URL from Object Storage
-        thumbnailUrl,
+        mediaUrl, // Mux MP4 URL or Object Storage path
+        thumbnailUrl, // Mux auto-generated thumbnail
         visibility,
         groupId: groupId || null,
         skipModeration: moderationWarning?.isViolation && 
@@ -587,8 +693,8 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
               <div className="mt-3 space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span className="flex items-center gap-2 text-muted-foreground">
-                    <Upload className="h-4 w-4 animate-pulse" />
-                    Uploading video...
+                    <Cloud className="h-4 w-4 animate-pulse" />
+                    {uploadStatus || "Uploading video..."}
                   </span>
                   <span className="text-primary font-medium">{uploadProgress}%</span>
                 </div>
