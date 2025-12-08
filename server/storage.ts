@@ -83,6 +83,20 @@ import {
   disputes,
   disputeEvidence,
   arbitrators,
+  guildApplications,
+  guildMembers,
+  guildPerks,
+  guildSyncs,
+  referralStats,
+  referralLeaderboard,
+  missions,
+  userMissionProgress,
+  userStreaks,
+  streakRewards,
+  communityEvents,
+  communityEventRsvps,
+  communityEventReminders,
+  rewardsLedger,
   arbitratorVotes,
   productProvenance,
   feedbackReports,
@@ -275,6 +289,21 @@ import {
   type BountyWithDetails,
   type FeedbackReport,
   type InsertFeedbackReport,
+  type GuildApplication,
+  type InsertGuildApplication,
+  type GuildMember,
+  type InsertGuildMember,
+  type Mission,
+  type UserMissionProgress,
+  type InsertUserMissionProgress,
+  type UserStreak,
+  type InsertUserStreak,
+  type CommunityEvent,
+  type CommunityEventRsvp,
+  type InsertCommunityEventRsvp,
+  type RewardsLedgerEntry,
+  type InsertRewardsLedger,
+  type ReferralStatsRecord,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, or, sql, inArray, ilike } from "drizzle-orm";
@@ -4422,6 +4451,342 @@ export class DatabaseStorage implements IStorage {
 
   async createFeedbackReport(report: InsertFeedbackReport): Promise<FeedbackReport> {
     const [created] = await db.insert(feedbackReports).values(report as any).returning();
+    return created;
+  }
+
+  // ============= GROWTH HUB: GUILD =============
+
+  async getGuildApplication(userId: string): Promise<GuildApplication | undefined> {
+    const [application] = await db.select()
+      .from(guildApplications)
+      .where(eq(guildApplications.userId, userId))
+      .orderBy(desc(guildApplications.createdAt))
+      .limit(1);
+    return application || undefined;
+  }
+
+  async createGuildApplication(application: InsertGuildApplication): Promise<GuildApplication> {
+    const [created] = await db.insert(guildApplications).values(application as any).returning();
+    return created;
+  }
+
+  async getGuildMember(userId: string): Promise<GuildMember | undefined> {
+    const [member] = await db.select()
+      .from(guildMembers)
+      .where(eq(guildMembers.userId, userId))
+      .limit(1);
+    return member || undefined;
+  }
+
+  async getGuildPerks(): Promise<GuildPerk[]> {
+    return await db.select()
+      .from(guildPerks)
+      .orderBy(guildPerks.tier);
+  }
+
+  async getGuildSyncs(): Promise<GuildSync[]> {
+    return await db.select()
+      .from(guildSyncs)
+      .where(sql`${guildSyncs.scheduledAt} > now()`)
+      .orderBy(guildSyncs.scheduledAt)
+      .limit(5);
+  }
+
+  // ============= GROWTH HUB: MISSIONS =============
+
+  async getMissions(userId: string): Promise<(Mission & { progress?: UserMissionProgress | null })[]> {
+    const allMissions = await db.select().from(missions).where(eq(missions.isActive, true));
+    const userProgress = await db.select()
+      .from(userMissionProgress)
+      .where(eq(userMissionProgress.userId, userId));
+    
+    const progressMap = new Map(userProgress.map(p => [p.missionId, p]));
+    
+    return allMissions.map(m => ({
+      ...m,
+      progress: progressMap.get(m.id) || null
+    }));
+  }
+
+  async getUserMissionProgress(userId: string, missionId: string): Promise<UserMissionProgress | undefined> {
+    const [progress] = await db.select()
+      .from(userMissionProgress)
+      .where(and(
+        eq(userMissionProgress.userId, userId),
+        eq(userMissionProgress.missionId, missionId)
+      ))
+      .limit(1);
+    return progress || undefined;
+  }
+
+  async createMissionProgress(progress: InsertUserMissionProgress): Promise<UserMissionProgress> {
+    const [created] = await db.insert(userMissionProgress).values(progress as any).returning();
+    return created;
+  }
+
+  async updateMissionProgress(id: string, updates: Partial<UserMissionProgress>): Promise<UserMissionProgress | undefined> {
+    const [updated] = await db.update(userMissionProgress).set(updates).where(eq(userMissionProgress.id, id)).returning();
+    return updated || undefined;
+  }
+
+  // ============= GROWTH HUB: STREAKS =============
+
+  async getUserStreak(userId: string): Promise<UserStreak | undefined> {
+    const [streak] = await db.select()
+      .from(userStreaks)
+      .where(eq(userStreaks.userId, userId))
+      .limit(1);
+    return streak || undefined;
+  }
+
+  async createUserStreak(streak: InsertUserStreak): Promise<UserStreak> {
+    const [created] = await db.insert(userStreaks).values(streak as any).returning();
+    return created;
+  }
+
+  async updateUserStreak(userId: string, updates: Partial<UserStreak>): Promise<UserStreak | undefined> {
+    const [updated] = await db.update(userStreaks).set(updates).where(eq(userStreaks.userId, userId)).returning();
+    return updated || undefined;
+  }
+
+  // ============= GROWTH HUB: EVENTS =============
+
+  async getCommunityEvents(): Promise<CommunityEvent[]> {
+    return db.select().from(communityEvents).orderBy(desc(communityEvents.scheduledStart));
+  }
+
+  async getCommunityEvent(eventId: string): Promise<CommunityEvent | undefined> {
+    const [event] = await db.select().from(communityEvents).where(eq(communityEvents.id, eventId)).limit(1);
+    return event || undefined;
+  }
+
+  async getEventRsvp(eventId: string, userId: string): Promise<CommunityEventRsvp | undefined> {
+    const [rsvp] = await db.select()
+      .from(communityEventRsvps)
+      .where(and(
+        eq(communityEventRsvps.eventId, eventId),
+        eq(communityEventRsvps.userId, userId)
+      ))
+      .limit(1);
+    return rsvp || undefined;
+  }
+
+  async createEventRsvp(rsvp: InsertCommunityEventRsvp): Promise<CommunityEventRsvp> {
+    const [created] = await db.insert(communityEventRsvps).values(rsvp as any).returning();
+    return created;
+  }
+
+  // ============= GROWTH HUB: REFERRALS =============
+
+  async getGrowthReferralStats(userId: string): Promise<ReferralStatsRecord | undefined> {
+    const [stats] = await db.select()
+      .from(referralStats)
+      .where(eq(referralStats.userId, userId))
+      .limit(1);
+    return stats || undefined;
+  }
+
+  async createGrowthReferralStats(userId: string, referralCode: string): Promise<ReferralStatsRecord> {
+    const [created] = await db.insert(referralStats)
+      .values({
+        userId,
+        referralCode
+      } as any)
+      .returning();
+    return created;
+  }
+
+  async getGrowthReferralLeaderboard(limit: number = 10): Promise<any[]> {
+    return db.select()
+      .from(referralLeaderboard)
+      .orderBy(desc(referralLeaderboard.rank))
+      .limit(limit);
+  }
+
+  // ============= GROWTH HUB: REWARDS =============
+
+  async getGrowthRewardsLedger(userId: string, limit: number = 50): Promise<RewardsLedgerEntry[]> {
+    return db.select()
+      .from(rewardsLedger)
+      .where(eq(rewardsLedger.userId, userId))
+      .orderBy(desc(rewardsLedger.createdAt))
+      .limit(limit);
+  }
+
+  async getGrowthRewardsTotals(userId: string): Promise<{ totalXp: number; totalAxm: string }> {
+    const [totals] = await db.select({
+      totalXp: sql<number>`COALESCE(SUM(${rewardsLedger.xpAmount}), 0)`,
+      totalAxm: sql<string>`COALESCE(SUM(${rewardsLedger.axmAmount}::numeric), 0)::text`
+    })
+      .from(rewardsLedger)
+      .where(eq(rewardsLedger.userId, userId));
+    return totals || { totalXp: 0, totalAxm: "0" };
+  }
+
+  async getCompletedMissionsCount(userId: string): Promise<number> {
+    const [result] = await db.select({ count: sql<number>`count(*)` })
+      .from(userMissionProgress)
+      .where(and(
+        eq(userMissionProgress.userId, userId),
+        eq(userMissionProgress.isCompleted, true)
+      ));
+    return Number(result?.count) || 0;
+  }
+
+  async getActiveMissionsCount(): Promise<number> {
+    const [result] = await db.select({ count: sql<number>`count(*)` })
+      .from(missions)
+      .where(eq(missions.isActive, true));
+    return Number(result?.count) || 0;
+  }
+
+  async getUserUpcomingRsvpsCount(userId: string): Promise<number> {
+    const [result] = await db.select({ count: sql<number>`count(*)` })
+      .from(communityEventRsvps)
+      .innerJoin(communityEvents, eq(communityEventRsvps.eventId, communityEvents.id))
+      .where(and(
+        eq(communityEventRsvps.userId, userId),
+        sql`${communityEvents.scheduledStart} > now()`
+      ));
+    return Number(result?.count) || 0;
+  }
+
+  async updateUserCheckin(userId: string, newStreak: number, longestStreak: number, xpReward: number): Promise<void> {
+    await db.update(users)
+      .set({
+        lastLoginAt: new Date(),
+        currentStreak: newStreak,
+        longestStreak,
+        xp: sql`${users.xp} + ${xpReward}`
+      })
+      .where(eq(users.id, userId));
+  }
+
+  async getMission(missionId: string): Promise<Mission | undefined> {
+    const [mission] = await db.select()
+      .from(missions)
+      .where(eq(missions.id, missionId))
+      .limit(1);
+    return mission || undefined;
+  }
+
+  async updateMissionProgressFull(
+    userId: string, 
+    missionId: string, 
+    increment: number
+  ): Promise<{ progress: UserMissionProgress; isNewlyComplete: boolean }> {
+    const [existing] = await db.select()
+      .from(userMissionProgress)
+      .where(and(
+        eq(userMissionProgress.userId, userId),
+        eq(userMissionProgress.missionId, missionId)
+      ))
+      .limit(1);
+    
+    const [mission] = await db.select()
+      .from(missions)
+      .where(eq(missions.id, missionId))
+      .limit(1);
+    
+    if (!mission) {
+      throw new Error("Mission not found");
+    }
+    
+    const newProgress = (existing?.currentValue || 0) + increment;
+    const isComplete = newProgress >= mission.targetValue;
+    const isNewlyComplete = isComplete && !existing?.completedAt;
+    
+    let result: UserMissionProgress;
+    
+    if (!existing) {
+      const [created] = await db.insert(userMissionProgress).values({
+        userId,
+        missionId,
+        currentValue: newProgress,
+        isCompleted: isComplete,
+        completedAt: isComplete ? new Date() : null
+      } as any).returning();
+      result = created;
+    } else {
+      const [updated] = await db.update(userMissionProgress)
+        .set({
+          currentValue: newProgress,
+          isCompleted: isComplete,
+          completedAt: isComplete && !existing.completedAt ? new Date() : existing.completedAt
+        })
+        .where(eq(userMissionProgress.id, existing.id))
+        .returning();
+      result = updated;
+    }
+    
+    return { progress: result, isNewlyComplete };
+  }
+
+  async awardUserXp(userId: string, xpAmount: number): Promise<void> {
+    await db.update(users)
+      .set({
+        xp: sql`${users.xp} + ${xpAmount}`
+      })
+      .where(eq(users.id, userId));
+  }
+
+  async deleteEventRsvp(rsvpId: string): Promise<void> {
+    await db.delete(communityEventRsvps)
+      .where(eq(communityEventRsvps.id, rsvpId));
+  }
+
+  async updateEventRsvpCount(eventId: string, increment: boolean): Promise<void> {
+    if (increment) {
+      await db.update(communityEvents)
+        .set({ attendeeCount: sql`${communityEvents.attendeeCount} + 1` })
+        .where(eq(communityEvents.id, eventId));
+    } else {
+      await db.update(communityEvents)
+        .set({ rsvpCount: sql`GREATEST(${communityEvents.rsvpCount} - 1, 0)` })
+        .where(eq(communityEvents.id, eventId));
+    }
+  }
+
+  async createEventReminder(eventId: string, userId: string, reminderTime: Date): Promise<void> {
+    await db.insert(communityEventReminders).values({
+      eventId,
+      userId,
+      reminderTime
+    } as any);
+  }
+
+  async getUserRsvps(userId: string): Promise<CommunityEventRsvp[]> {
+    return await db.select()
+      .from(communityEventRsvps)
+      .where(eq(communityEventRsvps.userId, userId));
+  }
+
+  async getReferralLeaderboard(limit: number = 10): Promise<any[]> {
+    return await db.select({
+      id: referralStats.id,
+      userId: referralStats.userId,
+      tier: referralStats.tier,
+      totalReferrals: referralStats.totalReferrals,
+      lifetimeEarnings: referralStats.lifetimeEarnings
+    })
+      .from(referralStats)
+      .orderBy(desc(referralStats.totalReferrals))
+      .limit(limit);
+  }
+
+  async getUserRsvpsWithEvents(userId: string): Promise<{ rsvp: CommunityEventRsvp; event: CommunityEvent }[]> {
+    return await db.select({
+      rsvp: communityEventRsvps,
+      event: communityEvents
+    })
+      .from(communityEventRsvps)
+      .innerJoin(communityEvents, eq(communityEventRsvps.eventId, communityEvents.id))
+      .where(eq(communityEventRsvps.userId, userId))
+      .orderBy(communityEvents.scheduledStart);
+  }
+
+  async createGrowthRewardEntry(entry: InsertRewardsLedger): Promise<RewardsLedgerEntry> {
+    const [created] = await db.insert(rewardsLedger).values(entry as any).returning();
     return created;
   }
 }

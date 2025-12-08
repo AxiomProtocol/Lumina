@@ -54,6 +54,7 @@ import Checkout from "@/pages/Checkout";
 import PostDetail from "@/pages/PostDetail";
 import Feedback from "@/pages/Feedback";
 import About from "@/pages/About";
+import GrowthHub from "@/pages/growth-hub";
 import { CartProvider } from "@/lib/cartContext";
 import { AffiliateProvider } from "@/lib/affiliateContext";
 
@@ -97,6 +98,7 @@ function Router() {
       <Route path="/messages/:id?" component={() => <ProtectedRoute component={Messages} />} />
       <Route path="/analytics" component={() => <ProtectedRoute component={Analytics} />} />
       <Route path="/rewards" component={() => <ProtectedRoute component={Rewards} />} />
+      <Route path="/growth" component={() => <ProtectedRoute component={GrowthHub} />} />
       <Route path="/live" component={Live} />
       <Route path="/live/:id" component={LiveStreamViewer} />
       <Route path="/nfts" component={NFTs} />

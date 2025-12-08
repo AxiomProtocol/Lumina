@@ -3918,3 +3918,482 @@ export const insertFeedbackReportSchema = createInsertSchema(feedbackReports).om
 
 export type InsertFeedbackReport = z.infer<typeof insertFeedbackReportSchema>;
 export type FeedbackReport = typeof feedbackReports.$inferSelect;
+
+// ============= PHASE 1 GROWTH: CREATOR GUILD =============
+
+export const guildApplicationStatusEnum = pgEnum("guild_application_status", ["pending", "approved", "rejected", "waitlisted"]);
+export const guildMemberTierEnum = pgEnum("guild_member_tier", ["founding", "pioneer", "creator", "rising"]);
+
+export const guildApplications = pgTable("guild_applications", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  status: guildApplicationStatusEnum("status").notNull().default("pending"),
+  creatorType: text("creator_type").notNull(), // content type they create
+  socialLinks: jsonb("social_links"), // twitter, youtube, etc.
+  followerCount: integer("follower_count").default(0),
+  whyJoin: text("why_join").notNull(),
+  portfolioUrls: text("portfolio_urls").array(),
+  reviewedBy: varchar("reviewed_by").references(() => users.id),
+  reviewNotes: text("review_notes"),
+  reviewedAt: timestamp("reviewed_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const guildMembers = pgTable("guild_members", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  tier: guildMemberTierEnum("tier").notNull().default("rising"),
+  vestingAmount: text("vesting_amount").default("0"), // total AXM allocated
+  vestedAmount: text("vested_amount").default("0"), // AXM already vested
+  claimedAmount: text("claimed_amount").default("0"), // AXM claimed
+  vestingStartDate: timestamp("vesting_start_date"),
+  vestingEndDate: timestamp("vesting_end_date"),
+  weeklyReward: text("weekly_reward").default("0"), // weekly AXM allocation
+  contributionScore: integer("contribution_score").default(0),
+  specialBadges: text("special_badges").array(),
+  isActive: boolean("is_active").default(true),
+  joinedAt: timestamp("joined_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const guildPerks = pgTable("guild_perks", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  iconName: text("icon_name"),
+  requiredTier: guildMemberTierEnum("required_tier").notNull().default("rising"),
+  perkType: text("perk_type").notNull(), // "boost", "access", "reward", "badge"
+  perkValue: jsonb("perk_value"), // specific perk data
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const guildSyncs = pgTable("guild_syncs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  description: text("description"),
+  scheduledFor: timestamp("scheduled_for").notNull(),
+  meetingUrl: text("meeting_url"),
+  hostId: varchar("host_id").references(() => users.id),
+  attendeeCount: integer("attendee_count").default(0),
+  recordingUrl: text("recording_url"),
+  notes: text("notes"),
+  status: text("status").default("scheduled"), // scheduled, live, completed, cancelled
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const guildSyncAttendees = pgTable("guild_sync_attendees", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  syncId: varchar("sync_id").notNull().references(() => guildSyncs.id, { onDelete: "cascade" }),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  rsvpStatus: text("rsvp_status").default("pending"), // pending, attending, declined
+  attendedAt: timestamp("attended_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// ============= PHASE 1 GROWTH: REFERRAL SYSTEM =============
+
+export const referralTierEnum = pgEnum("referral_tier", ["bronze", "silver", "gold", "platinum", "diamond"]);
+
+export const referralStats = pgTable("referral_stats", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  referralCode: text("referral_code").notNull().unique(),
+  tier: referralTierEnum("tier").notNull().default("bronze"),
+  totalReferrals: integer("total_referrals").default(0),
+  activeReferrals: integer("active_referrals").default(0), // referrals who are still active
+  totalEarnings: text("total_earnings").default("0"), // total AXM earned from referrals
+  pendingEarnings: text("pending_earnings").default("0"), // unclaimed AXM
+  revenueShareEarnings: text("revenue_share_earnings").default("0"), // from tip revenue share
+  lifetimeValue: text("lifetime_value").default("0"), // value generated by all referrals
+  lastReferralAt: timestamp("last_referral_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Note: referralEvents table already exists above, using the existing one
+
+export const referralMilestones = pgTable("referral_milestones", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  description: text("description"),
+  requiredReferrals: integer("required_referrals").notNull(),
+  rewardAmount: text("reward_amount").notNull(), // AXM reward
+  badgeName: text("badge_name"),
+  badgeIcon: text("badge_icon"),
+  tier: referralTierEnum("tier").notNull(),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const referralLeaderboard = pgTable("referral_leaderboard", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  period: text("period").notNull(), // "weekly", "monthly", "alltime"
+  periodStart: timestamp("period_start"),
+  periodEnd: timestamp("period_end"),
+  referralCount: integer("referral_count").default(0),
+  earnings: text("earnings").default("0"),
+  rank: integer("rank"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// ============= PHASE 1 GROWTH: ENHANCED QUEST/MISSION SYSTEM =============
+
+export const missionFrequencyEnum = pgEnum("mission_frequency", ["onboarding", "daily", "weekly", "special", "achievement"]);
+export const missionCategoryEnum = pgEnum("mission_category", ["social", "content", "web3", "community", "engagement"]);
+
+export const missions = pgTable("missions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  frequency: missionFrequencyEnum("frequency").notNull().default("daily"),
+  category: missionCategoryEnum("category").notNull().default("engagement"),
+  requirement: text("requirement").notNull(), // action required (e.g., "create_post", "follow_user")
+  targetValue: integer("target_value").notNull().default(1),
+  pointsReward: integer("points_reward").notNull().default(10),
+  xpReward: integer("xp_reward").notNull().default(5),
+  axmReward: text("axm_reward").default("0"),
+  badgeReward: text("badge_reward"), // badge name if mission unlocks a badge
+  iconName: text("icon_name"),
+  iconColor: text("icon_color"),
+  sortOrder: integer("sort_order").default(0),
+  isActive: boolean("is_active").default(true),
+  startsAt: timestamp("starts_at"),
+  endsAt: timestamp("ends_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const userMissionProgress = pgTable("user_mission_progress", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  missionId: varchar("mission_id").notNull().references(() => missions.id, { onDelete: "cascade" }),
+  currentValue: integer("current_value").default(0),
+  isCompleted: boolean("is_completed").default(false),
+  rewardClaimed: boolean("reward_claimed").default(false),
+  completedAt: timestamp("completed_at"),
+  claimedAt: timestamp("claimed_at"),
+  periodStart: timestamp("period_start"), // for daily/weekly tracking
+  periodEnd: timestamp("period_end"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const userStreaks = pgTable("user_streaks", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  currentStreak: integer("current_streak").default(0),
+  longestStreak: integer("longest_streak").default(0),
+  lastActivityDate: timestamp("last_activity_date"),
+  streakMultiplier: integer("streak_multiplier").default(100), // percentage bonus
+  freezesAvailable: integer("freezes_available").default(0), // streak freeze tokens
+  totalDaysActive: integer("total_days_active").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const streakRewards = pgTable("streak_rewards", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  dayNumber: integer("day_number").notNull().unique(),
+  pointsReward: integer("points_reward").notNull(),
+  xpReward: integer("xp_reward").notNull().default(0),
+  axmReward: text("axm_reward").default("0"),
+  bonusMultiplier: integer("bonus_multiplier").default(100),
+  specialReward: text("special_reward"), // badge or special item
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// ============= PHASE 1 GROWTH: EVENTS CALENDAR =============
+
+export const communityEventTypeEnum = pgEnum("community_event_type", ["ama", "trading_session", "creator_spotlight", "town_hall", "workshop", "launch", "community"]);
+export const communityEventStatusEnum = pgEnum("community_event_status", ["draft", "scheduled", "live", "completed", "cancelled"]);
+
+export const communityEvents = pgTable("community_events", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  eventType: communityEventTypeEnum("event_type").notNull().default("community"),
+  status: communityEventStatusEnum("status").notNull().default("scheduled"),
+  coverImageUrl: text("cover_image_url"),
+  hostId: varchar("host_id").notNull().references(() => users.id),
+  coHostIds: text("co_host_ids").array(),
+  scheduledStart: timestamp("scheduled_start").notNull(),
+  scheduledEnd: timestamp("scheduled_end"),
+  actualStart: timestamp("actual_start"),
+  actualEnd: timestamp("actual_end"),
+  timezone: text("timezone").default("UTC"),
+  location: text("location"), // "online", or physical location
+  meetingUrl: text("meeting_url"),
+  streamId: varchar("stream_id").references(() => liveStreams.id),
+  maxAttendees: integer("max_attendees"),
+  rsvpCount: integer("rsvp_count").default(0),
+  attendeeCount: integer("attendee_count").default(0),
+  pointsForAttending: integer("points_for_attending").default(50),
+  isRecurring: boolean("is_recurring").default(false),
+  recurringPattern: jsonb("recurring_pattern"), // weekly, biweekly, etc.
+  tags: text("tags").array(),
+  isPublic: boolean("is_public").default(true),
+  recordingUrl: text("recording_url"),
+  highlights: text("highlights"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const communityEventRsvps = pgTable("community_event_rsvps", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  eventId: varchar("event_id").notNull().references(() => communityEvents.id, { onDelete: "cascade" }),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  status: text("status").default("going"), // going, interested, not_going
+  notifyBefore: boolean("notify_before").default(true),
+  attendedAt: timestamp("attended_at"),
+  pointsEarned: integer("points_earned").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const communityEventReminders = pgTable("community_event_reminders", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  eventId: varchar("event_id").notNull().references(() => communityEvents.id, { onDelete: "cascade" }),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  reminderTime: timestamp("reminder_time").notNull(),
+  reminderType: text("reminder_type").default("push"), // push, email, both
+  sent: boolean("sent").default(false),
+  sentAt: timestamp("sent_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// ============= PHASE 1 GROWTH: REWARDS LEDGER =============
+
+export const rewardTypeEnum = pgEnum("reward_type", [
+  "daily_checkin", "mission_complete", "referral_bonus", "event_attendance",
+  "guild_reward", "streak_bonus", "achievement", "tip_received", "content_bonus"
+]);
+
+export const rewardsLedger = pgTable("rewards_ledger", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  rewardType: rewardTypeEnum("reward_type").notNull(),
+  axmAmount: text("axm_amount").default("0"),
+  xpAmount: integer("xp_amount").default(0),
+  pointsAmount: integer("points_amount").default(0),
+  sourceType: text("source_type"), // e.g., "mission", "referral", "event", "checkin"
+  sourceId: text("source_id"), // the ID of the mission, event, etc.
+  description: text("description"),
+  isClaimed: boolean("is_claimed").default(false),
+  claimedAt: timestamp("claimed_at"),
+  expiresAt: timestamp("expires_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const rewardsLedgerRelations = relations(rewardsLedger, ({ one }) => ({
+  user: one(users, { fields: [rewardsLedger.userId], references: [users.id] }),
+}));
+
+// ============= PHASE 1 GROWTH: RELATIONS =============
+
+export const guildApplicationsRelations = relations(guildApplications, ({ one }) => ({
+  user: one(users, { fields: [guildApplications.userId], references: [users.id] }),
+  reviewer: one(users, { fields: [guildApplications.reviewedBy], references: [users.id] }),
+}));
+
+export const guildMembersRelations = relations(guildMembers, ({ one }) => ({
+  user: one(users, { fields: [guildMembers.userId], references: [users.id] }),
+}));
+
+export const guildSyncsRelations = relations(guildSyncs, ({ one, many }) => ({
+  host: one(users, { fields: [guildSyncs.hostId], references: [users.id] }),
+  attendees: many(guildSyncAttendees),
+}));
+
+export const guildSyncAttendeesRelations = relations(guildSyncAttendees, ({ one }) => ({
+  sync: one(guildSyncs, { fields: [guildSyncAttendees.syncId], references: [guildSyncs.id] }),
+  user: one(users, { fields: [guildSyncAttendees.userId], references: [users.id] }),
+}));
+
+export const referralStatsRelations = relations(referralStats, ({ one }) => ({
+  user: one(users, { fields: [referralStats.userId], references: [users.id] }),
+}));
+
+// Note: referralEventsRelations already defined above
+
+export const missionsRelations = relations(missions, ({ many }) => ({
+  progress: many(userMissionProgress),
+}));
+
+export const userMissionProgressRelations = relations(userMissionProgress, ({ one }) => ({
+  user: one(users, { fields: [userMissionProgress.userId], references: [users.id] }),
+  mission: one(missions, { fields: [userMissionProgress.missionId], references: [missions.id] }),
+}));
+
+export const userStreaksRelations = relations(userStreaks, ({ one }) => ({
+  user: one(users, { fields: [userStreaks.userId], references: [users.id] }),
+}));
+
+export const communityEventsRelations = relations(communityEvents, ({ one, many }) => ({
+  host: one(users, { fields: [communityEvents.hostId], references: [users.id] }),
+  stream: one(liveStreams, { fields: [communityEvents.streamId], references: [liveStreams.id] }),
+  rsvps: many(communityEventRsvps),
+  reminders: many(communityEventReminders),
+}));
+
+export const communityEventRsvpsRelations = relations(communityEventRsvps, ({ one }) => ({
+  event: one(communityEvents, { fields: [communityEventRsvps.eventId], references: [communityEvents.id] }),
+  user: one(users, { fields: [communityEventRsvps.userId], references: [users.id] }),
+}));
+
+export const communityEventRemindersRelations = relations(communityEventReminders, ({ one }) => ({
+  event: one(communityEvents, { fields: [communityEventReminders.eventId], references: [communityEvents.id] }),
+  user: one(users, { fields: [communityEventReminders.userId], references: [users.id] }),
+}));
+
+// ============= PHASE 1 GROWTH: INSERT SCHEMAS =============
+
+export const insertGuildApplicationSchema = createInsertSchema(guildApplications).omit({
+  id: true,
+  status: true,
+  reviewedBy: true,
+  reviewNotes: true,
+  reviewedAt: true,
+  createdAt: true,
+});
+
+export const insertGuildMemberSchema = createInsertSchema(guildMembers).omit({
+  id: true,
+  vestedAmount: true,
+  claimedAmount: true,
+  joinedAt: true,
+  createdAt: true,
+});
+
+export const insertGuildPerkSchema = createInsertSchema(guildPerks).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertGuildSyncSchema = createInsertSchema(guildSyncs).omit({
+  id: true,
+  attendeeCount: true,
+  createdAt: true,
+});
+
+export const insertReferralStatsSchema = createInsertSchema(referralStats).omit({
+  id: true,
+  totalReferrals: true,
+  activeReferrals: true,
+  totalEarnings: true,
+  pendingEarnings: true,
+  revenueShareEarnings: true,
+  lifetimeValue: true,
+  lastReferralAt: true,
+  createdAt: true,
+});
+
+// Note: insertReferralEventSchema already exists above
+
+export const insertMissionSchema = createInsertSchema(missions).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertUserMissionProgressSchema = createInsertSchema(userMissionProgress).omit({
+  id: true,
+  isCompleted: true,
+  rewardClaimed: true,
+  completedAt: true,
+  claimedAt: true,
+  createdAt: true,
+});
+
+export const insertUserStreakSchema = createInsertSchema(userStreaks).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertCommunityEventSchema = createInsertSchema(communityEvents).omit({
+  id: true,
+  status: true,
+  actualStart: true,
+  actualEnd: true,
+  rsvpCount: true,
+  attendeeCount: true,
+  recordingUrl: true,
+  createdAt: true,
+});
+
+export const insertCommunityEventRsvpSchema = createInsertSchema(communityEventRsvps).omit({
+  id: true,
+  attendedAt: true,
+  pointsEarned: true,
+  createdAt: true,
+});
+
+export const insertCommunityEventReminderSchema = createInsertSchema(communityEventReminders).omit({
+  id: true,
+  sent: true,
+  sentAt: true,
+  createdAt: true,
+});
+
+export const insertRewardsLedgerSchema = createInsertSchema(rewardsLedger).omit({
+  id: true,
+  isClaimed: true,
+  claimedAt: true,
+  createdAt: true,
+});
+
+// ============= PHASE 1 GROWTH: TYPES =============
+
+export type InsertRewardsLedger = z.infer<typeof insertRewardsLedgerSchema>;
+export type RewardsLedgerEntry = typeof rewardsLedger.$inferSelect;
+
+export type InsertGuildApplication = z.infer<typeof insertGuildApplicationSchema>;
+export type GuildApplication = typeof guildApplications.$inferSelect;
+export type InsertGuildMember = z.infer<typeof insertGuildMemberSchema>;
+export type GuildMember = typeof guildMembers.$inferSelect;
+export type InsertGuildPerk = z.infer<typeof insertGuildPerkSchema>;
+export type GuildPerk = typeof guildPerks.$inferSelect;
+export type InsertGuildSync = z.infer<typeof insertGuildSyncSchema>;
+export type GuildSync = typeof guildSyncs.$inferSelect;
+export type InsertReferralStatsRecord = z.infer<typeof insertReferralStatsSchema>;
+export type ReferralStatsRecord = typeof referralStats.$inferSelect;
+// Note: InsertReferralEvent and ReferralEvent types already exist above
+export type InsertMission = z.infer<typeof insertMissionSchema>;
+export type Mission = typeof missions.$inferSelect;
+export type InsertUserMissionProgress = z.infer<typeof insertUserMissionProgressSchema>;
+export type UserMissionProgress = typeof userMissionProgress.$inferSelect;
+export type InsertUserStreak = z.infer<typeof insertUserStreakSchema>;
+export type UserStreak = typeof userStreaks.$inferSelect;
+export type InsertCommunityEvent = z.infer<typeof insertCommunityEventSchema>;
+export type CommunityEvent = typeof communityEvents.$inferSelect;
+export type InsertCommunityEventRsvp = z.infer<typeof insertCommunityEventRsvpSchema>;
+export type CommunityEventRsvp = typeof communityEventRsvps.$inferSelect;
+export type InsertCommunityEventReminder = z.infer<typeof insertCommunityEventReminderSchema>;
+export type CommunityEventReminder = typeof communityEventReminders.$inferSelect;
+
+// ============= PHASE 1 GROWTH: EXTENDED TYPES =============
+
+export interface GuildApplicationWithUser extends GuildApplication {
+  user: User;
+  reviewer?: User | null;
+}
+
+export interface GuildMemberWithUser extends GuildMember {
+  user: User;
+}
+
+export interface GuildSyncWithDetails extends GuildSync {
+  host?: User | null;
+  attendees: { user: User; rsvpStatus: string }[];
+}
+
+export interface ReferralStatsWithUser extends ReferralStatsRecord {
+  user: User;
+}
+
+// Note: ReferralEventWithUsers type already exists above as ReferralEventWithParties
+
+export interface MissionWithProgress extends Mission {
+  progress?: UserMissionProgress | null;
+}
+
+export interface CommunityEventWithHost extends CommunityEvent {
+  host: User;
+  rsvps?: CommunityEventRsvp[];
+  userRsvp?: CommunityEventRsvp | null;
+}

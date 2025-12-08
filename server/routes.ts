@@ -198,6 +198,19 @@ import {
   nftListings,
   posts,
   type User,
+  // Growth Hub tables
+  guildApplications,
+  guildMembers,
+  guildPerks,
+  guildSyncs,
+  referralStats,
+  missions,
+  userMissionProgress,
+  userStreaks,
+  communityEvents,
+  communityEventRsvps,
+  communityEventReminders,
+  rewardsLedger,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, or, sql } from "drizzle-orm";
@@ -8022,6 +8035,520 @@ export async function registerRoutes(app: Express): Promise<void> {
     } catch (error) {
       console.error("Submit feedback error:", error);
       res.status(500).json({ error: "Failed to submit feedback" });
+    }
+  });
+
+  // ============= GROWTH HUB - GUILD SYSTEM =============
+
+  // Get guild status for current user
+  app.get("/api/growth/guild/status", async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+      
+      const userId = (req.user as any).id;
+      
+      // Use storage layer for guild data
+      const application = await storage.getGuildApplication(userId);
+      const member = await storage.getGuildMember(userId);
+      
+      res.json({
+        isMember: !!member,
+        hasPendingApplication: application?.status === "pending",
+        member: member || null,
+        application: application || null
+      });
+    } catch (error) {
+      console.error("Get guild status error:", error);
+      res.status(500).json({ error: "Failed to get guild status" });
+    }
+  });
+
+  // Submit guild application
+  app.post("/api/growth/guild/apply", generalLimiter, async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+      
+      const userId = (req.user as any).id;
+      
+      // Validate request body with Zod
+      const guildApplySchema = z.object({
+        contentFocus: z.string().max(100).optional(),
+        socialLinks: z.record(z.string()).optional().default({}),
+        motivation: z.string().max(2000).optional(),
+        portfolio: z.string().max(500).optional().nullable(),
+        note: z.string().max(2000).optional(),
+        referredBy: z.string().max(500).optional().nullable()
+      }).refine(data => {
+        // Require at least one substantive field with actual content
+        const hasMotivation = data.motivation && data.motivation.trim().length >= 10;
+        const hasNote = data.note && data.note.trim().length >= 10;
+        const hasContentFocus = data.contentFocus && data.contentFocus.trim().length >= 2;
+        return hasMotivation || hasNote || hasContentFocus;
+      }, {
+        message: "Please provide application details (motivation, note, or content focus with at least 10 characters)"
+      });
+      
+      const parsed = guildApplySchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({ error: "Invalid request data", details: parsed.error.errors });
+      }
+      
+      const { contentFocus, socialLinks, motivation, portfolio, note, referredBy } = parsed.data;
+      
+      // Check for existing pending application using storage
+      const existing = await storage.getGuildApplication(userId);
+      
+      if (existing && existing.status === "pending") {
+        return res.status(400).json({ error: "You already have a pending application" });
+      }
+      
+      // Create application using storage layer
+      const application = await storage.createGuildApplication({
+        userId,
+        contentFocus: contentFocus || "general",
+        socialLinks: socialLinks || {},
+        motivation: motivation || note || "",
+        portfolio: portfolio || referredBy || null
+      });
+      
+      res.json({ success: true, application });
+    } catch (error) {
+      console.error("Submit guild application error:", error);
+      res.status(500).json({ error: "Failed to submit application" });
+    }
+  });
+
+  // Get guild perks
+  app.get("/api/growth/guild/perks", async (_req, res) => {
+    try {
+      // Use storage layer
+      const perks = await storage.getGuildPerks();
+      res.json(perks);
+    } catch (error) {
+      console.error("Get guild perks error:", error);
+      res.status(500).json({ error: "Failed to get guild perks" });
+    }
+  });
+
+  // Get upcoming guild syncs
+  app.get("/api/growth/guild/syncs", async (_req, res) => {
+    try {
+      // Use storage layer
+      const upcomingSyncs = await storage.getGuildSyncs();
+      res.json(upcomingSyncs);
+    } catch (error) {
+      console.error("Get guild syncs error:", error);
+      res.status(500).json({ error: "Failed to get guild syncs" });
+    }
+  });
+
+  // ============= GROWTH HUB - REFERRAL SYSTEM =============
+
+  // Get referral stats for current user
+  app.get("/api/growth/referrals/stats", async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+      
+      const userId = (req.user as any).id;
+      
+      // Use storage layer to get referral stats
+      let stats = await storage.getGrowthReferralStats(userId);
+      
+      if (!stats) {
+        // Create new referral stats for user using storage layer
+        const username = (req.user as any).username || "USER";
+        const referralCode = `LUM${username.slice(0, 4).toUpperCase()}${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+        stats = await storage.createGrowthReferralStats(userId, referralCode);
+      }
+      
+      res.json(stats);
+    } catch (error) {
+      console.error("Get referral stats error:", error);
+      res.status(500).json({ error: "Failed to get referral stats" });
+    }
+  });
+
+  // Get referral leaderboard
+  app.get("/api/growth/referrals/leaderboard", async (_req, res) => {
+    try {
+      // Use storage layer
+      const leaderboard = await storage.getReferralLeaderboard(10);
+      
+      const enriched = await Promise.all(
+        leaderboard.map(async (entry) => {
+          const user = await storage.getUser(entry.userId);
+          return {
+            ...entry,
+            username: user?.username || "Anonymous"
+          };
+        })
+      );
+      
+      res.json(enriched);
+    } catch (error) {
+      console.error("Get referral leaderboard error:", error);
+      res.status(500).json({ error: "Failed to get leaderboard" });
+    }
+  });
+
+  // ============= GROWTH HUB - MISSIONS/QUESTS SYSTEM =============
+
+  // Get all active missions for user
+  app.get("/api/growth/missions", async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+      
+      const userId = (req.user as any).id;
+      
+      // Use storage layer to get missions with progress
+      const missionsWithProgress = await storage.getMissions(userId);
+      
+      // Transform to match frontend expected format
+      const formattedMissions = missionsWithProgress.map(mission => ({
+        ...mission,
+        progress: mission.progress ? {
+          currentProgress: mission.progress.currentValue || 0,
+          isCompleted: mission.progress.isCompleted
+        } : null
+      }));
+      
+      res.json({ missions: formattedMissions });
+    } catch (error) {
+      console.error("Get missions error:", error);
+      res.status(500).json({ error: "Failed to get missions" });
+    }
+  });
+
+  // Update mission progress
+  app.post("/api/growth/missions/:missionId/progress", async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+      
+      const userId = (req.user as any).id;
+      const missionId = req.params.missionId;
+      
+      // Validate request body with Zod
+      const progressSchema = z.object({
+        increment: z.number().int().min(1).max(100).optional().default(1)
+      });
+      
+      const parsed = progressSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({ error: "Invalid request data", details: parsed.error.errors });
+      }
+      
+      const { increment } = parsed.data;
+      
+      // Use storage layer
+      const mission = await storage.getMission(missionId);
+      if (!mission) {
+        return res.status(404).json({ error: "Mission not found" });
+      }
+      
+      const { progress, isNewlyComplete } = await storage.updateMissionProgressFull(userId, missionId, increment);
+      
+      // Award XP and AXM if newly completed
+      if (isNewlyComplete) {
+        await storage.awardUserXp(userId, mission.xpReward);
+        
+        await storage.createGrowthRewardEntry({
+          userId,
+          rewardType: "mission_complete",
+          axmAmount: mission.axmReward || "0",
+          xpAmount: mission.xpReward,
+          sourceType: "mission",
+          sourceId: missionId,
+          description: `Completed mission: ${mission.title}`
+        });
+      }
+      
+      res.json({ 
+        success: true, 
+        progress: progress.currentValue, 
+        isComplete: progress.isCompleted,
+        xpAwarded: isNewlyComplete ? mission.xpReward : 0,
+        axmAwarded: isNewlyComplete ? mission.axmReward || "0" : "0"
+      });
+    } catch (error) {
+      console.error("Update mission progress error:", error);
+      res.status(500).json({ error: "Failed to update progress" });
+    }
+  });
+
+  // Get streak info
+  app.get("/api/growth/streak", async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+      
+      const userId = (req.user as any).id;
+      const user = req.user as any;
+      
+      // Try to get streak from storage first
+      const streakData = await storage.getUserStreak(userId);
+      
+      const now = new Date();
+      let currentStreak = streakData?.currentStreak || user.currentStreak || 0;
+      const longestStreak = streakData?.longestStreak || user.longestStreak || 0;
+      const lastCheckin = streakData?.lastCheckinAt || user.lastLoginAt;
+      
+      if (lastCheckin) {
+        const hoursSinceCheckin = (now.getTime() - new Date(lastCheckin).getTime()) / (1000 * 60 * 60);
+        if (hoursSinceCheckin > 48) {
+          currentStreak = 0;
+        }
+      }
+      
+      res.json({
+        currentStreak,
+        longestStreak,
+        lastCheckinAt: lastCheckin,
+        streakBonus: Math.min(currentStreak * 5, 50)
+      });
+    } catch (error) {
+      console.error("Get streak error:", error);
+      res.status(500).json({ error: "Failed to get streak" });
+    }
+  });
+
+  // Daily check-in
+  app.post("/api/growth/checkin", async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+      
+      const userId = (req.user as any).id;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      const now = new Date();
+      const today = now.toDateString();
+      const lastLogin = user.lastLoginAt ? new Date(user.lastLoginAt) : null;
+      const lastLoginDate = lastLogin ? lastLogin.toDateString() : null;
+      
+      if (lastLoginDate === today) {
+        return res.json({ 
+          success: false, 
+          message: "Already checked in today",
+          currentStreak: user.currentStreak || 0
+        });
+      }
+      
+      let newStreak = 1;
+      if (lastLogin) {
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayDate = yesterday.toDateString();
+        
+        if (lastLoginDate === yesterdayDate) {
+          newStreak = (user.currentStreak || 0) + 1;
+        }
+      }
+      
+      const longestStreak = Math.max(newStreak, user.longestStreak || 0);
+      const xpReward = 10 + Math.min(newStreak * 2, 20);
+      
+      // Use storage layer
+      await storage.updateUserCheckin(userId, newStreak, longestStreak, xpReward);
+      
+      await storage.createGrowthRewardEntry({
+        userId,
+        rewardType: "daily_checkin",
+        axmAmount: "5",
+        xpAmount: xpReward,
+        sourceType: "checkin",
+        sourceId: now.toISOString(),
+        description: `Day ${newStreak} check-in streak`
+      });
+      
+      res.json({
+        success: true,
+        currentStreak: newStreak,
+        longestStreak,
+        xpAwarded: xpReward,
+        axmAwarded: "5"
+      });
+    } catch (error) {
+      console.error("Daily check-in error:", error);
+      res.status(500).json({ error: "Failed to check in" });
+    }
+  });
+
+  // ============= GROWTH HUB - COMMUNITY EVENTS =============
+
+  // Get upcoming events
+  app.get("/api/growth/events", async (_req, res) => {
+    try {
+      // Use storage layer to get events
+      const allEvents = await storage.getCommunityEvents();
+      
+      // Filter to upcoming events
+      const now = new Date();
+      const upcomingEvents = allEvents.filter(e => 
+        new Date(e.scheduledStart) > now || e.status === "live" || e.status === "scheduled"
+      );
+      
+      res.json({ events: upcomingEvents });
+    } catch (error) {
+      console.error("Get events error:", error);
+      res.status(500).json({ error: "Failed to get events" });
+    }
+  });
+
+  // RSVP to event
+  app.post("/api/growth/events/:eventId/rsvp", async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+      
+      const userId = (req.user as any).id;
+      const eventId = req.params.eventId;
+      
+      // Validate request body with Zod
+      const rsvpSchema = z.object({
+        setReminder: z.boolean().optional().default(false)
+      });
+      
+      const parsed = rsvpSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({ error: "Invalid request data", details: parsed.error.errors });
+      }
+      
+      const { setReminder } = parsed.data;
+      
+      // Use storage to get event
+      const event = await storage.getCommunityEvent(eventId);
+      
+      if (!event) {
+        return res.status(404).json({ error: "Event not found" });
+      }
+      
+      // Use storage to check existing RSVP
+      const existing = await storage.getEventRsvp(eventId, userId);
+      
+      if (existing) {
+        // Use storage to delete RSVP
+        await storage.deleteEventRsvp(existing.id);
+        await storage.updateEventRsvpCount(eventId, false);
+        
+        return res.json({ success: true, rsvped: false });
+      }
+      
+      // Use storage to create RSVP
+      await storage.createEventRsvp({
+        eventId,
+        userId
+      });
+      
+      await storage.updateEventRsvpCount(eventId, true);
+      
+      if (setReminder) {
+        const reminderTime = new Date(event.scheduledStart);
+        reminderTime.setMinutes(reminderTime.getMinutes() - 15);
+        await storage.createEventReminder(eventId, userId, reminderTime);
+      }
+      
+      res.json({ success: true, rsvped: true });
+    } catch (error) {
+      console.error("RSVP error:", error);
+      res.status(500).json({ error: "Failed to RSVP" });
+    }
+  });
+
+  // Get user's RSVPs
+  app.get("/api/growth/events/my-rsvps", async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+      
+      const userId = (req.user as any).id;
+      
+      // Use storage layer
+      const rsvps = await storage.getUserRsvpsWithEvents(userId);
+      
+      res.json(rsvps);
+    } catch (error) {
+      console.error("Get my RSVPs error:", error);
+      res.status(500).json({ error: "Failed to get RSVPs" });
+    }
+  });
+
+  // ============= GROWTH HUB - REWARDS LEDGER =============
+
+  // Get rewards history
+  app.get("/api/growth/rewards", async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+      
+      const userId = (req.user as any).id;
+      const limit = parseInt(req.query.limit as string) || 50;
+      
+      // Use storage layer
+      const rewards = await storage.getGrowthRewardsLedger(userId, limit);
+      const totals = await storage.getGrowthRewardsTotals(userId);
+      
+      res.json({
+        rewards,
+        totals
+      });
+    } catch (error) {
+      console.error("Get rewards error:", error);
+      res.status(500).json({ error: "Failed to get rewards" });
+    }
+  });
+
+  // Get growth summary
+  app.get("/api/growth/summary", async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+      
+      const user = req.user as any;
+      const userId = user.id;
+      
+      // Use storage layer for all queries
+      const refStats = await storage.getGrowthReferralStats(userId);
+      const membership = await storage.getGuildMember(userId);
+      const activeMissionsCount = await storage.getActiveMissionsCount();
+      const completedMissionsCount = await storage.getCompletedMissionsCount(userId);
+      const upcomingRsvpsCount = await storage.getUserUpcomingRsvpsCount(userId);
+      
+      res.json({
+        xp: user.xp || 0,
+        level: user.level || 1,
+        currentStreak: user.currentStreak || 0,
+        longestStreak: user.longestStreak || 0,
+        referrals: refStats?.totalReferrals || 0,
+        referralTier: refStats?.tier || "bronze",
+        isGuildMember: !!membership,
+        guildTier: membership?.tier || null,
+        activeMissions: activeMissionsCount,
+        completedMissions: completedMissionsCount,
+        upcomingEvents: upcomingRsvpsCount
+      });
+    } catch (error) {
+      console.error("Get growth summary error:", error);
+      res.status(500).json({ error: "Failed to get summary" });
     }
   });
 }
