@@ -378,8 +378,8 @@ export class ObjectStorageService {
       throw new Error("PRIVATE_OBJECT_DIR not set");
     }
     
-    const objectId = randomUUID();
-    const finalPath = `${privateObjectDir}/uploads/${objectId}`;
+    // Use the uploadId as the final object ID so the path matches what clients expect
+    const finalPath = `${privateObjectDir}/uploads/${uploadId}`;
     const { bucketName, objectName: finalObjectName } = parseObjectPath(finalPath);
     
     const bucket = objectStorageClient.bucket(bucketName);
@@ -436,7 +436,7 @@ export class ObjectStorageService {
     const [metadata] = await destFile.getMetadata();
     console.log(`[GCS Compose] Complete: ${metadata.size} bytes`);
     
-    return `/objects/uploads/${objectId}`;
+    return `/objects/uploads/${uploadId}`;
   }
 
   // Check if a chunk exists in GCS
