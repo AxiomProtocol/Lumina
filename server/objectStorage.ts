@@ -1,6 +1,8 @@
 import { Storage, File as GCSFile } from "@google-cloud/storage";
+import { Client as ReplitStorageClient } from "@replit/object-storage";
 import { Request, Response } from "express";
 import { randomUUID } from "crypto";
+import { Readable } from "stream";
 import {
   ObjectAclPolicy,
   ObjectPermission,
@@ -11,6 +13,24 @@ import {
 
 const REPLIT_SIDECAR_ENDPOINT = "http://127.0.0.1:1106";
 
+// Use Replit's official SDK for uploads - handles auth automatically in dev AND production
+let replitClient: ReplitStorageClient | null = null;
+export function getReplitStorageClient(): ReplitStorageClient {
+  if (!replitClient) {
+    // Get bucket ID from environment - required for Replit SDK to work
+    const bucketId = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
+    if (bucketId) {
+      console.log(`[Replit SDK] Initializing with bucket: ${bucketId.substring(0, 20)}...`);
+      replitClient = new ReplitStorageClient({ bucketId });
+    } else {
+      console.log(`[Replit SDK] No bucket ID found, using default bucket`);
+      replitClient = new ReplitStorageClient();
+    }
+  }
+  return replitClient;
+}
+
+// Legacy GCS client for downloads with range request support
 export const objectStorageClient = new Storage({
   credentials: {
     audience: "replit",
@@ -586,6 +606,139 @@ export class ObjectStorageService {
       objectFile,
       requestedPermission: requestedPermission ?? ObjectPermission.READ,
     });
+  }
+
+  // ============================================================
+  // PRODUCTION-READY UPLOAD METHODS (using official Replit SDK)
+  // These methods handle authentication automatically in both
+  // development AND production deployments.
+  // ============================================================
+
+  /**
+   * Upload a chunk using Replit SDK (production-safe)
+   * Falls back to GCS client if Replit SDK fails
+   */
+  async uploadChunkWithReplitSDK(
+    uploadId: string,
+    chunkIndex: number,
+    chunkData: Buffer,
+    contentType: string
+  ): Promise<{ size: number }> {
+    const chunkPath = `temp-chunks/${uploadId}/chunk_${chunkIndex.toString().padStart(6, '0')}`;
+    
+    try {
+      const client = getReplitStorageClient();
+      const result = await client.uploadFromBytes(chunkPath, chunkData, {
+        compress: false, // Don't compress video chunks
+      });
+      
+      if (!result.ok) {
+        throw new Error(`Replit SDK upload failed: ${result.error?.message || 'Unknown error'}`);
+      }
+      
+      console.log(`[Replit SDK] Uploaded chunk ${chunkIndex} for ${uploadId}: ${chunkData.length} bytes`);
+      return { size: chunkData.length };
+    } catch (error) {
+      console.error(`[Replit SDK] Chunk upload error, falling back to GCS:`, error);
+      // Fallback to GCS client
+      return this.uploadChunkToGCS(uploadId, chunkIndex, chunkData, contentType);
+    }
+  }
+
+  /**
+   * Upload a buffer directly using Replit SDK (production-safe)
+   */
+  async uploadBufferWithReplitSDK(
+    buffer: Buffer,
+    contentType: string
+  ): Promise<string> {
+    const objectId = randomUUID();
+    const objectPath = `uploads/${objectId}`;
+    
+    try {
+      const client = getReplitStorageClient();
+      const result = await client.uploadFromBytes(objectPath, buffer, {
+        compress: false,
+      });
+      
+      if (!result.ok) {
+        throw new Error(`Replit SDK upload failed: ${result.error?.message || 'Unknown error'}`);
+      }
+      
+      console.log(`[Replit SDK] Uploaded buffer to ${objectPath}: ${buffer.length} bytes`);
+      return `/objects/uploads/${objectId}`;
+    } catch (error) {
+      console.error(`[Replit SDK] Buffer upload error, falling back to GCS:`, error);
+      // Fallback to legacy GCS method
+      return this.uploadFromBuffer(buffer, contentType);
+    }
+  }
+
+  /**
+   * Upload a stream using Replit SDK (production-safe for large files)
+   */
+  async uploadStreamWithReplitSDK(
+    inputStream: NodeJS.ReadableStream,
+    contentType: string
+  ): Promise<string> {
+    const objectId = randomUUID();
+    const objectPath = `uploads/${objectId}`;
+    
+    try {
+      const client = getReplitStorageClient();
+      await client.uploadFromStream(objectPath, inputStream as Readable, {
+        compress: false,
+      });
+      
+      console.log(`[Replit SDK] Uploaded stream to ${objectPath}`);
+      return `/objects/uploads/${objectId}`;
+    } catch (error) {
+      console.error(`[Replit SDK] Stream upload error:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Upload from local file using Replit SDK (production-safe)
+   */
+  async uploadFileWithReplitSDK(
+    localFilePath: string,
+    contentType: string
+  ): Promise<string> {
+    const objectId = randomUUID();
+    const objectPath = `uploads/${objectId}`;
+    
+    try {
+      const client = getReplitStorageClient();
+      const result = await client.uploadFromFilename(objectPath, localFilePath, {
+        compress: false,
+      });
+      
+      if (!result.ok) {
+        throw new Error(`Replit SDK file upload failed: ${result.error?.message || 'Unknown error'}`);
+      }
+      
+      console.log(`[Replit SDK] Uploaded file ${localFilePath} to ${objectPath}`);
+      return `/objects/uploads/${objectId}`;
+    } catch (error) {
+      console.error(`[Replit SDK] File upload error:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Check if Replit SDK is working (for health checks)
+   */
+  async testReplitSDKConnection(): Promise<boolean> {
+    try {
+      const client = getReplitStorageClient();
+      // Try to list objects to verify connection
+      const result = await client.list({ maxResults: 1 });
+      return result.ok;
+    } catch (error) {
+      console.error(`[Replit SDK] Connection test failed:`, error);
+      return false;
+    }
   }
 }
 

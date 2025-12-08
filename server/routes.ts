@@ -315,6 +315,34 @@ export async function registerRoutes(app: Express): Promise<void> {
     setCsrfCookie(res, token);
     res.json({ csrfToken: token });
   });
+
+  // Storage health check endpoint - verifies Replit SDK connection works in production
+  app.get("/api/storage/health", async (req, res) => {
+    try {
+      const replitSDKWorks = await objectStorageService.testReplitSDKConnection();
+      const privateDir = process.env.PRIVATE_OBJECT_DIR;
+      const publicPaths = process.env.PUBLIC_OBJECT_SEARCH_PATHS;
+      const bucketId = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
+      
+      res.json({
+        status: replitSDKWorks ? "healthy" : "degraded",
+        replitSDK: replitSDKWorks ? "connected" : "error",
+        environment: {
+          hasBucketId: !!bucketId,
+          hasPrivateDir: !!privateDir,
+          hasPublicPaths: !!publicPaths,
+          nodeEnv: process.env.NODE_ENV,
+        },
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        status: "error",
+        error: error.message,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  });
   
   // Apply rate limiting to auth routes
   app.post("/api/auth/signup", authLimiter, async (req, res) => {
@@ -1360,8 +1388,8 @@ export async function registerRoutes(app: Express): Promise<void> {
       const chunkIdx = parseInt(chunkIndex);
       const chunkContentType = upload?.contentType || contentType || 'application/octet-stream';
       
-      // Upload chunk directly to GCS
-      await objectStorageService.uploadChunkToGCS(
+      // Upload chunk using Replit SDK (production-safe) with fallback to GCS
+      await objectStorageService.uploadChunkWithReplitSDK(
         uploadId,
         chunkIdx,
         req.file.buffer,
@@ -1463,8 +1491,8 @@ export async function registerRoutes(app: Express): Promise<void> {
       
       console.log(`Proxy upload: ${req.file.originalname}, size: ${buffer.length} bytes, type: ${contentType}`);
       
-      // Upload to GCS using server-side resumable upload
-      const objectPath = await objectStorageService.uploadFromBuffer(buffer, contentType);
+      // Upload using Replit SDK (production-safe) with fallback to GCS
+      const objectPath = await objectStorageService.uploadBufferWithReplitSDK(buffer, contentType);
       
       // Set ACL to public
       await objectStorageService.trySetObjectEntityAclPolicy(objectPath, {
