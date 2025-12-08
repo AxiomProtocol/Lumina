@@ -15,6 +15,7 @@ const navItems = [
   { href: "/search", label: "Discover", icon: Search },
   { href: "/messages", label: "Messages", icon: MessageCircle },
   { href: "/groups", label: "Groups", icon: Users },
+  { href: "/growth", label: "Growth Hub", icon: Rocket },
   { href: "/advocacy", label: "Advocacy", icon: Megaphone },
   { href: "/volunteers", label: "Volunteer", icon: Hand },
   { href: "/action-center", label: "Action Center", icon: ClipboardList },
@@ -26,7 +27,6 @@ const navItems = [
   { href: "/academy", label: "The Forge", icon: GraduationCap },
   { href: "/exchange", label: "Exchange", icon: ArrowDownUp },
   { href: "/nodes", label: "DePIN Nodes", icon: Server },
-  { href: "/growth", label: "Growth Hub", icon: Rocket },
   { href: "/referrals", label: "Referrals", icon: Gift },
   { href: "/guidelines", label: "Guidelines", icon: Shield },
 ];
