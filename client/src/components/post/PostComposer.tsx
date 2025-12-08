@@ -20,6 +20,7 @@ import { useAuth } from "@/lib/authContext";
 import { apiRequest, queryClient, getCsrfToken } from "@/lib/queryClient";
 import { cn } from "@/lib/utils";
 import { VideoThumbnailSelector } from "./VideoThumbnailSelector";
+import { MuxThumbnailSelector } from "./MuxThumbnailSelector";
 
 interface PostComposerProps {
   onSuccess?: () => void;
@@ -56,6 +57,9 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
   // Mux upload states
   const [muxUploadId, setMuxUploadId] = useState<string | null>(null);
   const [muxPlaybackId, setMuxPlaybackId] = useState<string | null>(null);
+  const [muxHlsUrl, setMuxHlsUrl] = useState<string | null>(null);
+  const [muxDefaultThumbnail, setMuxDefaultThumbnail] = useState<string | null>(null);
+  const [showMuxThumbnailSelector, setShowMuxThumbnailSelector] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<string>("");
 
   const maxLength = 500;
@@ -165,6 +169,9 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
     // Clear Mux states
     setMuxUploadId(null);
     setMuxPlaybackId(null);
+    setMuxHlsUrl(null);
+    setMuxDefaultThumbnail(null);
+    setShowMuxThumbnailSelector(false);
     setUploadStatus("");
     if (imageInputRef.current) imageInputRef.current.value = "";
     if (videoInputRef.current) videoInputRef.current.value = "";
@@ -509,6 +516,61 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
     }
   };
 
+  const handleMuxThumbnailSelect = (thumbnailUrl: string) => {
+    setSelectedThumbnail(thumbnailUrl);
+    setShowMuxThumbnailSelector(false);
+    // Submit with the selected thumbnail directly to avoid state race condition
+    handleSubmitAfterThumbnail(thumbnailUrl);
+  };
+
+  const handleSkipMuxThumbnail = () => {
+    // Use default thumbnail
+    const defaultThumb = muxDefaultThumbnail || "";
+    setSelectedThumbnail(defaultThumb);
+    setShowMuxThumbnailSelector(false);
+    handleSubmitAfterThumbnail(defaultThumb);
+  };
+
+  const handleSubmitAfterThumbnail = async (thumbnailUrl: string) => {
+    // This is called after thumbnail selection to complete the post submission
+    setIsSubmitting(true);
+    try {
+      await apiRequest("POST", "/api/posts", {
+        content: content.trim(),
+        postType: "video",
+        mediaUrl: uploadedVideoPath,
+        hlsUrl: muxHlsUrl,
+        thumbnailUrl: thumbnailUrl,
+        visibility,
+        groupId: groupId || null,
+        skipModeration: moderationWarning?.isViolation && 
+          (moderationWarning.severity === "low" || moderationWarning.severity === "medium"),
+      });
+
+      setContent("");
+      clearMedia();
+      setModerationWarning(null);
+
+      toast({
+        title: "Video posted!",
+        description: "Your video has been shared successfully.",
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/feed"] });
+      onSuccess?.();
+    } catch (error: any) {
+      console.error("Post submit error:", error);
+      toast({
+        title: "Failed to post",
+        description: error.message || "Please try again",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleThumbnailSelect = (thumbnailPath: string) => {
     setSelectedThumbnail(thumbnailPath);
     setShowThumbnailSelector(false);
@@ -564,41 +626,46 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
       let thumbnailUrl = selectedThumbnail;
       
       // Upload video using Mux Direct Upload (browser -> Mux, bypasses server)
-      let hlsUrl: string | null = null;
+      let hlsUrl: string | null = muxHlsUrl;
       
-      if (mediaType === "video" && mediaFile && !mediaUrl) {
+      if (mediaType === "video" && mediaFile && !muxPlaybackId) {
         console.log("[Submit] Uploading video via Mux Direct Upload...");
         try {
           const muxResult = await uploadVideoToMux(mediaFile);
           // MP4 for social sharing (Facebook OG tags), HLS for in-app playback
           mediaUrl = muxResult.mp4Url;
           hlsUrl = muxResult.hlsUrl;
-          thumbnailUrl = muxResult.thumbnailUrl;
           setUploadedVideoPath(mediaUrl);
-          setSelectedThumbnail(thumbnailUrl);
-          console.log("[Submit] Mux upload complete:", { mediaUrl, hlsUrl, thumbnailUrl });
+          setMuxHlsUrl(hlsUrl);
+          setMuxDefaultThumbnail(muxResult.thumbnailUrl);
+          console.log("[Submit] Mux upload complete:", { mediaUrl, hlsUrl, thumbnailUrl: muxResult.thumbnailUrl });
+          
+          // Show thumbnail selector for user to choose
+          setIsUploading(false);
+          setShowMuxThumbnailSelector(true);
+          setIsSubmitting(false);
+          return; // Wait for user to select thumbnail
         } catch (muxError: any) {
           // Check if Mux is not configured - fall back to Object Storage
           if (muxError.message?.includes("503") || muxError.message?.includes("not configured")) {
             console.log("[Submit] Mux unavailable, falling back to Object Storage...");
             mediaUrl = await uploadVideoToStorage(mediaFile);
             setUploadedVideoPath(mediaUrl);
-            // Try auto-generating thumbnail for fallback
-            try {
-              const thumbResponse = await apiRequest("POST", "/api/video/auto-thumbnail", {
-                videoPath: mediaUrl,
-              });
-              const thumbData = await thumbResponse.json();
-              if (thumbData.thumbnailPath) {
-                thumbnailUrl = thumbData.thumbnailPath;
-              }
-            } catch {
-              console.error("Auto-thumbnail generation failed");
-            }
+            // Show old thumbnail selector for fallback
+            setIsUploading(false);
+            setShowThumbnailSelector(true);
+            setIsSubmitting(false);
+            return;
           } else {
             throw muxError;
           }
         }
+      }
+      
+      // Use stored values if already uploaded and thumbnail selected
+      if (muxPlaybackId && muxHlsUrl) {
+        mediaUrl = uploadedVideoPath;
+        hlsUrl = muxHlsUrl;
       }
       
       // Upload images directly
@@ -770,13 +837,25 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
               </div>
             )}
 
-            {/* Video Thumbnail Selector */}
+            {/* Video Thumbnail Selector (fallback for non-Mux uploads) */}
             {showThumbnailSelector && uploadedVideoPath && (
               <VideoThumbnailSelector
                 videoPath={uploadedVideoPath}
                 videoDuration={videoDuration}
                 onThumbnailSelect={handleThumbnailSelect}
                 onSkip={handleSkipThumbnail}
+                className="mt-3"
+              />
+            )}
+
+            {/* Mux Thumbnail Selector (for Mux uploads) */}
+            {showMuxThumbnailSelector && muxPlaybackId && muxDefaultThumbnail && (
+              <MuxThumbnailSelector
+                muxPlaybackId={muxPlaybackId}
+                videoDuration={videoDuration}
+                defaultThumbnailUrl={muxDefaultThumbnail}
+                onThumbnailSelect={handleMuxThumbnailSelect}
+                onSkip={handleSkipMuxThumbnail}
                 className="mt-3"
               />
             )}
