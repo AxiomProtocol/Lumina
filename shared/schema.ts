@@ -343,6 +343,13 @@ export const insertPostSchema = createInsertSchema(posts).omit({
   createdAt: true,
 });
 
+export const updatePostSchema = z.object({
+  content: z.string().optional(),
+  visibility: z.enum(["public", "followers", "private"]).optional(),
+});
+
+export type UpdatePost = z.infer<typeof updatePostSchema>;
+
 export const insertCommentSchema = createInsertSchema(comments).omit({
   id: true,
   likeCount: true,
