@@ -8041,12 +8041,8 @@ export async function registerRoutes(app: Express): Promise<void> {
   // ============= GROWTH HUB - GUILD SYSTEM =============
 
   // Get guild status for current user
-  app.get("/api/growth/guild/status", async (req, res) => {
+  app.get("/api/growth/guild/status", requireAuth, async (req, res) => {
     try {
-      if (!req.isAuthenticated() || !req.user) {
-        return res.status(401).json({ error: "Not authenticated" });
-      }
-      
       const userId = (req.user as any).id;
       
       // Use storage layer for guild data
@@ -8066,12 +8062,8 @@ export async function registerRoutes(app: Express): Promise<void> {
   });
 
   // Submit guild application
-  app.post("/api/growth/guild/apply", generalLimiter, async (req, res) => {
+  app.post("/api/growth/guild/apply", requireAuth, generalLimiter, async (req, res) => {
     try {
-      if (!req.isAuthenticated() || !req.user) {
-        return res.status(401).json({ error: "Not authenticated" });
-      }
-      
       const userId = (req.user as any).id;
       
       // Validate request body with Zod
@@ -8149,12 +8141,8 @@ export async function registerRoutes(app: Express): Promise<void> {
   // ============= GROWTH HUB - REFERRAL SYSTEM =============
 
   // Get referral stats for current user
-  app.get("/api/growth/referrals/stats", async (req, res) => {
+  app.get("/api/growth/referrals/stats", requireAuth, async (req, res) => {
     try {
-      if (!req.isAuthenticated() || !req.user) {
-        return res.status(401).json({ error: "Not authenticated" });
-      }
-      
       const userId = (req.user as any).id;
       
       // Use storage layer to get referral stats
@@ -8200,12 +8188,8 @@ export async function registerRoutes(app: Express): Promise<void> {
   // ============= GROWTH HUB - MISSIONS/QUESTS SYSTEM =============
 
   // Get all active missions for user
-  app.get("/api/growth/missions", async (req, res) => {
+  app.get("/api/growth/missions", requireAuth, async (req, res) => {
     try {
-      if (!req.isAuthenticated() || !req.user) {
-        return res.status(401).json({ error: "Not authenticated" });
-      }
-      
       const userId = (req.user as any).id;
       
       // Use storage layer to get missions with progress
@@ -8228,12 +8212,8 @@ export async function registerRoutes(app: Express): Promise<void> {
   });
 
   // Update mission progress
-  app.post("/api/growth/missions/:missionId/progress", async (req, res) => {
+  app.post("/api/growth/missions/:missionId/progress", requireAuth, async (req, res) => {
     try {
-      if (!req.isAuthenticated() || !req.user) {
-        return res.status(401).json({ error: "Not authenticated" });
-      }
-      
       const userId = (req.user as any).id;
       const missionId = req.params.missionId;
       
@@ -8286,12 +8266,8 @@ export async function registerRoutes(app: Express): Promise<void> {
   });
 
   // Get streak info
-  app.get("/api/growth/streak", async (req, res) => {
+  app.get("/api/growth/streak", requireAuth, async (req, res) => {
     try {
-      if (!req.isAuthenticated() || !req.user) {
-        return res.status(401).json({ error: "Not authenticated" });
-      }
-      
       const userId = (req.user as any).id;
       const user = req.user as any;
       
@@ -8323,12 +8299,8 @@ export async function registerRoutes(app: Express): Promise<void> {
   });
 
   // Daily check-in
-  app.post("/api/growth/checkin", async (req, res) => {
+  app.post("/api/growth/checkin", requireAuth, async (req, res) => {
     try {
-      if (!req.isAuthenticated() || !req.user) {
-        return res.status(401).json({ error: "Not authenticated" });
-      }
-      
       const userId = (req.user as any).id;
       const user = await storage.getUser(userId);
       
@@ -8411,12 +8383,8 @@ export async function registerRoutes(app: Express): Promise<void> {
   });
 
   // RSVP to event
-  app.post("/api/growth/events/:eventId/rsvp", async (req, res) => {
+  app.post("/api/growth/events/:eventId/rsvp", requireAuth, async (req, res) => {
     try {
-      if (!req.isAuthenticated() || !req.user) {
-        return res.status(401).json({ error: "Not authenticated" });
-      }
-      
       const userId = (req.user as any).id;
       const eventId = req.params.eventId;
       
@@ -8472,12 +8440,8 @@ export async function registerRoutes(app: Express): Promise<void> {
   });
 
   // Get user's RSVPs
-  app.get("/api/growth/events/my-rsvps", async (req, res) => {
+  app.get("/api/growth/events/my-rsvps", requireAuth, async (req, res) => {
     try {
-      if (!req.isAuthenticated() || !req.user) {
-        return res.status(401).json({ error: "Not authenticated" });
-      }
-      
       const userId = (req.user as any).id;
       
       // Use storage layer
@@ -8493,12 +8457,8 @@ export async function registerRoutes(app: Express): Promise<void> {
   // ============= GROWTH HUB - REWARDS LEDGER =============
 
   // Get rewards history
-  app.get("/api/growth/rewards", async (req, res) => {
+  app.get("/api/growth/rewards", requireAuth, async (req, res) => {
     try {
-      if (!req.isAuthenticated() || !req.user) {
-        return res.status(401).json({ error: "Not authenticated" });
-      }
-      
       const userId = (req.user as any).id;
       const limit = parseInt(req.query.limit as string) || 50;
       
@@ -8517,12 +8477,8 @@ export async function registerRoutes(app: Express): Promise<void> {
   });
 
   // Get growth summary
-  app.get("/api/growth/summary", async (req, res) => {
+  app.get("/api/growth/summary", requireAuth, async (req, res) => {
     try {
-      if (!req.isAuthenticated() || !req.user) {
-        return res.status(401).json({ error: "Not authenticated" });
-      }
-      
       const user = req.user as any;
       const userId = user.id;
       
