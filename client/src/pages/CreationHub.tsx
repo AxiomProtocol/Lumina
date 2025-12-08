@@ -27,8 +27,10 @@ import {
   LayoutTemplate,
   History,
   X,
-  Download
+  Download,
+  ArrowLeft
 } from "lucide-react";
+import { Link } from "wouter";
 import type { PromptTemplate, GenerationJob, UserBrandProfile } from "@shared/schema";
 
 interface GenerationJobWithDetails extends GenerationJob {
@@ -65,6 +67,12 @@ export default function CreationHub() {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
+          <Link href="/feed">
+            <Button variant="ghost" size="sm" className="mb-4 gap-2" data-testid="button-back">
+              <ArrowLeft className="w-4 h-4" />
+              Back to Feed
+            </Button>
+          </Link>
           <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
             <Sparkles className="w-8 h-8 text-primary" />
             Creation Hub
