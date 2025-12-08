@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Home, Play, Users, User, Settings, TrendingUp, Coins, Search, MessageCircle, BarChart3, Trophy, Radio, ImageIcon, Vote, Lock, Award, Megaphone, Hand, ClipboardList, Phone, Shield, Building2, Gift, GraduationCap, ArrowDownUp, Server, Store, Rocket } from "lucide-react";
+import { Home, Play, Users, User, Settings, TrendingUp, Coins, Search, MessageCircle, BarChart3, Trophy, Radio, ImageIcon, Vote, Lock, Award, Megaphone, Hand, ClipboardList, Phone, Shield, Building2, Gift, GraduationCap, ArrowDownUp, Server, Store, Rocket, Sparkles } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,6 +16,7 @@ const navItems = [
   { href: "/messages", label: "Messages", icon: MessageCircle },
   { href: "/groups", label: "Groups", icon: Users },
   { href: "/growth", label: "Growth Hub", icon: Rocket },
+  { href: "/creation-hub", label: "Creation Hub", icon: Sparkles },
   { href: "/advocacy", label: "Advocacy", icon: Megaphone },
   { href: "/volunteers", label: "Volunteer", icon: Hand },
   { href: "/action-center", label: "Action Center", icon: ClipboardList },
