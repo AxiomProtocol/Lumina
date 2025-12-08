@@ -91,19 +91,25 @@ function generateOgHtml(post: PostWithAuthor, req: Request): string {
   const mediaUrl = rawMediaUrl ? escapeUrl(rawMediaUrl) : null;
   const authorAvatar = rawAuthorAvatar ? escapeUrl(rawAuthorAvatar) : null;
   
-  // For Mux videos, extract playback ID and generate MP4 URL for Facebook compatibility
-  // HLS URL format: https://stream.mux.com/{playbackId}.m3u8
-  // MP4 URL format: https://stream.mux.com/{playbackId}/highest.mp4
-  let mp4Url: string | null = null;
+  // Determine the best video URL for social media sharing
+  // Priority: 1) Mux MP4, 2) Object Storage MP4, 3) HLS stream
+  let videoStreamUrl: string | null = null;
+  let videoType = 'video/mp4';
+  
   if (rawHlsUrl && rawHlsUrl.includes('stream.mux.com')) {
+    // For Mux videos, extract playback ID and generate MP4 URL for Facebook compatibility
     const muxMatch = rawHlsUrl.match(/stream\.mux\.com\/([^/.]+)/);
     if (muxMatch && muxMatch[1]) {
-      mp4Url = escapeUrl(`https://stream.mux.com/${muxMatch[1]}/highest.mp4`);
+      videoStreamUrl = escapeUrl(`https://stream.mux.com/${muxMatch[1]}/highest.mp4`);
+    } else {
+      videoStreamUrl = escapeUrl(rawHlsUrl);
+      videoType = 'application/x-mpegURL';
     }
+  } else if (rawMediaUrl) {
+    // Direct MP4 from Object Storage - works great for Facebook sharing
+    videoStreamUrl = mediaUrl;
+    videoType = 'video/mp4';
   }
-  
-  // For OG video, prefer MP4 (Facebook compatible) over HLS
-  const videoStreamUrl = mp4Url || (rawHlsUrl ? escapeUrl(rawHlsUrl) : mediaUrl);
   
   const isVideo = post.postType === 'video';
   const ogType = isVideo ? 'video.other' : 'article';
@@ -124,9 +130,6 @@ function generateOgHtml(post: PostWithAuthor, req: Request): string {
     imageUrl = defaultOgImage;
   }
   
-  // Use MP4 type for Facebook compatibility (MP4 is preferred), HLS as fallback
-  const videoType = mp4Url ? 'video/mp4' : (rawHlsUrl ? 'application/x-mpegURL' : 'video/mp4');
-  
   let videoTags = '';
   if (isVideo && videoStreamUrl) {
     videoTags = `
@@ -138,7 +141,9 @@ function generateOgHtml(post: PostWithAuthor, req: Request): string {
     <meta name="twitter:card" content="player" />
     <meta name="twitter:player" content="${postUrl}" />
     <meta name="twitter:player:width" content="1280" />
-    <meta name="twitter:player:height" content="720" />`;
+    <meta name="twitter:player:height" content="720" />
+    <meta property="twitter:player:stream" content="${videoStreamUrl}" />
+    <meta property="twitter:player:stream:content_type" content="${videoType}" />`;
   } else {
     videoTags = `
     <meta name="twitter:card" content="summary_large_image" />`;
