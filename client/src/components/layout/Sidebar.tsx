@@ -26,7 +26,7 @@ const navItems = [
   { href: "/academy", label: "The Forge", icon: GraduationCap },
   { href: "/exchange", label: "Exchange", icon: ArrowDownUp },
   { href: "/nodes", label: "DePIN Nodes", icon: Server },
-  { href: "/growth-hub", label: "Growth Hub", icon: Rocket },
+  { href: "/growth", label: "Growth Hub", icon: Rocket },
   { href: "/referrals", label: "Referrals", icon: Gift },
   { href: "/guidelines", label: "Guidelines", icon: Shield },
 ];
