@@ -1,6 +1,6 @@
 import { useParams, useLocation, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Loader2, Heart, MessageCircle, Share2, Coins, Play, Copy, Check, Twitter, Facebook, Maximize, Minimize, Trash2 } from "lucide-react";
+import { ArrowLeft, Loader2, Heart, MessageCircle, Share2, Coins, Play, Copy, Check, Twitter, Facebook, Maximize, Minimize, Trash2, Edit2 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import MuxPlayer from "@mux/mux-player-react";
 import Hls from "hls.js";
@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { TipModal } from "@/components/modals/TipModal";
 import { CommentModal } from "@/components/modals/CommentModal";
+import { PostEditModal } from "@/components/modals/PostEditModal";
 import { useAuth } from "@/lib/authContext";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -66,6 +67,7 @@ export default function PostDetail() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const muxPlayerRef = useRef<any>(null);
   const videoContainerRef = useRef<HTMLDivElement>(null);
@@ -511,16 +513,28 @@ export default function PostDetail() {
                 </DropdownMenu>
 
                 {isAuthor && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowDeleteConfirm(true)}
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                    data-testid="button-delete"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                    Delete
-                  </Button>
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowEditModal(true)}
+                      className="text-primary"
+                      data-testid="button-edit"
+                    >
+                      <Edit2 className="w-5 h-5" />
+                      Edit
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowDeleteConfirm(true)}
+                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                      data-testid="button-delete"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                      Delete
+                    </Button>
+                  </>
                 )}
               </div>
             </div>
@@ -558,6 +572,12 @@ export default function PostDetail() {
       <CommentModal
         open={showCommentModal}
         onOpenChange={setShowCommentModal}
+        post={post}
+      />
+
+      <PostEditModal
+        open={showEditModal}
+        onOpenChange={setShowEditModal}
         post={post}
       />
 
