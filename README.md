@@ -1,21 +1,31 @@
-# Lumina
+Lumina
 
-<div align="center">
+The Web3 Social Platform Where Creators Own Their Content
 
-![Lumina Banner](https://img.shields.io/badge/Web3-Social%20Platform-emerald?style=for-the-badge&logo=ethereum)
-[![Arbitrum](https://img.shields.io/badge/Arbitrum-One-blue?style=for-the-badge&logo=arbitrum)](https://arbitrum.io)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react)](https://reactjs.org/)
-
-**The Web3 Social Platform Where Creators Own Their Content**
-
-[Live Demo](https://joinlumina.io) · [Documentation](#documentation) · [Smart Contracts](https://github.com/AxiomProtocol/AXIOM)
-
-</div>
+Live Demo: https://joinlumina.io
+Smart Contracts: https://github.com/AxiomProtocol/AXIOM
 
 ---
 
-## Overview
+License Notice
+
+Lumina is proprietary source available software.
+
+Viewing and educational use are permitted.
+
+Commercial use, production deployment, resale, rebranding, and hosted offering are prohibited without written authorization.
+
+This repository previously used an MIT license in earlier history, but this license notice and the LICENSE file govern all new contributions and releases from the commit that introduces this change.
+
+---
+
+Commercial Licensing
+
+For commercial licensing permissions, contact: info@axiomprotocol.app
+
+---
+
+Overview
 
 Lumina is a decentralized social media platform built on Arbitrum One, combining the best features of Facebook and TikTok with Web3 monetization. Creators earn AXM tokens for engagement, receive tips directly to their wallets, and truly own their content and audience.
 
@@ -198,9 +208,9 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ---
 
-## License
+License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Lumina Proprietary Source Available License. See the LICENSE file for details.
 
 ---
 

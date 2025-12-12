@@ -1,280 +1,39 @@
-# Contributing to Lumina
+CONTRIBUTING TO LUMINA
 
-Thank you for your interest in contributing to Lumina! We welcome contributions from the community and are grateful for any help you can provide.
+Thank you for your interest in contributing to Lumina.
 
-## Table of Contents
+CONTRIBUTOR LICENSE AGREEMENT
 
-- [Code of Conduct](#code-of-conduct)
-- [Getting Started](#getting-started)
-- [Development Process](#development-process)
-- [Pull Request Process](#pull-request-process)
-- [Coding Standards](#coding-standards)
-- [Reporting Bugs](#reporting-bugs)
-- [Feature Requests](#feature-requests)
+Contributions are accepted only if the contributor agrees to the Contributor License Agreement (CLA) in this repository. Please read CLA.md before submitting any contributions.
 
----
+CONTRIBUTOR REQUIREMENTS
 
-## Code of Conduct
+By submitting a contribution, you confirm the following:
 
-By participating in this project, you agree to abide by our Code of Conduct:
+(a) The contribution is your original work, or you have sufficient rights to contribute the work.
 
-- **Be Respectful**: Treat everyone with respect and kindness
-- **Be Inclusive**: Welcome newcomers and help them get started
-- **Be Constructive**: Provide helpful feedback and suggestions
-- **Be Professional**: Keep discussions focused and productive
+(b) You have not copied proprietary code, restricted content, or any material that you do not have the right to contribute.
 
----
+(c) You agree to the terms of the CLA in this repository.
 
-## Getting Started
+HOW TO CONTRIBUTE
 
-### Prerequisites
+1. Review the LICENSE and CLA.md files in this repository.
 
-- Node.js 18 or higher
-- PostgreSQL database
-- Git
-- A code editor (VS Code recommended)
+2. Open an issue to discuss your proposed change before starting work.
 
-### Setting Up Your Development Environment
+3. Fork the repository and create a branch for your changes.
 
-1. **Fork the repository**
-   
-   Click the "Fork" button on the GitHub repository page.
+4. Make your changes with clear, descriptive commit messages.
 
-2. **Clone your fork**
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/Lumina.git
-   cd Lumina
-   ```
+5. Submit a pull request referencing the related issue.
 
-3. **Add upstream remote**
-   ```bash
-   git remote add upstream https://github.com/AxiomProtocol/Lumina.git
-   ```
+6. Wait for review and respond to any feedback.
 
-4. **Install dependencies**
-   ```bash
-   npm install
-   ```
+ACCEPTANCE OF CONTRIBUTIONS
 
-5. **Set up environment variables**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your local configuration
-   ```
+The project owner reserves the right to reject any contribution for any reason. Acceptance of a contribution is at the sole discretion of the project owner.
 
-6. **Set up the database**
-   ```bash
-   npm run db:push
-   ```
+QUESTIONS
 
-7. **Start the development server**
-   ```bash
-   npm run dev
-   ```
-
----
-
-## Development Process
-
-### Branching Strategy
-
-- `main` - Production-ready code
-- `develop` - Integration branch for features
-- `feature/*` - New features
-- `fix/*` - Bug fixes
-- `hotfix/*` - Urgent production fixes
-
-### Creating a Feature Branch
-
-```bash
-# Sync with upstream
-git fetch upstream
-git checkout main
-git merge upstream/main
-
-# Create feature branch
-git checkout -b feature/your-feature-name
-```
-
-### Keeping Your Branch Updated
-
-```bash
-git fetch upstream
-git rebase upstream/main
-```
-
----
-
-## Pull Request Process
-
-1. **Ensure your code follows our standards** (see Coding Standards below)
-
-2. **Write meaningful commit messages**
-   ```
-   feat: add user profile page
-   fix: resolve wallet connection issue
-   docs: update API documentation
-   refactor: simplify authentication flow
-   ```
-
-3. **Update documentation** if you've changed APIs or added features
-
-4. **Test your changes** thoroughly before submitting
-
-5. **Create the Pull Request**
-   - Use a clear, descriptive title
-   - Reference any related issues
-   - Provide a detailed description of changes
-   - Include screenshots for UI changes
-
-6. **Respond to feedback** from reviewers promptly
-
-### PR Checklist
-
-- [ ] Code follows project coding standards
-- [ ] All tests pass
-- [ ] Documentation updated (if applicable)
-- [ ] No console.log statements left in code
-- [ ] No hardcoded secrets or API keys
-- [ ] Responsive design tested (if UI changes)
-- [ ] Web3 functionality tested with wallet
-
----
-
-## Coding Standards
-
-### TypeScript
-
-- Use TypeScript for all new code
-- Define types explicitly, avoid `any`
-- Use interfaces for object shapes
-- Use enums for fixed sets of values
-
-```typescript
-// Good
-interface User {
-  id: string;
-  username: string;
-  walletAddress?: string;
-}
-
-// Avoid
-const user: any = { ... };
-```
-
-### React Components
-
-- Use functional components with hooks
-- Keep components small and focused
-- Use descriptive prop names
-- Add `data-testid` attributes for interactive elements
-
-```typescript
-// Good
-export function UserProfile({ user, onEdit }: UserProfileProps) {
-  return (
-    <Card>
-      <h2 data-testid="text-username">{user.username}</h2>
-      <Button onClick={onEdit} data-testid="button-edit-profile">
-        Edit Profile
-      </Button>
-    </Card>
-  );
-}
-```
-
-### Styling
-
-- Use Tailwind CSS utility classes
-- Follow the design system in `design_guidelines.md`
-- Use shadcn/ui components when available
-- Support dark mode with appropriate variants
-
-### File Organization
-
-- One component per file (unless tightly coupled)
-- Group related files in directories
-- Use index files for clean exports
-- Keep files under 300 lines when possible
-
-### Naming Conventions
-
-- **Files**: `kebab-case.tsx` or `PascalCase.tsx` for components
-- **Components**: `PascalCase`
-- **Functions**: `camelCase`
-- **Constants**: `UPPER_SNAKE_CASE`
-- **Types/Interfaces**: `PascalCase`
-
----
-
-## Reporting Bugs
-
-### Before Submitting
-
-- Check existing issues to avoid duplicates
-- Try to reproduce the bug consistently
-- Gather relevant information (browser, OS, wallet)
-
-### Bug Report Template
-
-```markdown
-**Description**
-A clear description of the bug.
-
-**Steps to Reproduce**
-1. Go to '...'
-2. Click on '...'
-3. See error
-
-**Expected Behavior**
-What you expected to happen.
-
-**Actual Behavior**
-What actually happened.
-
-**Screenshots**
-If applicable, add screenshots.
-
-**Environment**
-- Browser: [e.g., Chrome 120]
-- OS: [e.g., macOS 14]
-- Wallet: [e.g., MetaMask 11.0]
-```
-
----
-
-## Feature Requests
-
-We love hearing ideas for new features! Before submitting:
-
-- Check if the feature has already been requested
-- Consider if it aligns with the project's goals
-- Think about implementation complexity
-
-### Feature Request Template
-
-```markdown
-**Problem Statement**
-What problem does this feature solve?
-
-**Proposed Solution**
-How do you envision this working?
-
-**Alternatives Considered**
-Other approaches you've thought about.
-
-**Additional Context**
-Any other relevant information.
-```
-
----
-
-## Questions?
-
-- Open a GitHub Discussion for general questions
-- Join our [Discord](https://discord.gg/joinlumina) for community support
-- Email developers@joinlumina.io for sensitive matters
-
----
-
-Thank you for contributing to Lumina! Together, we're building the future of decentralized social media.
+For questions about contributing, contact: info@axiomprotocol.app
