@@ -314,9 +314,22 @@ import {
   type GenerationJobWithDetails,
   type UserBrandProfile,
   type InsertUserBrandProfile,
+  type MusicTrack,
+  type InsertMusicTrack,
+  type MusicPlaylist,
+  type InsertMusicPlaylist,
+  type MusicPlaylistTrack,
+  type InsertMusicPlaylistTrack,
+  type MusicIngestionJob,
+  type InsertMusicIngestionJob,
+  type MusicRightsDeclaration,
+  type InsertMusicRightsDeclaration,
+  type MusicTrackWithCreator,
+  type MusicPlaylistWithTracks,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, or, sql, inArray, ilike } from "drizzle-orm";
+import * as musicStorageMethods from "./musicStorage";
 
 // Helper to remove password from user objects
 function sanitizeUser(user: User): Omit<User, 'password'> {
@@ -569,6 +582,31 @@ export interface IStorage {
   getGenerationJob(id: string): Promise<GenerationJobWithDetails | undefined>;
   createGenerationJob(job: InsertGenerationJob): Promise<GenerationJob>;
   updateGenerationJob(id: string, updates: Partial<GenerationJob>): Promise<GenerationJob | undefined>;
+
+  // Music Platform
+  getMusicTrack(id: string): Promise<MusicTrackWithCreator | undefined>;
+  getMusicTracks(opts: { status?: string; creatorId?: string; genre?: string; limit?: number; offset?: number }): Promise<MusicTrackWithCreator[]>;
+  createMusicTrack(data: InsertMusicTrack): Promise<MusicTrack>;
+  updateMusicTrack(id: string, updates: Partial<MusicTrack>): Promise<MusicTrack | undefined>;
+  deleteMusicTrack(id: string): Promise<void>;
+  getMusicCatalog(creatorId: string, status?: string): Promise<MusicTrack[]>;
+  publishMusicTrack(id: string): Promise<MusicTrack | undefined>;
+  unpublishMusicTrack(id: string): Promise<MusicTrack | undefined>;
+  getMusicPlaylist(id: string): Promise<MusicPlaylistWithTracks | undefined>;
+  getMusicPlaylists(opts: { creatorId?: string; visibility?: string; limit?: number }): Promise<MusicPlaylist[]>;
+  createMusicPlaylist(data: InsertMusicPlaylist): Promise<MusicPlaylist>;
+  updateMusicPlaylist(id: string, updates: Partial<MusicPlaylist>): Promise<MusicPlaylist | undefined>;
+  deleteMusicPlaylist(id: string): Promise<void>;
+  addTrackToPlaylist(data: InsertMusicPlaylistTrack): Promise<MusicPlaylistTrack>;
+  removeTrackFromPlaylist(playlistId: string, trackId: string): Promise<void>;
+  reorderPlaylistTracks(playlistId: string, orderedTrackIds: string[]): Promise<void>;
+  createIngestionJob(data: InsertMusicIngestionJob): Promise<MusicIngestionJob>;
+  getIngestionJob(id: string): Promise<MusicIngestionJob | undefined>;
+  getIngestionJobByTrackId(trackId: string): Promise<MusicIngestionJob | undefined>;
+  updateIngestionJob(id: string, updates: Partial<MusicIngestionJob>): Promise<MusicIngestionJob | undefined>;
+  createRightsDeclaration(data: InsertMusicRightsDeclaration): Promise<MusicRightsDeclaration>;
+  getRightsDeclaration(trackId: string): Promise<MusicRightsDeclaration | undefined>;
+  updateRightsDeclaration(trackId: string, updates: Partial<MusicRightsDeclaration>): Promise<MusicRightsDeclaration | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -4960,6 +4998,31 @@ export class DatabaseStorage implements IStorage {
       .returning();
     return updated || undefined;
   }
+
+  // ---- Music Platform (delegates to musicStorage module) ----
+  async getMusicTrack(id: string) { return musicStorageMethods.getMusicTrack(id); }
+  async getMusicTracks(opts: { status?: string; creatorId?: string; genre?: string; limit?: number; offset?: number }) { return musicStorageMethods.getMusicTracks(opts); }
+  async createMusicTrack(data: InsertMusicTrack) { return musicStorageMethods.createMusicTrack(data); }
+  async updateMusicTrack(id: string, updates: Partial<MusicTrack>) { return musicStorageMethods.updateMusicTrack(id, updates); }
+  async deleteMusicTrack(id: string) { return musicStorageMethods.deleteMusicTrack(id); }
+  async getMusicCatalog(creatorId: string, status?: string) { return musicStorageMethods.getMusicCatalog(creatorId, status); }
+  async publishMusicTrack(id: string) { return musicStorageMethods.publishMusicTrack(id); }
+  async unpublishMusicTrack(id: string) { return musicStorageMethods.unpublishMusicTrack(id); }
+  async getMusicPlaylist(id: string) { return musicStorageMethods.getMusicPlaylist(id); }
+  async getMusicPlaylists(opts: { creatorId?: string; visibility?: string; limit?: number }) { return musicStorageMethods.getMusicPlaylists(opts); }
+  async createMusicPlaylist(data: InsertMusicPlaylist) { return musicStorageMethods.createMusicPlaylist(data); }
+  async updateMusicPlaylist(id: string, updates: Partial<MusicPlaylist>) { return musicStorageMethods.updateMusicPlaylist(id, updates); }
+  async deleteMusicPlaylist(id: string) { return musicStorageMethods.deleteMusicPlaylist(id); }
+  async addTrackToPlaylist(data: InsertMusicPlaylistTrack) { return musicStorageMethods.addTrackToPlaylist(data); }
+  async removeTrackFromPlaylist(playlistId: string, trackId: string) { return musicStorageMethods.removeTrackFromPlaylist(playlistId, trackId); }
+  async reorderPlaylistTracks(playlistId: string, orderedTrackIds: string[]) { return musicStorageMethods.reorderPlaylistTracks(playlistId, orderedTrackIds); }
+  async createIngestionJob(data: InsertMusicIngestionJob) { return musicStorageMethods.createIngestionJob(data); }
+  async getIngestionJob(id: string) { return musicStorageMethods.getIngestionJob(id); }
+  async getIngestionJobByTrackId(trackId: string) { return musicStorageMethods.getIngestionJobByTrackId(trackId); }
+  async updateIngestionJob(id: string, updates: Partial<MusicIngestionJob>) { return musicStorageMethods.updateIngestionJob(id, updates); }
+  async createRightsDeclaration(data: InsertMusicRightsDeclaration) { return musicStorageMethods.createRightsDeclaration(data); }
+  async getRightsDeclaration(trackId: string) { return musicStorageMethods.getRightsDeclaration(trackId); }
+  async updateRightsDeclaration(trackId: string, updates: Partial<MusicRightsDeclaration>) { return musicStorageMethods.updateRightsDeclaration(trackId, updates); }
 }
 
 export const storage = new DatabaseStorage();

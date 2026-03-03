@@ -1,6 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
 import { registerRoutes } from "./routes";
+import { registerMusicRoutes } from "./musicRoutes";
+import { storage } from "./storage";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 import { pool } from "./db";
@@ -99,6 +101,7 @@ app.use((req, res, next) => {
 
 (async () => {
   await registerRoutes(app);
+  registerMusicRoutes(app, storage);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
