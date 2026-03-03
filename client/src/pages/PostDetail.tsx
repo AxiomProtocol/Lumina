@@ -1,6 +1,6 @@
 import { useParams, useLocation, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Loader2, Heart, MessageCircle, Share2, Coins, Play, Copy, Check, Twitter, Facebook, Maximize, Minimize, Trash2, Edit2 } from "lucide-react";
+import { ArrowLeft, Loader2, Heart, MessageCircle, Share2, Coins, Play, Copy, Check, Twitter, Facebook, Maximize, Minimize, Trash2, Edit2, Music } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import MuxPlayer from "@mux/mux-player-react";
 import Hls from "hls.js";
@@ -500,6 +500,25 @@ export default function PostDetail() {
                   alt="Post media"
                   className="w-full h-auto max-h-[600px] object-contain bg-muted"
                   data-testid="img-post-media"
+                />
+              </div>
+            )}
+
+            {post.postType === "music" && post.linkedMusicTrack && (
+              <div className="rounded-xl border border-border/50 bg-muted/30 p-4 mb-4 space-y-3" data-testid="music-post-player">
+                <div className="flex items-center gap-2">
+                  <Music className="h-5 w-5 text-primary shrink-0" />
+                  <span className="text-base font-semibold">{post.linkedMusicTrack.title}</span>
+                </div>
+                {post.linkedMusicTrack.description && (
+                  <p className="text-sm text-muted-foreground">{post.linkedMusicTrack.description}</p>
+                )}
+                <audio
+                  src={`/objects/${post.linkedMusicTrack.originalObjectKey.replace(/^\/objects\//, "")}`}
+                  controls
+                  preload="metadata"
+                  className="w-full"
+                  data-testid="audio-player"
                 />
               </div>
             )}

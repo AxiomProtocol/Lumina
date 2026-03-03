@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { Heart, MessageCircle, Share2, Repeat2, MoreHorizontal, Coins, Play, Copy, Check, Twitter, Facebook, Link as LinkIcon, Trash2, Loader2, Pencil } from "lucide-react";
+import { Heart, MessageCircle, Share2, Repeat2, MoreHorizontal, Coins, Play, Copy, Check, Twitter, Facebook, Link as LinkIcon, Trash2, Loader2, Pencil, Music } from "lucide-react";
 import MuxPlayer from "@mux/mux-player-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -387,6 +387,25 @@ export function PostCard({ post, onLike, onComment, onShare, onRepost }: PostCar
                   </div>
                 );
               })()}
+
+              {post.postType === "music" && post.linkedMusicTrack && (
+                <div className="mt-3 rounded-xl border border-border/50 bg-muted/30 p-3 space-y-2" data-testid="music-post-player">
+                  <div className="flex items-center gap-2">
+                    <Music className="h-4 w-4 text-primary shrink-0" />
+                    <span className="text-sm font-semibold truncate">{post.linkedMusicTrack.title}</span>
+                  </div>
+                  {post.linkedMusicTrack.description && (
+                    <p className="text-xs text-muted-foreground">{post.linkedMusicTrack.description}</p>
+                  )}
+                  <audio
+                    src={`/objects/${post.linkedMusicTrack.originalObjectKey.replace(/^\/objects\//, "")}`}
+                    controls
+                    preload="metadata"
+                    className="w-full h-10"
+                    data-testid="audio-player"
+                  />
+                </div>
+              )}
 
               <div className="flex items-center justify-between mt-4 -ml-2">
                 <div className="flex items-center gap-1">

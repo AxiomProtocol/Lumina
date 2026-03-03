@@ -307,6 +307,9 @@ import {
   promptTemplates,
   generationJobs,
   userBrandProfiles,
+  musicTracks,
+  type MusicTrack,
+  type InsertMusicTrack,
   type PromptTemplate,
   type InsertPromptTemplate,
   type GenerationJob,
@@ -336,6 +339,9 @@ export interface IStorage {
   createPost(post: InsertPost): Promise<Post>;
   updatePost(id: string, updates: Partial<Post>): Promise<Post | undefined>;
   deletePost(id: string): Promise<void>;
+
+  createMusicTrack(track: InsertMusicTrack): Promise<MusicTrack>;
+  getMusicTrack(id: string): Promise<MusicTrack | undefined>;
   
   getComments(postId: string): Promise<CommentWithAuthor[]>;
   createComment(comment: InsertComment): Promise<Comment>;
@@ -621,9 +627,11 @@ export class DatabaseStorage implements IStorage {
       .select({
         post: posts,
         author: users,
+        linkedMusicTrack: musicTracks,
       })
       .from(posts)
       .innerJoin(users, eq(posts.authorId, users.id))
+      .leftJoin(musicTracks, eq(posts.linkedMusicTrackId, musicTracks.id))
       .orderBy(desc(posts.createdAt))
       .limit(limit + 1);
     
@@ -636,6 +644,7 @@ export class DatabaseStorage implements IStorage {
     const postsWithAuthors: PostWithAuthor[] = results.slice(0, limit).map((row) => ({
       ...row.post,
       author: sanitizeUser(row.author) as any,
+      linkedMusicTrack: row.linkedMusicTrack ?? null,
     }));
     
     const nextCursor = results.length > limit ? results[limit - 1].post.id : undefined;
@@ -648,9 +657,11 @@ export class DatabaseStorage implements IStorage {
       .select({
         post: posts,
         author: users,
+        linkedMusicTrack: musicTracks,
       })
       .from(posts)
       .innerJoin(users, eq(posts.authorId, users.id))
+      .leftJoin(musicTracks, eq(posts.linkedMusicTrackId, musicTracks.id))
       .where(eq(posts.id, id));
     
     if (!result) return undefined;
@@ -658,6 +669,7 @@ export class DatabaseStorage implements IStorage {
     return {
       ...result.post,
       author: sanitizeUser(result.author) as any,
+      linkedMusicTrack: result.linkedMusicTrack ?? null,
     };
   }
 
@@ -673,6 +685,16 @@ export class DatabaseStorage implements IStorage {
 
   async deletePost(id: string): Promise<void> {
     await db.delete(posts).where(eq(posts.id, id));
+  }
+
+  async createMusicTrack(track: InsertMusicTrack): Promise<MusicTrack> {
+    const [created] = await db.insert(musicTracks).values(track).returning();
+    return created;
+  }
+
+  async getMusicTrack(id: string): Promise<MusicTrack | undefined> {
+    const [track] = await db.select().from(musicTracks).where(eq(musicTracks.id, id));
+    return track ?? undefined;
   }
 
   async getComments(postId: string): Promise<CommentWithAuthor[]> {
