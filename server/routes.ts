@@ -17,15 +17,16 @@ const upload = multer({
     fileSize: 2 * 1024 * 1024 * 1024, // 2GB for videos over 3 minutes
   },
   fileFilter: (_req, file, cb) => {
-    // Only allow video and image MIME types
+    // Only allow video, image, and audio MIME types
     const allowedTypes = [
       'video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo',
-      'image/jpeg', 'image/png', 'image/gif', 'image/webp'
+      'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+      'audio/mpeg', 'audio/wav', 'audio/x-wav', 'audio/aac', 'audio/ogg', 'audio/flac', 'audio/mp4',
     ];
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error(`Invalid file type: ${file.mimetype}. Only video and image files are allowed.`));
+      cb(new Error(`Invalid file type: ${file.mimetype}. Only video, image, and audio files are allowed.`));
     }
   },
 });
@@ -776,10 +777,152 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // ─── Music Upload Endpoints ───────────────────────────────────────────────────
+
+  // Allowed audio MIME types and max size (200 MB)
+  const ALLOWED_AUDIO_TYPES = [
+    "audio/mpeg", "audio/wav", "audio/x-wav", "audio/aac",
+    "audio/ogg", "audio/flac", "audio/mp4",
+  ] as const;
+  const MAX_AUDIO_BYTES = 200 * 1024 * 1024;
+
+  // Initialize a chunked upload session specifically for audio files
+  // Returns { uploadId, objectPath } — reuses the existing chunked-upload pipeline
+  app.post("/api/music/upload/init", requireAuth, async (req, res) => {
+    try {
+      const { contentType, totalChunks, fileSize } = req.body;
+      if (!contentType || !totalChunks) {
+        return res.status(400).json({ error: "contentType and totalChunks are required" });
+      }
+      if (!(ALLOWED_AUDIO_TYPES as readonly string[]).includes(contentType)) {
+        return res.status(415).json({ error: "Unsupported audio MIME type" });
+      }
+      if (fileSize && Number(fileSize) > MAX_AUDIO_BYTES) {
+        return res.status(413).json({ error: "Audio file exceeds 200 MB limit" });
+      }
+      const uploadId = crypto.randomUUID();
+      res.json({ uploadId, objectPath: `/objects/uploads/${uploadId}` });
+    } catch (error: any) {
+      console.error("Music upload init error:", error);
+      res.status(500).json({ error: "Failed to initialize audio upload" });
+    }
+  });
+
+  // Finalize audio upload: compose chunks into final object and return canonical objectKey
+  // Delegates to the existing chunked-upload/complete pipeline
+  app.post("/api/music/upload/complete", requireAuth, async (req, res) => {
+    try {
+      const { uploadId, totalChunks, contentType } = req.body;
+      if (!uploadId || !totalChunks || !contentType) {
+        return res.status(400).json({ error: "uploadId, totalChunks, and contentType are required" });
+      }
+      if (!(ALLOWED_AUDIO_TYPES as readonly string[]).includes(contentType)) {
+        return res.status(415).json({ error: "Unsupported audio MIME type" });
+      }
+
+      // Verify chunks in GCS and compose
+      const existingChunks = await objectStorageService.listChunksInGCS(uploadId);
+      if (existingChunks.length !== Number(totalChunks)) {
+        return res.status(400).json({
+          error: `Missing chunks: found ${existingChunks.length} of ${totalChunks}`,
+        });
+      }
+      const objectPath = await objectStorageService.composeChunksFromGCS(uploadId, Number(totalChunks), contentType);
+      // Set ACL to public for streaming
+      await objectStorageService.trySetObjectEntityAclPolicy(objectPath, {
+        owner: req.session.userId!,
+        visibility: "public",
+      });
+      // Return canonical object key (strip leading /objects/)
+      const objectKey = objectPath.replace(/^\/objects\//, "");
+      res.json({ objectPath, objectKey });
+    } catch (error: any) {
+      console.error("Music upload complete error:", error);
+      res.status(500).json({ error: "Failed to finalize audio upload" });
+    }
+  });
+
+  // ─── Music Track Endpoints ───────────────────────────────────────────────────
+
+  // Create a music track record after the audio file has been uploaded to object storage
+  app.post("/api/music/tracks", requireAuth, async (req, res) => {
+    try {
+      const { title, description, objectPath, mimeType, bytes, durationSeconds } = req.body;
+
+      if (!title || !objectPath) {
+        return res.status(400).json({ error: "title and objectPath are required" });
+      }
+
+      // Validate MIME type
+      if (mimeType && !(ALLOWED_AUDIO_TYPES as readonly string[]).includes(mimeType)) {
+        return res.status(415).json({ error: "Unsupported audio MIME type" });
+      }
+
+      // Validate bytes within limit
+      if (bytes !== undefined && bytes !== null && Number(bytes) > MAX_AUDIO_BYTES) {
+        return res.status(413).json({ error: "Audio file exceeds 200 MB limit" });
+      }
+
+      // Normalize objectPath: strip leading /objects/ so originalObjectKey is always a bare key
+      // (e.g. "uploads/abc123"). When serving, prefix with /objects/ to get the full path.
+      const normalizedKey = String(objectPath).replace(/^\/objects\//, "");
+      if (!normalizedKey.startsWith("uploads/")) {
+        return res.status(400).json({ error: "objectPath must be inside the uploads prefix" });
+      }
+
+      const track = await storage.createMusicTrack({
+        userId: req.session.userId!,
+        title: String(title).trim(),
+        description: description ? String(description).trim() : null,
+        originalObjectKey: normalizedKey,
+        mimeType: mimeType ? String(mimeType) : null,
+        bytes: bytes !== undefined && bytes !== null ? Number(bytes) : null,
+        durationSeconds: durationSeconds !== undefined && durationSeconds !== null ? Number(durationSeconds) : null,
+      });
+
+      res.status(201).json({ track });
+    } catch (error: any) {
+      console.error("Create music track error:", error);
+      res.status(500).json({ error: "Failed to create music track" });
+    }
+  });
+
+  // Get a single music track by id (owner only)
+  app.get("/api/music/tracks/:id", requireAuth, async (req, res) => {
+    try {
+      const track = await storage.getMusicTrack(req.params.id);
+      if (!track) {
+        return res.status(404).json({ error: "Music track not found" });
+      }
+      if (track.userId !== req.session.userId!) {
+        return res.status(403).json({ error: "Forbidden" });
+      }
+      res.json({ track });
+    } catch (error: any) {
+      console.error("Get music track error:", error);
+      res.status(500).json({ error: "Failed to get music track" });
+    }
+  });
+
   app.post("/api/posts", requireAuth, postLimiter, async (req, res) => {
     try {
-      const { content, postType, mediaUrl, mediaType, thumbnailUrl } = req.body;
+      const { content, postType, mediaUrl, mediaType, thumbnailUrl, linkedMusicTrackId } = req.body;
       console.log("Creating post with thumbnailUrl:", thumbnailUrl);
+
+      // Validate music post: linkedMusicTrackId must belong to the requesting user
+      if (postType === "music" || linkedMusicTrackId) {
+        if (!linkedMusicTrackId) {
+          return res.status(400).json({ error: "linkedMusicTrackId is required for music posts" });
+        }
+        const track = await storage.getMusicTrack(String(linkedMusicTrackId));
+        if (!track) {
+          return res.status(404).json({ error: "Music track not found" });
+        }
+        if (track.userId !== req.session.userId!) {
+          return res.status(403).json({ error: "You do not own this music track" });
+        }
+      }
+
       
       // Sanitize user-provided text content to prevent XSS
       const sanitizedContent = sanitizeText(content);
