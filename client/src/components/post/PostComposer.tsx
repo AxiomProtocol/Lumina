@@ -1,10 +1,11 @@
 import { useState, useRef } from "react";
-import { Image, Video, X, Loader2, Globe, Users, AlertTriangle, ShieldCheck, Shield, Upload, Cloud } from "lucide-react";
+import { Image, Video, X, Loader2, Globe, Users, AlertTriangle, ShieldCheck, Shield, Upload, Cloud, Music } from "lucide-react";
 import * as UpChunk from "@mux/upchunk";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
@@ -61,6 +62,13 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
   const [muxDefaultThumbnail, setMuxDefaultThumbnail] = useState<string | null>(null);
   const [showMuxThumbnailSelector, setShowMuxThumbnailSelector] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<string>("");
+
+  // Music track states
+  const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [audioTitle, setAudioTitle] = useState("");
+  const [audioDescription, setAudioDescription] = useState("");
+  const [uploadedTrackId, setUploadedTrackId] = useState<string | null>(null);
+  const audioInputRef = useRef<HTMLInputElement>(null);
 
   const maxLength = 500;
   const charCount = content.length;
@@ -154,6 +162,23 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
     }
   };
 
+  const handleAudioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const allowedAudioTypes = ["audio/mpeg", "audio/wav", "audio/x-wav", "audio/aac", "audio/ogg", "audio/flac", "audio/mp4"];
+    if (!allowedAudioTypes.includes(file.type)) {
+      toast({ title: "Unsupported format", description: "Please upload an MP3, WAV, AAC, OGG, or FLAC file.", variant: "destructive" });
+      return;
+    }
+    if (file.size > 200 * 1024 * 1024) {
+      toast({ title: "File too large", description: "Audio files must be under 200MB", variant: "destructive" });
+      return;
+    }
+    setAudioFile(file);
+    setAudioTitle(file.name.replace(/\.[^.]+$/, ""));
+    setUploadedTrackId(null);
+  };
+
   const clearMedia = () => {
     // Revoke object URL to prevent memory leaks (for video previews)
     if (mediaPreview && mediaType === "video" && mediaPreview.startsWith("blob:")) {
@@ -173,8 +198,14 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
     setMuxDefaultThumbnail(null);
     setShowMuxThumbnailSelector(false);
     setUploadStatus("");
+    // Clear audio states
+    setAudioFile(null);
+    setAudioTitle("");
+    setAudioDescription("");
+    setUploadedTrackId(null);
     if (imageInputRef.current) imageInputRef.current.value = "";
     if (videoInputRef.current) videoInputRef.current.value = "";
+    if (audioInputRef.current) audioInputRef.current.value = "";
   };
 
   const checkContent = async () => {
@@ -604,7 +635,7 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
   };
 
   const handleSubmit = async () => {
-    if ((!content.trim() && !mediaFile) || isOverLimit) return;
+    if ((!content.trim() && !mediaFile && !audioFile) || isOverLimit) return;
 
     // If there's a high severity warning, block submission
     if (moderationWarning?.isViolation && 
@@ -617,11 +648,56 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
       return;
     }
 
+    // Music post: require a title
+    if (audioFile && !audioTitle.trim()) {
+      toast({ title: "Title required", description: "Please enter a title for your track.", variant: "destructive" });
+      return;
+    }
+
     setIsSubmitting(true);
     setUploadProgress(0);
     setIsUploading(true);
     
     try {
+      // ── Music post path ────────────────────────────────────────────────────
+      if (audioFile) {
+        let trackId = uploadedTrackId;
+        if (!trackId) {
+          setUploadStatus("Uploading audio...");
+          const objectPath = await uploadChunked(audioFile);
+          setUploadStatus("Saving track...");
+          const trackRes = await apiRequest("POST", "/api/music/tracks", {
+            title: audioTitle.trim(),
+            description: audioDescription.trim() || null,
+            objectPath,
+            mimeType: audioFile.type,
+            bytes: audioFile.size,
+          });
+          const { track } = await trackRes.json();
+          trackId = track.id;
+          setUploadedTrackId(trackId);
+        }
+
+        await apiRequest("POST", "/api/posts", {
+          content: content.trim(),
+          postType: "music",
+          linkedMusicTrackId: trackId,
+          visibility,
+          groupId: groupId || null,
+          skipModeration: moderationWarning?.isViolation &&
+            (moderationWarning.severity === "low" || moderationWarning.severity === "medium"),
+        });
+
+        setContent("");
+        clearMedia();
+        setModerationWarning(null);
+        queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+        toast({ title: "Music post created", description: "Your track has been shared!" });
+        onSuccess?.();
+        return;
+      }
+
+      // ── Video / image post path ────────────────────────────────────────────
       let mediaUrl: string | null = uploadedVideoPath;
       let thumbnailUrl = selectedThumbnail;
       
@@ -848,6 +924,44 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
               />
             )}
 
+            {/* Audio track preview + metadata */}
+            {audioFile && (
+              <div className="mt-3 space-y-3 rounded-xl border border-border/50 bg-muted/30 p-3">
+                <div className="flex items-center gap-2">
+                  <Music className="h-5 w-5 text-primary shrink-0" />
+                  <span className="text-sm font-medium truncate">{audioFile.name}</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="ml-auto h-6 w-6 shrink-0"
+                    onClick={clearMedia}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+                <audio
+                  src={URL.createObjectURL(audioFile)}
+                  controls
+                  className="w-full h-10"
+                  data-testid="audio-preview"
+                />
+                <Input
+                  placeholder="Track title *"
+                  value={audioTitle}
+                  onChange={(e) => setAudioTitle(e.target.value)}
+                  className="text-sm"
+                  data-testid="input-audio-title"
+                />
+                <Input
+                  placeholder="Description (optional)"
+                  value={audioDescription}
+                  onChange={(e) => setAudioDescription(e.target.value)}
+                  className="text-sm"
+                  data-testid="input-audio-description"
+                />
+              </div>
+            )}
+
             {/* Mux Thumbnail Selector (for Mux uploads) */}
             {showMuxThumbnailSelector && muxPlaybackId && muxDefaultThumbnail && (
               <MuxThumbnailSelector
@@ -873,7 +987,7 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
                   variant="ghost"
                   size="icon"
                   onClick={() => imageInputRef.current?.click()}
-                  disabled={!!mediaFile}
+                  disabled={!!mediaFile || !!audioFile}
                   data-testid="button-add-image"
                 >
                   <Image className="h-5 w-5 text-primary" />
@@ -890,10 +1004,27 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
                   variant="ghost"
                   size="icon"
                   onClick={() => videoInputRef.current?.click()}
-                  disabled={!!mediaFile}
+                  disabled={!!mediaFile || !!audioFile}
                   data-testid="button-add-video"
                 >
                   <Video className="h-5 w-5 text-primary" />
+                </Button>
+
+                <input
+                  ref={audioInputRef}
+                  type="file"
+                  accept="audio/*"
+                  onChange={handleAudioChange}
+                  className="hidden"
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => audioInputRef.current?.click()}
+                  disabled={!!mediaFile || !!audioFile}
+                  data-testid="button-add-audio"
+                >
+                  <Music className="h-5 w-5 text-primary" />
                 </Button>
 
                 <Select value={visibility} onValueChange={setVisibility}>
@@ -942,7 +1073,7 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
                 <Button
                   onClick={handleSubmit}
                   disabled={
-                    (!content.trim() && !mediaFile) || 
+                    (!content.trim() && !mediaFile && !audioFile) || 
                     isOverLimit || 
                     isSubmitting ||
                     showThumbnailSelector ||
@@ -953,7 +1084,9 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
                   data-testid="button-submit-post"
                 >
                   {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {mediaType === "video" && !uploadedVideoPath 
+                  {audioFile && !uploadedTrackId
+                    ? "Upload & Post"
+                    : mediaType === "video" && !uploadedVideoPath 
                     ? "Upload Video" 
                     : "Post"}
                 </Button>

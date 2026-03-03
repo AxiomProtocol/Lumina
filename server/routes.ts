@@ -20,12 +20,13 @@ const upload = multer({
     // Only allow video and image MIME types
     const allowedTypes = [
       'video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo',
-      'image/jpeg', 'image/png', 'image/gif', 'image/webp'
+      'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+      'audio/mpeg', 'audio/wav', 'audio/x-wav', 'audio/aac', 'audio/ogg', 'audio/flac', 'audio/mp4',
     ];
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error(`Invalid file type: ${file.mimetype}. Only video and image files are allowed.`));
+      cb(new Error(`Invalid file type: ${file.mimetype}. Only video, image, and audio files are allowed.`));
     }
   },
 });
@@ -776,10 +777,70 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // ─── Music Track Endpoints ───────────────────────────────────────────────────
+
+  // Create a music track record after the audio file has been uploaded to object storage
+  app.post("/api/music/tracks", requireAuth, async (req, res) => {
+    try {
+      const { title, description, objectPath, mimeType, bytes, durationSeconds } = req.body;
+
+      if (!title || !objectPath) {
+        return res.status(400).json({ error: "title and objectPath are required" });
+      }
+
+      const track = await storage.createMusicTrack({
+        userId: req.session.userId!,
+        title: String(title).trim(),
+        description: description ? String(description).trim() : null,
+        originalObjectKey: String(objectPath),
+        mimeType: mimeType ? String(mimeType) : null,
+        bytes: bytes ? Number(bytes) : null,
+        durationSeconds: durationSeconds ? Number(durationSeconds) : null,
+      });
+
+      res.status(201).json({ track });
+    } catch (error: any) {
+      console.error("Create music track error:", error);
+      res.status(500).json({ error: "Failed to create music track" });
+    }
+  });
+
+  // Get a single music track by id
+  app.get("/api/music/tracks/:id", requireAuth, async (req, res) => {
+    try {
+      const track = await storage.getMusicTrack(req.params.id);
+      if (!track) {
+        return res.status(404).json({ error: "Music track not found" });
+      }
+      // Only the owner can view their own track directly
+      if (track.userId !== req.session.userId!) {
+        return res.status(403).json({ error: "Forbidden" });
+      }
+      res.json({ track });
+    } catch (error: any) {
+      console.error("Get music track error:", error);
+      res.status(500).json({ error: "Failed to get music track" });
+    }
+  });
+
   app.post("/api/posts", requireAuth, postLimiter, async (req, res) => {
     try {
-      const { content, postType, mediaUrl, mediaType, thumbnailUrl } = req.body;
+      const { content, postType, mediaUrl, mediaType, thumbnailUrl, linkedMusicTrackId } = req.body;
       console.log("Creating post with thumbnailUrl:", thumbnailUrl);
+
+      // Validate music post: linkedMusicTrackId must belong to the requesting user
+      if (postType === "music" || linkedMusicTrackId) {
+        if (!linkedMusicTrackId) {
+          return res.status(400).json({ error: "linkedMusicTrackId is required for music posts" });
+        }
+        const track = await storage.getMusicTrack(String(linkedMusicTrackId));
+        if (!track) {
+          return res.status(404).json({ error: "Music track not found" });
+        }
+        if (track.userId !== req.session.userId!) {
+          return res.status(403).json({ error: "You do not own this music track" });
+        }
+      }
       
       // Sanitize user-provided text content to prevent XSS
       const sanitizedContent = sanitizeText(content);
