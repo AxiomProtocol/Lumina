@@ -29,6 +29,7 @@ export function MusicPlayer({
   const [volume, setVolume] = useState(1);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [playbackError, setPlaybackError] = useState<string | null>(null);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -80,7 +81,9 @@ export function MusicPlayer({
       audio.pause();
       setIsPlaying(false);
     } else {
-      audio.play().then(() => setIsPlaying(true)).catch(() => {});
+      audio.play().then(() => setIsPlaying(true)).catch((err: Error) => {
+        setPlaybackError(err.message ?? "Playback blocked by browser");
+      });
     }
   };
 
@@ -143,6 +146,11 @@ export function MusicPlayer({
           <p className="text-xs text-muted-foreground truncate">{artist ?? ""}</p>
         </div>
       </div>
+
+      {/* Playback error */}
+      {playbackError && (
+        <p className="text-xs text-destructive">{playbackError}</p>
+      )}
 
       {/* Seek bar */}
       <div className="flex items-center gap-2 text-xs text-muted-foreground">

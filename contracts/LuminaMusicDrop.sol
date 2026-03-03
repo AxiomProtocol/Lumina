@@ -61,6 +61,7 @@ contract LuminaMusicDrop is ERC1155, Ownable, ReentrancyGuard {
     }
 
     function mint(uint256 tokenId, uint256 quantity) external nonReentrant {
+        require(quantity > 0, "Quantity must be greater than 0");
         require(isMintActive[tokenId], "Mint not active");
         require(totalMinted[tokenId] + quantity <= maxSupply[tokenId], "Exceeds max supply");
 
@@ -118,20 +119,18 @@ contract LuminaMusicDrop is ERC1155, Ownable, ReentrancyGuard {
         rewardDebt[account][tokenId] = (balanceOf(account, tokenId) * cumulativeRewardsPerShare[tokenId]) / 1e18;
     }
 
-    function _beforeTokenTransfer(
-        address operator,
+    // ERC-1155 _update hook (OpenZeppelin v5.x) – update reward debts on every transfer
+    function _update(
         address from,
         address to,
         uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory data
+        uint256[] memory values
     ) internal virtual override {
-        // Update reward debts on transfer
         for (uint256 i = 0; i < ids.length; i++) {
             if (from != address(0)) _updateRewardDebt(from, ids[i]);
             if (to != address(0)) _updateRewardDebt(to, ids[i]);
         }
-        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
+        super._update(from, to, ids, values);
     }
 
     receive() external payable {}

@@ -30,7 +30,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/lib/authContext";
 import { MoreHorizontal, Plus, Music, Loader2, ShieldAlert } from "lucide-react";
-import type { MusicTrack, MusicClaim } from "@shared/schema";
+import type { MusicTrack, MusicClaim, User } from "@shared/schema";
 
 const STATUS_TABS = ["all", "draft", "scheduled", "published", "archived"] as const;
 type StatusTab = (typeof STATUS_TABS)[number];
@@ -70,7 +70,7 @@ const EMPTY_FORM: TrackFormData = {
 export default function MusicCatalog() {
   const { toast } = useToast();
   const { user } = useAuth();
-  const isAdmin = (user as any)?.isAdmin === true;
+  const isAdmin = (user as User | null)?.isAdmin === true;
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<StatusTab>("all");
   const [dialogOpen, setDialogOpen] = useState(false);

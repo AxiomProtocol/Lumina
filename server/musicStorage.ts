@@ -314,12 +314,19 @@ export async function updateMusicClaim(id: string, updates: Partial<MusicClaim>)
 
 export async function generateFingerprint(trackId: string, sourceUrl: string): Promise<MusicRightsDeclaration | undefined> {
   const { createHash } = await import("crypto");
+  // NOTE: Hash is computed from the source URL as a placeholder for real audio fingerprinting.
+  // A production implementation would hash the actual audio content.
   const fingerprintHash = createHash("sha256").update(sourceUrl).digest("hex");
   const existing = await getRightsDeclaration(trackId);
   if (existing) {
     return updateRightsDeclaration(trackId, { fingerprintHash });
   }
-  return undefined;
+  // Create a default rights declaration with the fingerprint
+  const [created] = await db
+    .insert(musicRightsDeclarations)
+    .values({ trackId, fingerprintHash } as any)
+    .returning();
+  return created ?? undefined;
 }
 
 // ---- Drops ----

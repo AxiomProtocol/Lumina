@@ -1,5 +1,6 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import type { IStorage } from "./storage";
+import type { User } from "@shared/schema";
 import { isMuxConfigured, createDirectUpload, getUploadStatus, getAsset } from "./services/mux";
 import { musicTracks } from "@shared/schema";
 import { eq, sql } from "drizzle-orm";
@@ -677,7 +678,7 @@ export function registerMusicRoutes(app: Express, storage: IStorage) {
       if (!track) return res.status(404).json({ error: "Track not found" });
       // Only track creator or admin can view claims
       const user = await storage.getUser(userId);
-      if (track.creatorId !== userId && !(user as any)?.isAdmin) {
+      if (track.creatorId !== userId && !(user as User)?.isAdmin) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const claims = await storage.getMusicClaimsByTrack(req.params.id);
@@ -692,10 +693,15 @@ export function registerMusicRoutes(app: Express, storage: IStorage) {
     try {
       const userId = req.session!.userId!;
       const user = await storage.getUser(userId);
-      if (!(user as any)?.isAdmin) return res.status(403).json({ error: "Admin only" });
+      if (!(user as User)?.isAdmin) return res.status(403).json({ error: "Admin only" });
       const { status, adminNotes } = req.body as { status?: string; adminNotes?: string };
+      const validStatuses = ["resolved_takedown", "resolved_dismissed", "resolved_license"] as const;
+      type ResolvedStatus = typeof validStatuses[number];
+      const resolvedStatus: ResolvedStatus = validStatuses.includes(status as ResolvedStatus)
+        ? (status as ResolvedStatus)
+        : "resolved_license";
       const updated = await storage.updateMusicClaim(req.params.id, {
-        status: (status as any) ?? "resolved_license",
+        status: resolvedStatus,
         adminNotes: adminNotes ?? null,
         resolvedAt: new Date(),
         resolvedById: userId,
@@ -712,7 +718,7 @@ export function registerMusicRoutes(app: Express, storage: IStorage) {
     try {
       const userId = req.session!.userId!;
       const user = await storage.getUser(userId);
-      if (!(user as any)?.isAdmin) return res.status(403).json({ error: "Admin only" });
+      if (!(user as User)?.isAdmin) return res.status(403).json({ error: "Admin only" });
       const track = await storage.getMusicTrack(req.params.id);
       if (!track) return res.status(404).json({ error: "Track not found" });
       const updated = await storage.updateMusicTrack(req.params.id, { status: "archived" });
