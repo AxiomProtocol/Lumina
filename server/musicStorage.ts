@@ -6,6 +6,11 @@ import {
   musicPlaylistTracks,
   musicIngestionJobs,
   musicRightsDeclarations,
+  musicClaims,
+  musicDrops,
+  musicDropMints,
+  musicListings,
+  musicRewardsClaims,
   users,
   type MusicTrack,
   type InsertMusicTrack,
@@ -20,6 +25,16 @@ import {
   type MusicTrackWithCreator,
   type MusicPlaylistWithTracks,
   type User,
+  type MusicClaim,
+  type InsertMusicClaim,
+  type MusicDrop,
+  type InsertMusicDrop,
+  type MusicDropMint,
+  type InsertMusicDropMint,
+  type MusicListing,
+  type InsertMusicListing,
+  type MusicRewardsClaim,
+  type InsertMusicRewardsClaim,
 } from "@shared/schema";
 
 // ---- Tracks ----
@@ -279,4 +294,99 @@ export async function updateRightsDeclaration(
     .where(eq(musicRightsDeclarations.id, existing.id))
     .returning();
   return updated ?? undefined;
+}
+
+// ---- Claims ----
+
+export async function createMusicClaim(data: InsertMusicClaim): Promise<MusicClaim> {
+  const [claim] = await db.insert(musicClaims).values(data as MusicClaim).returning();
+  return claim;
+}
+
+export async function getMusicClaimsByTrack(trackId: string): Promise<MusicClaim[]> {
+  return db.select().from(musicClaims).where(eq(musicClaims.trackId, trackId)).orderBy(desc(musicClaims.createdAt));
+}
+
+export async function updateMusicClaim(id: string, updates: Partial<MusicClaim>): Promise<MusicClaim | undefined> {
+  const [updated] = await db.update(musicClaims).set(updates).where(eq(musicClaims.id, id)).returning();
+  return updated ?? undefined;
+}
+
+export async function generateFingerprint(trackId: string, sourceUrl: string): Promise<MusicRightsDeclaration | undefined> {
+  const { createHash } = await import("crypto");
+  const fingerprintHash = createHash("sha256").update(sourceUrl).digest("hex");
+  const existing = await getRightsDeclaration(trackId);
+  if (existing) {
+    return updateRightsDeclaration(trackId, { fingerprintHash });
+  }
+  return undefined;
+}
+
+// ---- Drops ----
+
+export async function getMusicDrop(id: string): Promise<MusicDrop | undefined> {
+  const [drop] = await db.select().from(musicDrops).where(eq(musicDrops.id, id));
+  return drop ?? undefined;
+}
+
+export async function getMusicDropsByTrack(trackId: string): Promise<MusicDrop[]> {
+  return db.select().from(musicDrops).where(eq(musicDrops.trackId, trackId)).orderBy(desc(musicDrops.createdAt));
+}
+
+export async function createMusicDrop(data: InsertMusicDrop): Promise<MusicDrop> {
+  const [drop] = await db.insert(musicDrops).values(data as MusicDrop).returning();
+  return drop;
+}
+
+export async function updateMusicDrop(id: string, data: Partial<MusicDrop>): Promise<MusicDrop | undefined> {
+  const [updated] = await db.update(musicDrops).set({ ...data, updatedAt: new Date() }).where(eq(musicDrops.id, id)).returning();
+  return updated ?? undefined;
+}
+
+export async function recordMint(data: InsertMusicDropMint): Promise<MusicDropMint> {
+  return db.transaction(async (tx) => {
+    const [mint] = await tx.insert(musicDropMints).values(data as MusicDropMint).returning();
+    await tx.update(musicDrops).set({ mintCount: sql`COALESCE(${musicDrops.mintCount}, 0) + ${data.quantity}` }).where(eq(musicDrops.id, data.dropId));
+    return mint;
+  });
+}
+
+export async function getMintsByDrop(dropId: string): Promise<MusicDropMint[]> {
+  return db.select().from(musicDropMints).where(eq(musicDropMints.dropId, dropId)).orderBy(desc(musicDropMints.mintedAt));
+}
+
+// ---- Listings ----
+
+export async function createMusicListing(data: InsertMusicListing): Promise<MusicListing> {
+  const [listing] = await db.insert(musicListings).values(data as MusicListing).returning();
+  return listing;
+}
+
+export async function getMusicListingsByDrop(dropId: string): Promise<MusicListing[]> {
+  return db.select().from(musicListings).where(and(eq(musicListings.dropId, dropId), eq(musicListings.isActive, true))).orderBy(desc(musicListings.createdAt));
+}
+
+export async function getMusicListing(id: string): Promise<MusicListing | undefined> {
+  const [listing] = await db.select().from(musicListings).where(eq(musicListings.id, id));
+  return listing ?? undefined;
+}
+
+export async function updateMusicListing(id: string, data: Partial<MusicListing>): Promise<MusicListing | undefined> {
+  const [updated] = await db.update(musicListings).set({ ...data, updatedAt: new Date() }).where(eq(musicListings.id, id)).returning();
+  return updated ?? undefined;
+}
+
+export async function getAllActiveListings(): Promise<MusicListing[]> {
+  return db.select().from(musicListings).where(eq(musicListings.isActive, true)).orderBy(desc(musicListings.createdAt));
+}
+
+// ---- Rewards Claims ----
+
+export async function createRewardsClaim(data: InsertMusicRewardsClaim): Promise<MusicRewardsClaim> {
+  const [claim] = await db.insert(musicRewardsClaims).values(data as MusicRewardsClaim).returning();
+  return claim;
+}
+
+export async function getRewardsClaimsByDrop(dropId: string): Promise<MusicRewardsClaim[]> {
+  return db.select().from(musicRewardsClaims).where(eq(musicRewardsClaims.dropId, dropId)).orderBy(desc(musicRewardsClaims.claimedAt));
 }

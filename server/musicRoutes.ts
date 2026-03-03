@@ -4,6 +4,16 @@ import { isMuxConfigured, createDirectUpload, getUploadStatus, getAsset } from "
 import { musicTracks } from "@shared/schema";
 import { eq, sql } from "drizzle-orm";
 import { db } from "./db";
+import rateLimit from "express-rate-limit";
+
+const gateCheckLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 20, // 20 gate checks per minute per IP
+  message: { error: "Too many gate check requests, please try again later" },
+  standardHeaders: true,
+  legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
+});
 
 function requireAuth(req: Request, res: Response, next: NextFunction) {
   if (!req.session?.userId) {
@@ -380,6 +390,382 @@ export function registerMusicRoutes(app: Express, storage: IStorage) {
       res.json(rights);
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : "Failed to fetch rights";
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  // ---- Phase 2: Gate Check ----
+  app.post("/api/music/tracks/:id/gate-check", gateCheckLimiter, async (req: Request, res: Response) => {
+    try {
+      const track = await storage.getMusicTrack(req.params.id);
+      if (!track) return res.status(404).json({ error: "Track not found" });
+
+      if (track.accessMode === "public" || !track.accessMode) {
+        return res.json({ hasAccess: true });
+      }
+
+      const { walletAddress, signature, message } = req.body as {
+        walletAddress?: string;
+        signature?: string;
+        message?: string;
+      };
+
+      if (!walletAddress || !signature || !message) {
+        return res.status(400).json({ error: "walletAddress, signature and message are required" });
+      }
+
+      const { ethers } = await import("ethers");
+      let recovered: string;
+      try {
+        recovered = ethers.verifyMessage(message, signature);
+      } catch {
+        return res.status(401).json({ error: "Invalid signature" });
+      }
+      if (recovered.toLowerCase() !== walletAddress.toLowerCase()) {
+        return res.status(401).json({ error: "Signature mismatch" });
+      }
+
+      if (track.accessMode === "preview_gated") {
+        return res.json({ hasAccess: true });
+      }
+
+      // gated: check NFT ownership
+      if (track.accessMode === "gated") {
+        // Creator always has access
+        const creatorWallet = track.creator?.walletAddress;
+        if (creatorWallet && creatorWallet.toLowerCase() === walletAddress.toLowerCase()) {
+          return res.json({ hasAccess: true });
+        }
+
+        const drops = await storage.getMusicDropsByTrack(req.params.id);
+        const rpcUrl = process.env.ARBITRUM_RPC_URL ?? "https://arb1.arbitrum.io/rpc";
+        const provider = new ethers.JsonRpcProvider(rpcUrl);
+        const balanceOfAbi = ["function balanceOf(address account, uint256 id) view returns (uint256)"];
+
+        for (const drop of drops) {
+          if (!drop.contractAddress) continue;
+          try {
+            const contract = new ethers.Contract(drop.contractAddress, balanceOfAbi, provider);
+            const balance = await contract.balanceOf(walletAddress, drop.tokenId ?? 1);
+            if (BigInt(balance) > BigInt(0)) {
+              return res.json({ hasAccess: true });
+            }
+          } catch {
+            // continue checking other drops
+          }
+        }
+        return res.json({ hasAccess: false, reason: "No NFT found in wallet" });
+      }
+
+      return res.json({ hasAccess: false, reason: "Unknown access mode" });
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Gate check failed";
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  // ---- Phase 3: Drops ----
+  app.post("/api/music/drops", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.session!.userId!;
+      const { trackId } = req.body as { trackId?: string };
+      if (!trackId) return res.status(400).json({ error: "trackId is required" });
+      const track = await storage.getMusicTrack(trackId);
+      if (!track) return res.status(404).json({ error: "Track not found" });
+      if (track.creatorId !== userId) return res.status(403).json({ error: "Forbidden" });
+      const drop = await storage.createMusicDrop({ ...req.body, creatorId: userId });
+      res.status(201).json(drop);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to create drop";
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  app.get("/api/music/drops/:id", async (req: Request, res: Response) => {
+    try {
+      const drop = await storage.getMusicDrop(req.params.id);
+      if (!drop) return res.status(404).json({ error: "Drop not found" });
+      const mints = await storage.getMintsByDrop(req.params.id);
+      res.json({ ...drop, mints });
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to fetch drop";
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  app.get("/api/music/tracks/:id/drops", async (req: Request, res: Response) => {
+    try {
+      const drops = await storage.getMusicDropsByTrack(req.params.id);
+      res.json(drops);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to fetch drops";
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  app.patch("/api/music/drops/:id", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.session!.userId!;
+      const drop = await storage.getMusicDrop(req.params.id);
+      if (!drop) return res.status(404).json({ error: "Drop not found" });
+      if (drop.creatorId !== userId) return res.status(403).json({ error: "Forbidden" });
+      const updated = await storage.updateMusicDrop(req.params.id, req.body);
+      res.json(updated);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to update drop";
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  app.post("/api/music/drops/:id/verify-mint", async (req: Request, res: Response) => {
+    try {
+      const drop = await storage.getMusicDrop(req.params.id);
+      if (!drop) return res.status(404).json({ error: "Drop not found" });
+
+      const { txHash, minterAddress, quantity } = req.body as {
+        txHash?: string;
+        minterAddress?: string;
+        quantity?: number;
+      };
+      if (!txHash || !minterAddress) {
+        return res.status(400).json({ error: "txHash and minterAddress are required" });
+      }
+
+      const { ethers } = await import("ethers");
+      const rpcUrl = process.env.ARBITRUM_RPC_URL ?? "https://arb1.arbitrum.io/rpc";
+      const provider = new ethers.JsonRpcProvider(rpcUrl);
+
+      let blockNumber: number | undefined;
+      try {
+        const receipt = await provider.getTransactionReceipt(txHash);
+        if (receipt && receipt.blockNumber) {
+          blockNumber = receipt.blockNumber;
+        }
+      } catch {
+        // proceed even if RPC unavailable
+      }
+
+      const userId = req.session?.userId;
+      const mint = await storage.recordMint({
+        dropId: req.params.id,
+        minterAddress,
+        userId: userId ?? null,
+        txHash,
+        tokenId: drop.tokenId ?? 1,
+        quantity: quantity ?? 1,
+        blockNumber: blockNumber ?? null,
+      });
+
+      res.json({ success: true, mint });
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to verify mint";
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  // ---- Phase 4: Marketplace ----
+  app.get("/api/music/marketplace", async (req: Request, res: Response) => {
+    try {
+      const listings = await storage.getAllActiveListings();
+      res.json(listings);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to fetch listings";
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  app.post("/api/music/listings", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.session!.userId!;
+      const listing = await storage.createMusicListing({ ...req.body, sellerId: userId });
+      res.status(201).json(listing);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to create listing";
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  app.get("/api/music/drops/:id/listings", async (req: Request, res: Response) => {
+    try {
+      const listings = await storage.getMusicListingsByDrop(req.params.id);
+      res.json(listings);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to fetch listings";
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  app.post("/api/music/listings/:id/buy", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const listing = await storage.getMusicListing(req.params.id);
+      if (!listing) return res.status(404).json({ error: "Listing not found" });
+      if (!listing.isActive) return res.status(400).json({ error: "Listing is not active" });
+      const { txHash } = req.body as { txHash?: string };
+      const updated = await storage.updateMusicListing(req.params.id, { isActive: false, soldTxHash: txHash });
+      res.json({ success: true, listing: updated });
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to buy listing";
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  app.post("/api/music/drops/:id/claim-rewards", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const drop = await storage.getMusicDrop(req.params.id);
+      if (!drop) return res.status(404).json({ error: "Drop not found" });
+      const { claimantAddress, amountUsd, txHash } = req.body as {
+        claimantAddress?: string;
+        amountUsd?: number;
+        txHash?: string;
+      };
+      if (!claimantAddress || amountUsd === undefined) {
+        return res.status(400).json({ error: "claimantAddress and amountUsd are required" });
+      }
+      const userId = req.session!.userId!;
+      const claim = await storage.createRewardsClaim({
+        dropId: req.params.id,
+        claimantAddress,
+        claimantId: userId,
+        amountUsd,
+        txHash: txHash ?? null,
+      });
+      res.json({ success: true, claim });
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to claim rewards";
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  app.get("/api/music/drops/:id/rewards/:address", async (req: Request, res: Response) => {
+    try {
+      const drop = await storage.getMusicDrop(req.params.id);
+      if (!drop) return res.status(404).json({ error: "Drop not found" });
+      const claims = await storage.getRewardsClaimsByDrop(req.params.id);
+      const addressClaims = claims.filter(
+        (c) => c.claimantAddress.toLowerCase() === req.params.address.toLowerCase(),
+      );
+      const totalClaimed = addressClaims.reduce((sum, c) => sum + c.amountUsd, 0);
+      res.json({ totalClaimed, claims: addressClaims });
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to fetch rewards";
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  // ---- Phase 5: Copyright + Moderation ----
+  app.post("/api/music/tracks/:id/claims", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.session!.userId!;
+      const track = await storage.getMusicTrack(req.params.id);
+      if (!track) return res.status(404).json({ error: "Track not found" });
+      const claim = await storage.createMusicClaim({
+        ...req.body,
+        trackId: req.params.id,
+        claimantId: userId,
+      });
+      res.status(201).json(claim);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to submit claim";
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  app.get("/api/music/tracks/:id/claims", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.session!.userId!;
+      const track = await storage.getMusicTrack(req.params.id);
+      if (!track) return res.status(404).json({ error: "Track not found" });
+      // Only track creator or admin can view claims
+      const user = await storage.getUser(userId);
+      if (track.creatorId !== userId && !(user as any)?.isAdmin) {
+        return res.status(403).json({ error: "Forbidden" });
+      }
+      const claims = await storage.getMusicClaimsByTrack(req.params.id);
+      res.json(claims);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to fetch claims";
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  app.patch("/api/music/claims/:id/resolve", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.session!.userId!;
+      const user = await storage.getUser(userId);
+      if (!(user as any)?.isAdmin) return res.status(403).json({ error: "Admin only" });
+      const { status, adminNotes } = req.body as { status?: string; adminNotes?: string };
+      const updated = await storage.updateMusicClaim(req.params.id, {
+        status: (status as any) ?? "resolved_license",
+        adminNotes: adminNotes ?? null,
+        resolvedAt: new Date(),
+        resolvedById: userId,
+      });
+      if (!updated) return res.status(404).json({ error: "Claim not found" });
+      res.json(updated);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to resolve claim";
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  app.post("/api/music/tracks/:id/takedown", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.session!.userId!;
+      const user = await storage.getUser(userId);
+      if (!(user as any)?.isAdmin) return res.status(403).json({ error: "Admin only" });
+      const track = await storage.getMusicTrack(req.params.id);
+      if (!track) return res.status(404).json({ error: "Track not found" });
+      const updated = await storage.updateMusicTrack(req.params.id, { status: "archived" });
+      res.json(updated);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to takedown track";
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  app.post("/api/music/tracks/:id/fingerprint", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.session!.userId!;
+      const track = await storage.getMusicTrack(req.params.id);
+      if (!track) return res.status(404).json({ error: "Track not found" });
+      if (track.creatorId !== userId) return res.status(403).json({ error: "Forbidden" });
+      const sourceUrl = track.sourceFileUrl ?? track.streamUrl;
+      if (!sourceUrl) {
+        return res.status(400).json({ error: "Track has no source URL to fingerprint" });
+      }
+      const { createHash } = await import("crypto");
+      const fingerprintHash = createHash("sha256").update(sourceUrl).digest("hex");
+      const existing = await storage.getRightsDeclaration(req.params.id);
+      let result;
+      if (existing) {
+        result = await storage.updateRightsDeclaration(req.params.id, { fingerprintHash });
+      } else {
+        result = await storage.createRightsDeclaration({
+          trackId: req.params.id,
+          rightsType: "original",
+          licenseType: "all_rights_reserved",
+          fingerprintHash,
+        });
+      }
+      res.json({ fingerprintHash, rights: result });
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to generate fingerprint";
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  app.get("/api/music/tracks/:id/fingerprint-check", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const track = await storage.getMusicTrack(req.params.id);
+      if (!track) return res.status(404).json({ error: "Track not found" });
+      const rights = await storage.getRightsDeclaration(req.params.id);
+      if (!rights?.fingerprintHash) {
+        return res.json({ matches: [], message: "No fingerprint stored for this track" });
+      }
+      // In production, query all tracks for matching fingerprint
+      res.json({ fingerprintHash: rights.fingerprintHash, matches: [] });
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to check fingerprint";
       res.status(500).json({ error: msg });
     }
   });

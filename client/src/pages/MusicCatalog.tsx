@@ -28,8 +28,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { MoreHorizontal, Plus, Music, Loader2 } from "lucide-react";
-import type { MusicTrack } from "@shared/schema";
+import { useAuth } from "@/lib/authContext";
+import { MoreHorizontal, Plus, Music, Loader2, ShieldAlert } from "lucide-react";
+import type { MusicTrack, MusicClaim } from "@shared/schema";
 
 const STATUS_TABS = ["all", "draft", "scheduled", "published", "archived"] as const;
 type StatusTab = (typeof STATUS_TABS)[number];
@@ -68,6 +69,8 @@ const EMPTY_FORM: TrackFormData = {
 
 export default function MusicCatalog() {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const isAdmin = (user as any)?.isAdmin === true;
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<StatusTab>("all");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -82,6 +85,25 @@ export default function MusicCatalog() {
       fetch(`/api/music/catalog${statusFilter ? `?status=${statusFilter}` : ""}`, {
         credentials: "include",
       }).then((r) => r.json()),
+  });
+
+  // Admin: fetch all claims across a selected track (we show a summary panel for admins)
+  const [claimsTrackId, setClaimsTrackId] = useState<string | null>(null);
+  const { data: trackClaims = [] } = useQuery<MusicClaim[]>({
+    queryKey: ["/api/music/tracks", claimsTrackId, "claims"],
+    queryFn: () =>
+      fetch(`/api/music/tracks/${claimsTrackId}/claims`, { credentials: "include" }).then((r) => r.json()),
+    enabled: isAdmin && !!claimsTrackId,
+  });
+
+  const resolveMutation = useMutation({
+    mutationFn: ({ claimId, status }: { claimId: string; status: string }) =>
+      apiRequest("PATCH", `/api/music/claims/${claimId}/resolve`, { status }),
+    onSuccess: () => {
+      toast({ title: "Claim resolved" });
+      queryClient.invalidateQueries({ queryKey: ["/api/music/tracks", claimsTrackId, "claims"] });
+    },
+    onError: () => toast({ title: "Failed to resolve claim", variant: "destructive" }),
   });
 
   const createMutation = useMutation({
@@ -346,6 +368,63 @@ export default function MusicCatalog() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Admin: Claims Panel */}
+      {isAdmin && (
+        <div className="mt-8 border rounded-lg p-4">
+          <h2 className="flex items-center gap-2 font-semibold mb-3">
+            <ShieldAlert className="w-4 h-4 text-amber-500" /> Copyright Claims
+          </h2>
+          <div className="flex gap-2 mb-4">
+            <input
+              className="border rounded px-2 py-1 text-sm flex-1"
+              placeholder="Track ID to review claims"
+              value={claimsTrackId ?? ""}
+              onChange={(e) => setClaimsTrackId(e.target.value || null)}
+            />
+          </div>
+          {trackClaims.length === 0 && claimsTrackId && (
+            <p className="text-sm text-muted-foreground">No claims for this track.</p>
+          )}
+          {trackClaims.length > 0 && (
+            <div className="space-y-2">
+              {trackClaims.map((claim) => (
+                <div key={claim.id} className="border rounded p-3 text-sm">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <Badge variant={claim.status === "pending" ? "outline" : claim.status.startsWith("resolved") ? "default" : "destructive"}>
+                        {claim.status}
+                      </Badge>
+                      <p className="mt-1 text-muted-foreground">{claim.description ?? "No description"}</p>
+                      {claim.adminNotes && <p className="text-xs mt-1 text-amber-600">Notes: {claim.adminNotes}</p>}
+                    </div>
+                    {claim.status === "pending" && (
+                      <div className="flex gap-1 shrink-0">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => resolveMutation.mutate({ claimId: claim.id, status: "resolved_license" })}
+                          disabled={resolveMutation.isPending}
+                        >
+                          Resolve
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => resolveMutation.mutate({ claimId: claim.id, status: "resolved_dismissed" })}
+                          disabled={resolveMutation.isPending}
+                        >
+                          Dismiss
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

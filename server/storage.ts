@@ -326,6 +326,16 @@ import {
   type InsertMusicRightsDeclaration,
   type MusicTrackWithCreator,
   type MusicPlaylistWithTracks,
+  type MusicClaim,
+  type InsertMusicClaim,
+  type MusicDrop,
+  type InsertMusicDrop,
+  type MusicDropMint,
+  type InsertMusicDropMint,
+  type MusicListing,
+  type InsertMusicListing,
+  type MusicRewardsClaim,
+  type InsertMusicRewardsClaim,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, or, sql, inArray, ilike } from "drizzle-orm";
@@ -607,6 +617,26 @@ export interface IStorage {
   createRightsDeclaration(data: InsertMusicRightsDeclaration): Promise<MusicRightsDeclaration>;
   getRightsDeclaration(trackId: string): Promise<MusicRightsDeclaration | undefined>;
   updateRightsDeclaration(trackId: string, updates: Partial<MusicRightsDeclaration>): Promise<MusicRightsDeclaration | undefined>;
+  // Music Claims
+  createMusicClaim(data: InsertMusicClaim): Promise<MusicClaim>;
+  getMusicClaimsByTrack(trackId: string): Promise<MusicClaim[]>;
+  updateMusicClaim(id: string, updates: Partial<MusicClaim>): Promise<MusicClaim | undefined>;
+  // Music Drops
+  getMusicDrop(id: string): Promise<MusicDrop | undefined>;
+  getMusicDropsByTrack(trackId: string): Promise<MusicDrop[]>;
+  createMusicDrop(data: InsertMusicDrop): Promise<MusicDrop>;
+  updateMusicDrop(id: string, data: Partial<MusicDrop>): Promise<MusicDrop | undefined>;
+  recordMint(data: InsertMusicDropMint): Promise<MusicDropMint>;
+  getMintsByDrop(dropId: string): Promise<MusicDropMint[]>;
+  // Music Listings
+  createMusicListing(data: InsertMusicListing): Promise<MusicListing>;
+  getMusicListingsByDrop(dropId: string): Promise<MusicListing[]>;
+  getMusicListing(id: string): Promise<MusicListing | undefined>;
+  updateMusicListing(id: string, data: Partial<MusicListing>): Promise<MusicListing | undefined>;
+  getAllActiveListings(): Promise<MusicListing[]>;
+  // Music Rewards
+  createRewardsClaim(data: InsertMusicRewardsClaim): Promise<MusicRewardsClaim>;
+  getRewardsClaimsByDrop(dropId: string): Promise<MusicRewardsClaim[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -5023,6 +5053,26 @@ export class DatabaseStorage implements IStorage {
   async createRightsDeclaration(data: InsertMusicRightsDeclaration) { return musicStorageMethods.createRightsDeclaration(data); }
   async getRightsDeclaration(trackId: string) { return musicStorageMethods.getRightsDeclaration(trackId); }
   async updateRightsDeclaration(trackId: string, updates: Partial<MusicRightsDeclaration>) { return musicStorageMethods.updateRightsDeclaration(trackId, updates); }
+  // Claims
+  async createMusicClaim(data: InsertMusicClaim) { return musicStorageMethods.createMusicClaim(data); }
+  async getMusicClaimsByTrack(trackId: string) { return musicStorageMethods.getMusicClaimsByTrack(trackId); }
+  async updateMusicClaim(id: string, updates: Partial<MusicClaim>) { return musicStorageMethods.updateMusicClaim(id, updates); }
+  // Drops
+  async getMusicDrop(id: string) { return musicStorageMethods.getMusicDrop(id); }
+  async getMusicDropsByTrack(trackId: string) { return musicStorageMethods.getMusicDropsByTrack(trackId); }
+  async createMusicDrop(data: InsertMusicDrop) { return musicStorageMethods.createMusicDrop(data); }
+  async updateMusicDrop(id: string, data: Partial<MusicDrop>) { return musicStorageMethods.updateMusicDrop(id, data); }
+  async recordMint(data: InsertMusicDropMint) { return musicStorageMethods.recordMint(data); }
+  async getMintsByDrop(dropId: string) { return musicStorageMethods.getMintsByDrop(dropId); }
+  // Listings
+  async createMusicListing(data: InsertMusicListing) { return musicStorageMethods.createMusicListing(data); }
+  async getMusicListingsByDrop(dropId: string) { return musicStorageMethods.getMusicListingsByDrop(dropId); }
+  async getMusicListing(id: string) { return musicStorageMethods.getMusicListing(id); }
+  async updateMusicListing(id: string, data: Partial<MusicListing>) { return musicStorageMethods.updateMusicListing(id, data); }
+  async getAllActiveListings() { return musicStorageMethods.getAllActiveListings(); }
+  // Rewards
+  async createRewardsClaim(data: InsertMusicRewardsClaim) { return musicStorageMethods.createRewardsClaim(data); }
+  async getRewardsClaimsByDrop(dropId: string) { return musicStorageMethods.getRewardsClaimsByDrop(dropId); }
 }
 
 export const storage = new DatabaseStorage();

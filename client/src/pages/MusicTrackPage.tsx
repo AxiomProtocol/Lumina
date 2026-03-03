@@ -5,12 +5,18 @@ import { Badge } from "@/components/ui/badge";
 import { MusicPlayer } from "@/components/MusicPlayer";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Heart, Music, ArrowLeft, User } from "lucide-react";
+import { useWallet } from "@/lib/walletContext";
+import { Heart, Music, ArrowLeft, User, Lock, Eye } from "lucide-react";
+import { useState } from "react";
 import type { MusicTrackWithCreator } from "@shared/schema";
 
 export default function MusicTrackPage() {
   const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
+  const { address, isConnected, connect } = useWallet();
+  const [hasAccess, setHasAccess] = useState<boolean | null>(null);
+  const [gateChecking, setGateChecking] = useState(false);
+  const [previewEnded, setPreviewEnded] = useState(false);
 
   const { data: track, isLoading, error } = useQuery<MusicTrackWithCreator>({
     queryKey: [`/api/music/tracks/${id}`],
@@ -23,6 +29,32 @@ export default function MusicTrackPage() {
     onSuccess: () => toast({ title: "Liked!" }),
     onError: () => toast({ title: "Please log in to like tracks", variant: "destructive" }),
   });
+
+  async function checkGatedAccess() {
+    if (!address || !track) return;
+    setGateChecking(true);
+    try {
+      const message = `Access track ${track.id} with wallet ${address}`;
+      const signature = await (window as any).ethereum.request({
+        method: "personal_sign",
+        params: [message, address],
+      });
+      const res = await fetch(`/api/music/tracks/${track.id}/gate-check`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ walletAddress: address, signature, message }),
+      });
+      const data = await res.json();
+      setHasAccess(data.hasAccess);
+      if (!data.hasAccess) {
+        toast({ title: "Access denied", description: data.reason ?? "No NFT found", variant: "destructive" });
+      }
+    } catch {
+      toast({ title: "Could not verify access", variant: "destructive" });
+    } finally {
+      setGateChecking(false);
+    }
+  }
 
   if (isLoading) {
     return (
@@ -44,7 +76,16 @@ export default function MusicTrackPage() {
     );
   }
 
+  const accessMode = track.accessMode ?? "public";
+  const isGated = accessMode === "gated";
+  const isPreviewGated = accessMode === "preview_gated";
   const streamSrc = track.streamUrl ?? track.sourceFileUrl ?? "";
+
+  // Determine if audio should be shown
+  const showPlayer =
+    accessMode === "public" ||
+    isPreviewGated ||
+    (isGated && hasAccess === true);
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
@@ -99,17 +140,61 @@ export default function MusicTrackPage() {
         {track.keySignature && <Badge variant="outline">{track.keySignature}</Badge>}
         <Badge variant="outline">{track.likeCount ?? 0} likes</Badge>
         <Badge variant="outline">{track.playCount ?? 0} plays</Badge>
+        {isGated && (
+          <Badge variant="destructive" className="flex items-center gap-1">
+            <Lock className="w-3 h-3" /> Gated
+          </Badge>
+        )}
+        {isPreviewGated && (
+          <Badge variant="outline" className="flex items-center gap-1">
+            <Eye className="w-3 h-3" /> Preview
+          </Badge>
+        )}
       </div>
 
+      {/* Gated access section */}
+      {isGated && hasAccess !== true && (
+        <div className="border rounded-lg p-4 mb-6 text-center">
+          <Lock className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+          <p className="font-medium mb-3">This track requires NFT ownership to play</p>
+          {!isConnected ? (
+            <Button onClick={connect}>Connect Wallet to Access</Button>
+          ) : (
+            <Button onClick={checkGatedAccess} disabled={gateChecking}>
+              {gateChecking ? "Checking..." : "Verify Access"}
+            </Button>
+          )}
+          <p className="text-xs text-muted-foreground mt-2">
+            <Link href={`/music/drop/${id}`} className="underline">Get an NFT for this track</Link>
+          </p>
+        </div>
+      )}
+
       {/* Player */}
-      {streamSrc && (
-        <MusicPlayer
-          src={streamSrc}
-          title={track.title}
-          artist={track.creator.displayName ?? track.creator.username}
-          coverArtUrl={track.coverArtUrl ?? undefined}
-          className="mb-6"
-        />
+      {showPlayer && streamSrc && (
+        <>
+          <MusicPlayer
+            src={streamSrc}
+            title={track.title}
+            artist={track.creator.displayName ?? track.creator.username}
+            coverArtUrl={track.coverArtUrl ?? undefined}
+            className="mb-6"
+          />
+          {isPreviewGated && !previewEnded && track.previewSeconds && (
+            <p className="text-xs text-muted-foreground -mt-4 mb-6 text-center">
+              Preview: first {track.previewSeconds}s — <Link href={`/music/drop/${id}`} className="underline">Buy NFT to hear full track</Link>
+            </p>
+          )}
+          {isPreviewGated && previewEnded && (
+            <div className="border rounded-lg p-4 mb-6 text-center">
+              <p className="font-medium">Preview ended</p>
+              <p className="text-sm text-muted-foreground mb-3">Buy an NFT to hear the full track</p>
+              <Link href={`/music/drop/${id}`}>
+                <Button size="sm">Buy NFT to hear full track</Button>
+              </Link>
+            </div>
+          )}
+        </>
       )}
 
       {/* Description */}
