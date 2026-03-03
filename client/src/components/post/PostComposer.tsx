@@ -65,6 +65,7 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
 
   // Music track states
   const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [audioPreviewUrl, setAudioPreviewUrl] = useState<string | null>(null);
   const [audioTitle, setAudioTitle] = useState("");
   const [audioDescription, setAudioDescription] = useState("");
   const [uploadedTrackId, setUploadedTrackId] = useState<string | null>(null);
@@ -176,6 +177,7 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
     }
     setAudioFile(file);
     setAudioTitle(file.name.replace(/\.[^.]+$/, ""));
+    setAudioPreviewUrl(URL.createObjectURL(file));
     setUploadedTrackId(null);
   };
 
@@ -199,7 +201,11 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
     setShowMuxThumbnailSelector(false);
     setUploadStatus("");
     // Clear audio states
+    if (audioPreviewUrl) {
+      URL.revokeObjectURL(audioPreviewUrl);
+    }
     setAudioFile(null);
+    setAudioPreviewUrl(null);
     setAudioTitle("");
     setAudioDescription("");
     setUploadedTrackId(null);
@@ -940,7 +946,7 @@ export function PostComposer({ onSuccess, className, groupId }: PostComposerProp
                   </Button>
                 </div>
                 <audio
-                  src={URL.createObjectURL(audioFile)}
+                  src={audioPreviewUrl || undefined}
                   controls
                   className="w-full h-10"
                   data-testid="audio-preview"
