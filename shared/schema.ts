@@ -1,11 +1,11 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, boolean, timestamp, jsonb, pgEnum, serial } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, integer, boolean, timestamp, jsonb, pgEnum, serial, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const postVisibilityEnum = pgEnum("post_visibility", ["public", "followers"]);
-export const postTypeEnum = pgEnum("post_type", ["text", "image", "video"]);
+export const postTypeEnum = pgEnum("post_type", ["text", "image", "video", "music"]);
 export const transactionTypeEnum = pgEnum("transaction_type", ["tip", "reward_claim", "transfer"]);
 export const transactionStatusEnum = pgEnum("transaction_status", ["pending", "confirmed", "failed"]);
 export const reportStatusEnum = pgEnum("report_status", ["pending", "reviewed", "resolved", "dismissed"]);
@@ -129,7 +129,40 @@ export const usersRelations = relations(users, ({ many }) => ({
   groupMemberships: many(groupMemberships),
   notifications: many(notifications),
   rewardEvents: many(rewardEvents),
+  musicTracks: many(musicTracks),
 }));
+
+// ============= MUSIC TRACKS =============
+
+export const musicTracks = pgTable("music_tracks", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  description: text("description"),
+  originalObjectKey: text("original_object_key").notNull(),
+  mimeType: text("mime_type"),
+  bytes: integer("bytes"),
+  durationSeconds: integer("duration_seconds"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (t) => ({
+  userIdIdx: index("music_tracks_user_id_idx").on(t.userId),
+  createdAtIdx: index("music_tracks_created_at_idx").on(t.createdAt),
+}));
+
+export const musicTracksRelations = relations(musicTracks, ({ one }) => ({
+  user: one(users, {
+    fields: [musicTracks.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertMusicTrackSchema = createInsertSchema(musicTracks).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type MusicTrack = typeof musicTracks.$inferSelect;
+export type InsertMusicTrack = typeof musicTracks.$inferInsert;
 
 export const posts = pgTable("posts", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -140,6 +173,7 @@ export const posts = pgTable("posts", {
   hlsUrl: text("hls_url"),
   thumbnailUrl: text("thumbnail_url"),
   videoDuration: integer("video_duration"),
+  linkedMusicTrackId: varchar("linked_music_track_id").references(() => musicTracks.id, { onDelete: "set null" }),
   additionalMedia: jsonb("additional_media").$type<PostMediaItem[]>(),
   visibility: postVisibilityEnum("visibility").notNull().default("public"),
   groupId: varchar("group_id").references(() => groups.id, { onDelete: "set null" }),
@@ -149,7 +183,9 @@ export const posts = pgTable("posts", {
   shareCount: integer("share_count").default(0),
   viewCount: integer("view_count").default(0),
   createdAt: timestamp("created_at").defaultNow(),
-});
+}, (t) => ({
+  linkedMusicTrackIdx: index("posts_linked_music_track_id_idx").on(t.linkedMusicTrackId),
+}));
 
 export interface PostMediaItem {
   id: string;
@@ -177,6 +213,10 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
   reposts: many(posts, { relationName: "reposts" }),
   comments: many(comments),
   likes: many(likes),
+  linkedMusicTrack: one(musicTracks, {
+    fields: [posts.linkedMusicTrackId],
+    references: [musicTracks.id],
+  }),
 }));
 
 export const comments = pgTable("comments", {
@@ -435,6 +475,7 @@ export type RewardSnapshot = typeof rewardSnapshots.$inferSelect;
 
 export interface PostWithAuthor extends Post {
   author: User;
+  linkedMusicTrack?: MusicTrack | null;
 }
 
 export interface CommentWithAuthor extends Comment {
