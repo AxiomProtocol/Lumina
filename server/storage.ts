@@ -314,9 +314,32 @@ import {
   type GenerationJobWithDetails,
   type UserBrandProfile,
   type InsertUserBrandProfile,
+  type MusicTrack,
+  type InsertMusicTrack,
+  type MusicPlaylist,
+  type InsertMusicPlaylist,
+  type MusicPlaylistTrack,
+  type InsertMusicPlaylistTrack,
+  type MusicIngestionJob,
+  type InsertMusicIngestionJob,
+  type MusicRightsDeclaration,
+  type InsertMusicRightsDeclaration,
+  type MusicTrackWithCreator,
+  type MusicPlaylistWithTracks,
+  type MusicClaim,
+  type InsertMusicClaim,
+  type MusicDrop,
+  type InsertMusicDrop,
+  type MusicDropMint,
+  type InsertMusicDropMint,
+  type MusicListing,
+  type InsertMusicListing,
+  type MusicRewardsClaim,
+  type InsertMusicRewardsClaim,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, or, sql, inArray, ilike } from "drizzle-orm";
+import * as musicStorageMethods from "./musicStorage";
 
 // Helper to remove password from user objects
 function sanitizeUser(user: User): Omit<User, 'password'> {
@@ -569,6 +592,51 @@ export interface IStorage {
   getGenerationJob(id: string): Promise<GenerationJobWithDetails | undefined>;
   createGenerationJob(job: InsertGenerationJob): Promise<GenerationJob>;
   updateGenerationJob(id: string, updates: Partial<GenerationJob>): Promise<GenerationJob | undefined>;
+
+  // Music Platform
+  getMusicTrack(id: string): Promise<MusicTrackWithCreator | undefined>;
+  getMusicTracks(opts: { status?: string; creatorId?: string; genre?: string; limit?: number; offset?: number }): Promise<MusicTrackWithCreator[]>;
+  createMusicTrack(data: InsertMusicTrack): Promise<MusicTrack>;
+  updateMusicTrack(id: string, updates: Partial<MusicTrack>): Promise<MusicTrack | undefined>;
+  deleteMusicTrack(id: string): Promise<void>;
+  getMusicCatalog(creatorId: string, status?: string): Promise<MusicTrack[]>;
+  publishMusicTrack(id: string): Promise<MusicTrack | undefined>;
+  unpublishMusicTrack(id: string): Promise<MusicTrack | undefined>;
+  getMusicPlaylist(id: string): Promise<MusicPlaylistWithTracks | undefined>;
+  getMusicPlaylists(opts: { creatorId?: string; visibility?: string; limit?: number }): Promise<MusicPlaylist[]>;
+  createMusicPlaylist(data: InsertMusicPlaylist): Promise<MusicPlaylist>;
+  updateMusicPlaylist(id: string, updates: Partial<MusicPlaylist>): Promise<MusicPlaylist | undefined>;
+  deleteMusicPlaylist(id: string): Promise<void>;
+  addTrackToPlaylist(data: InsertMusicPlaylistTrack): Promise<MusicPlaylistTrack>;
+  removeTrackFromPlaylist(playlistId: string, trackId: string): Promise<void>;
+  reorderPlaylistTracks(playlistId: string, orderedTrackIds: string[]): Promise<void>;
+  createIngestionJob(data: InsertMusicIngestionJob): Promise<MusicIngestionJob>;
+  getIngestionJob(id: string): Promise<MusicIngestionJob | undefined>;
+  getIngestionJobByTrackId(trackId: string): Promise<MusicIngestionJob | undefined>;
+  updateIngestionJob(id: string, updates: Partial<MusicIngestionJob>): Promise<MusicIngestionJob | undefined>;
+  createRightsDeclaration(data: InsertMusicRightsDeclaration): Promise<MusicRightsDeclaration>;
+  getRightsDeclaration(trackId: string): Promise<MusicRightsDeclaration | undefined>;
+  updateRightsDeclaration(trackId: string, updates: Partial<MusicRightsDeclaration>): Promise<MusicRightsDeclaration | undefined>;
+  // Music Claims
+  createMusicClaim(data: InsertMusicClaim): Promise<MusicClaim>;
+  getMusicClaimsByTrack(trackId: string): Promise<MusicClaim[]>;
+  updateMusicClaim(id: string, updates: Partial<MusicClaim>): Promise<MusicClaim | undefined>;
+  // Music Drops
+  getMusicDrop(id: string): Promise<MusicDrop | undefined>;
+  getMusicDropsByTrack(trackId: string): Promise<MusicDrop[]>;
+  createMusicDrop(data: InsertMusicDrop): Promise<MusicDrop>;
+  updateMusicDrop(id: string, data: Partial<MusicDrop>): Promise<MusicDrop | undefined>;
+  recordMint(data: InsertMusicDropMint): Promise<MusicDropMint>;
+  getMintsByDrop(dropId: string): Promise<MusicDropMint[]>;
+  // Music Listings
+  createMusicListing(data: InsertMusicListing): Promise<MusicListing>;
+  getMusicListingsByDrop(dropId: string): Promise<MusicListing[]>;
+  getMusicListing(id: string): Promise<MusicListing | undefined>;
+  updateMusicListing(id: string, data: Partial<MusicListing>): Promise<MusicListing | undefined>;
+  getAllActiveListings(): Promise<MusicListing[]>;
+  // Music Rewards
+  createRewardsClaim(data: InsertMusicRewardsClaim): Promise<MusicRewardsClaim>;
+  getRewardsClaimsByDrop(dropId: string): Promise<MusicRewardsClaim[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -4960,6 +5028,51 @@ export class DatabaseStorage implements IStorage {
       .returning();
     return updated || undefined;
   }
+
+  // ---- Music Platform (delegates to musicStorage module) ----
+  async getMusicTrack(id: string) { return musicStorageMethods.getMusicTrack(id); }
+  async getMusicTracks(opts: { status?: string; creatorId?: string; genre?: string; limit?: number; offset?: number }) { return musicStorageMethods.getMusicTracks(opts); }
+  async createMusicTrack(data: InsertMusicTrack) { return musicStorageMethods.createMusicTrack(data); }
+  async updateMusicTrack(id: string, updates: Partial<MusicTrack>) { return musicStorageMethods.updateMusicTrack(id, updates); }
+  async deleteMusicTrack(id: string) { return musicStorageMethods.deleteMusicTrack(id); }
+  async getMusicCatalog(creatorId: string, status?: string) { return musicStorageMethods.getMusicCatalog(creatorId, status); }
+  async publishMusicTrack(id: string) { return musicStorageMethods.publishMusicTrack(id); }
+  async unpublishMusicTrack(id: string) { return musicStorageMethods.unpublishMusicTrack(id); }
+  async getMusicPlaylist(id: string) { return musicStorageMethods.getMusicPlaylist(id); }
+  async getMusicPlaylists(opts: { creatorId?: string; visibility?: string; limit?: number }) { return musicStorageMethods.getMusicPlaylists(opts); }
+  async createMusicPlaylist(data: InsertMusicPlaylist) { return musicStorageMethods.createMusicPlaylist(data); }
+  async updateMusicPlaylist(id: string, updates: Partial<MusicPlaylist>) { return musicStorageMethods.updateMusicPlaylist(id, updates); }
+  async deleteMusicPlaylist(id: string) { return musicStorageMethods.deleteMusicPlaylist(id); }
+  async addTrackToPlaylist(data: InsertMusicPlaylistTrack) { return musicStorageMethods.addTrackToPlaylist(data); }
+  async removeTrackFromPlaylist(playlistId: string, trackId: string) { return musicStorageMethods.removeTrackFromPlaylist(playlistId, trackId); }
+  async reorderPlaylistTracks(playlistId: string, orderedTrackIds: string[]) { return musicStorageMethods.reorderPlaylistTracks(playlistId, orderedTrackIds); }
+  async createIngestionJob(data: InsertMusicIngestionJob) { return musicStorageMethods.createIngestionJob(data); }
+  async getIngestionJob(id: string) { return musicStorageMethods.getIngestionJob(id); }
+  async getIngestionJobByTrackId(trackId: string) { return musicStorageMethods.getIngestionJobByTrackId(trackId); }
+  async updateIngestionJob(id: string, updates: Partial<MusicIngestionJob>) { return musicStorageMethods.updateIngestionJob(id, updates); }
+  async createRightsDeclaration(data: InsertMusicRightsDeclaration) { return musicStorageMethods.createRightsDeclaration(data); }
+  async getRightsDeclaration(trackId: string) { return musicStorageMethods.getRightsDeclaration(trackId); }
+  async updateRightsDeclaration(trackId: string, updates: Partial<MusicRightsDeclaration>) { return musicStorageMethods.updateRightsDeclaration(trackId, updates); }
+  // Claims
+  async createMusicClaim(data: InsertMusicClaim) { return musicStorageMethods.createMusicClaim(data); }
+  async getMusicClaimsByTrack(trackId: string) { return musicStorageMethods.getMusicClaimsByTrack(trackId); }
+  async updateMusicClaim(id: string, updates: Partial<MusicClaim>) { return musicStorageMethods.updateMusicClaim(id, updates); }
+  // Drops
+  async getMusicDrop(id: string) { return musicStorageMethods.getMusicDrop(id); }
+  async getMusicDropsByTrack(trackId: string) { return musicStorageMethods.getMusicDropsByTrack(trackId); }
+  async createMusicDrop(data: InsertMusicDrop) { return musicStorageMethods.createMusicDrop(data); }
+  async updateMusicDrop(id: string, data: Partial<MusicDrop>) { return musicStorageMethods.updateMusicDrop(id, data); }
+  async recordMint(data: InsertMusicDropMint) { return musicStorageMethods.recordMint(data); }
+  async getMintsByDrop(dropId: string) { return musicStorageMethods.getMintsByDrop(dropId); }
+  // Listings
+  async createMusicListing(data: InsertMusicListing) { return musicStorageMethods.createMusicListing(data); }
+  async getMusicListingsByDrop(dropId: string) { return musicStorageMethods.getMusicListingsByDrop(dropId); }
+  async getMusicListing(id: string) { return musicStorageMethods.getMusicListing(id); }
+  async updateMusicListing(id: string, data: Partial<MusicListing>) { return musicStorageMethods.updateMusicListing(id, data); }
+  async getAllActiveListings() { return musicStorageMethods.getAllActiveListings(); }
+  // Rewards
+  async createRewardsClaim(data: InsertMusicRewardsClaim) { return musicStorageMethods.createRewardsClaim(data); }
+  async getRewardsClaimsByDrop(dropId: string) { return musicStorageMethods.getRewardsClaimsByDrop(dropId); }
 }
 
 export const storage = new DatabaseStorage();

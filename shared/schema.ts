@@ -5,7 +5,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const postVisibilityEnum = pgEnum("post_visibility", ["public", "followers"]);
-export const postTypeEnum = pgEnum("post_type", ["text", "image", "video"]);
+export const postTypeEnum = pgEnum("post_type", ["text", "image", "video", "music"]);
 export const transactionTypeEnum = pgEnum("transaction_type", ["tip", "reward_claim", "transfer"]);
 export const transactionStatusEnum = pgEnum("transaction_status", ["pending", "confirmed", "failed"]);
 export const reportStatusEnum = pgEnum("report_status", ["pending", "reviewed", "resolved", "dismissed"]);
@@ -4532,3 +4532,354 @@ export type UserBrandProfile = typeof userBrandProfiles.$inferSelect;
 export interface GenerationJobWithDetails extends GenerationJob {
   template?: PromptTemplate | null;
 }
+
+// ============= MUSIC PLATFORM =============
+
+export const musicTrackStatusEnum = pgEnum("music_track_status", ["draft", "scheduled", "published", "archived"]);
+export const musicAccessModeEnum = pgEnum("music_access_mode", ["public", "preview_gated", "gated"]);
+export const musicIngestionStatusEnum = pgEnum("music_ingestion_status", ["pending", "processing", "ready", "failed"]);
+export const musicRightsTypeEnum = pgEnum("music_rights_type", ["original", "cover", "remix"]);
+export const musicLicenseTypeEnum = pgEnum("music_license_type", ["all_rights_reserved", "cc_by", "cc_by_sa", "cc_by_nc", "cc_by_nd", "cc0"]);
+export const musicClaimStatusEnum = pgEnum("music_claim_status", ["pending", "reviewing", "resolved_takedown", "resolved_dismissed", "resolved_license"]);
+export const musicDropStatusEnum = pgEnum("music_drop_status", ["draft", "active", "sold_out", "ended"]);
+
+export const musicTracks = pgTable("music_tracks", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  creatorId: varchar("creator_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  description: text("description"),
+  genre: text("genre"),
+  tags: text("tags").array(),
+  coverArtUrl: text("cover_art_url"),
+  status: musicTrackStatusEnum("status").notNull().default("draft"),
+  accessMode: musicAccessModeEnum("access_mode").notNull().default("public"),
+  previewSeconds: integer("preview_seconds").default(30),
+  sourceFileUrl: text("source_file_url"),
+  streamUrl: text("stream_url"),
+  muxAssetId: text("mux_asset_id"),
+  muxPlaybackId: text("mux_playback_id"),
+  duration: integer("duration"),
+  waveformData: jsonb("waveform_data"),
+  bpm: integer("bpm"),
+  keySignature: text("key_signature"),
+  scheduledAt: timestamp("scheduled_at"),
+  publishedAt: timestamp("published_at"),
+  playCount: integer("play_count").default(0),
+  likeCount: integer("like_count").default(0),
+  linkedPostId: varchar("linked_post_id").references(() => posts.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const musicPlaylists = pgTable("music_playlists", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  creatorId: varchar("creator_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  description: text("description"),
+  coverArtUrl: text("cover_art_url"),
+  visibility: text("visibility").default("public"),
+  trackCount: integer("track_count").default(0),
+  totalDuration: integer("total_duration").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const musicPlaylistTracks = pgTable("music_playlist_tracks", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  playlistId: varchar("playlist_id").notNull().references(() => musicPlaylists.id, { onDelete: "cascade" }),
+  trackId: varchar("track_id").notNull().references(() => musicTracks.id, { onDelete: "cascade" }),
+  position: integer("position").notNull(),
+  addedAt: timestamp("added_at").defaultNow(),
+});
+
+export const musicIngestionJobs = pgTable("music_ingestion_jobs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  trackId: varchar("track_id").notNull().references(() => musicTracks.id, { onDelete: "cascade" }),
+  creatorId: varchar("creator_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  inputType: text("input_type"),
+  inputFileUrl: text("input_file_url"),
+  status: musicIngestionStatusEnum("status").notNull().default("pending"),
+  muxUploadId: text("mux_upload_id"),
+  errorMessage: text("error_message"),
+  startedAt: timestamp("started_at"),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const musicRightsDeclarations = pgTable("music_rights_declarations", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  trackId: varchar("track_id").notNull().references(() => musicTracks.id, { onDelete: "cascade" }),
+  rightsType: musicRightsTypeEnum("rights_type").notNull().default("original"),
+  licenseType: musicLicenseTypeEnum("license_type").notNull().default("all_rights_reserved"),
+  originalArtist: text("original_artist"),
+  originalTitle: text("original_title"),
+  creditsJson: jsonb("credits_json"),
+  licenseProofUrl: text("license_proof_url"),
+  fingerprintHash: text("fingerprint_hash"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const musicClaims = pgTable("music_claims", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  trackId: varchar("track_id").notNull().references(() => musicTracks.id, { onDelete: "cascade" }),
+  claimantId: varchar("claimant_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  status: musicClaimStatusEnum("status").notNull().default("pending"),
+  description: text("description"),
+  evidenceUrl: text("evidence_url"),
+  adminNotes: text("admin_notes"),
+  resolvedAt: timestamp("resolved_at"),
+  resolvedById: varchar("resolved_by_id").references(() => users.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// ============= MUSIC: RELATIONS =============
+
+export const musicTracksRelations = relations(musicTracks, ({ one, many }) => ({
+  creator: one(users, {
+    fields: [musicTracks.creatorId],
+    references: [users.id],
+  }),
+  linkedPost: one(posts, {
+    fields: [musicTracks.linkedPostId],
+    references: [posts.id],
+  }),
+  playlistTracks: many(musicPlaylistTracks),
+  ingestionJobs: many(musicIngestionJobs),
+  rightsDeclarations: many(musicRightsDeclarations),
+  claims: many(musicClaims),
+}));
+
+export const musicPlaylistsRelations = relations(musicPlaylists, ({ one, many }) => ({
+  creator: one(users, {
+    fields: [musicPlaylists.creatorId],
+    references: [users.id],
+  }),
+  playlistTracks: many(musicPlaylistTracks),
+}));
+
+export const musicPlaylistTracksRelations = relations(musicPlaylistTracks, ({ one }) => ({
+  playlist: one(musicPlaylists, {
+    fields: [musicPlaylistTracks.playlistId],
+    references: [musicPlaylists.id],
+  }),
+  track: one(musicTracks, {
+    fields: [musicPlaylistTracks.trackId],
+    references: [musicTracks.id],
+  }),
+}));
+
+export const musicIngestionJobsRelations = relations(musicIngestionJobs, ({ one }) => ({
+  track: one(musicTracks, {
+    fields: [musicIngestionJobs.trackId],
+    references: [musicTracks.id],
+  }),
+  creator: one(users, {
+    fields: [musicIngestionJobs.creatorId],
+    references: [users.id],
+  }),
+}));
+
+export const musicRightsDeclarationsRelations = relations(musicRightsDeclarations, ({ one }) => ({
+  track: one(musicTracks, {
+    fields: [musicRightsDeclarations.trackId],
+    references: [musicTracks.id],
+  }),
+}));
+
+export const musicClaimsRelations = relations(musicClaims, ({ one }) => ({
+  track: one(musicTracks, {
+    fields: [musicClaims.trackId],
+    references: [musicTracks.id],
+  }),
+  claimant: one(users, {
+    fields: [musicClaims.claimantId],
+    references: [users.id],
+  }),
+  resolvedBy: one(users, {
+    fields: [musicClaims.resolvedById],
+    references: [users.id],
+    relationName: "resolvedClaims",
+  }),
+}));
+
+// ============= MUSIC: INSERT SCHEMAS =============
+
+export const insertMusicTrackSchema = createInsertSchema(musicTracks).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  playCount: true,
+  likeCount: true,
+  publishedAt: true,
+});
+
+export const insertMusicPlaylistSchema = createInsertSchema(musicPlaylists).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  trackCount: true,
+  totalDuration: true,
+});
+
+export const insertMusicPlaylistTrackSchema = createInsertSchema(musicPlaylistTracks).omit({
+  id: true,
+  addedAt: true,
+});
+
+export const insertMusicIngestionJobSchema = createInsertSchema(musicIngestionJobs).omit({
+  id: true,
+  createdAt: true,
+  status: true,
+  startedAt: true,
+  completedAt: true,
+  errorMessage: true,
+});
+
+export const insertMusicRightsDeclarationSchema = createInsertSchema(musicRightsDeclarations).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertMusicClaimSchema = createInsertSchema(musicClaims).omit({
+  id: true,
+  createdAt: true,
+  status: true,
+  adminNotes: true,
+  resolvedAt: true,
+  resolvedById: true,
+});
+
+// ============= MUSIC: TYPES =============
+
+export type InsertMusicTrack = z.infer<typeof insertMusicTrackSchema>;
+export type MusicTrack = typeof musicTracks.$inferSelect;
+export type InsertMusicPlaylist = z.infer<typeof insertMusicPlaylistSchema>;
+export type MusicPlaylist = typeof musicPlaylists.$inferSelect;
+export type InsertMusicPlaylistTrack = z.infer<typeof insertMusicPlaylistTrackSchema>;
+export type MusicPlaylistTrack = typeof musicPlaylistTracks.$inferSelect;
+export type InsertMusicIngestionJob = z.infer<typeof insertMusicIngestionJobSchema>;
+export type MusicIngestionJob = typeof musicIngestionJobs.$inferSelect;
+export type InsertMusicRightsDeclaration = z.infer<typeof insertMusicRightsDeclarationSchema>;
+export type MusicRightsDeclaration = typeof musicRightsDeclarations.$inferSelect;
+export type InsertMusicClaim = z.infer<typeof insertMusicClaimSchema>;
+export type MusicClaim = typeof musicClaims.$inferSelect;
+
+export interface MusicTrackWithCreator extends MusicTrack {
+  creator: User;
+  rightsDeclaration?: MusicRightsDeclaration | null;
+}
+
+export interface MusicPlaylistWithTracks extends MusicPlaylist {
+  creator: User;
+  tracks?: (MusicPlaylistTrack & { track: MusicTrack })[];
+}
+
+// ============= MUSIC DROPS =============
+
+export const musicDrops = pgTable("music_drops", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  trackId: varchar("track_id").notNull().references(() => musicTracks.id, { onDelete: "cascade" }),
+  creatorId: varchar("creator_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  contractAddress: text("contract_address"),
+  tokenId: integer("token_id").default(1),
+  supply: integer("supply").notNull().default(1000),
+  priceUsd: integer("price_usd").notNull().default(100),
+  status: musicDropStatusEnum("status").notNull().default("draft"),
+  mintCount: integer("mint_count").default(0),
+  startsAt: timestamp("starts_at"),
+  endsAt: timestamp("ends_at"),
+  metadataUri: text("metadata_uri"),
+  txHash: text("tx_hash"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const musicDropMints = pgTable("music_drop_mints", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  dropId: varchar("drop_id").notNull().references(() => musicDrops.id, { onDelete: "cascade" }),
+  minterAddress: text("minter_address").notNull(),
+  userId: varchar("user_id").references(() => users.id, { onDelete: "set null" }),
+  txHash: text("tx_hash").notNull(),
+  tokenId: integer("token_id").notNull().default(1),
+  quantity: integer("quantity").notNull().default(1),
+  pricePaidUsd: integer("price_paid_usd"),
+  blockNumber: integer("block_number"),
+  mintedAt: timestamp("minted_at").defaultNow(),
+});
+
+export const musicDropsRelations = relations(musicDrops, ({ one, many }) => ({
+  track: one(musicTracks, { fields: [musicDrops.trackId], references: [musicTracks.id] }),
+  creator: one(users, { fields: [musicDrops.creatorId], references: [users.id] }),
+  mints: many(musicDropMints),
+}));
+
+export const musicDropMintsRelations = relations(musicDropMints, ({ one }) => ({
+  drop: one(musicDrops, { fields: [musicDropMints.dropId], references: [musicDrops.id] }),
+  user: one(users, { fields: [musicDropMints.userId], references: [users.id] }),
+}));
+
+export const insertMusicDropSchema = createInsertSchema(musicDrops).omit({
+  id: true, contractAddress: true, mintCount: true, txHash: true, createdAt: true, updatedAt: true,
+});
+export const insertMusicDropMintSchema = createInsertSchema(musicDropMints).omit({
+  id: true, mintedAt: true,
+});
+
+export type InsertMusicDrop = z.infer<typeof insertMusicDropSchema>;
+export type MusicDrop = typeof musicDrops.$inferSelect;
+export type InsertMusicDropMint = z.infer<typeof insertMusicDropMintSchema>;
+export type MusicDropMint = typeof musicDropMints.$inferSelect;
+
+export interface MusicDropWithTrack extends MusicDrop {
+  track: MusicTrack;
+  creator: User;
+}
+
+// ============= MUSIC MARKETPLACE =============
+
+export const musicListings = pgTable("music_listings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  dropId: varchar("drop_id").notNull().references(() => musicDrops.id, { onDelete: "cascade" }),
+  sellerAddress: text("seller_address").notNull(),
+  sellerId: varchar("seller_id").references(() => users.id, { onDelete: "set null" }),
+  tokenId: integer("token_id").notNull(),
+  quantity: integer("quantity").notNull().default(1),
+  priceUsd: integer("price_usd").notNull(),
+  isActive: boolean("is_active").default(true),
+  txHash: text("tx_hash"),
+  soldTxHash: text("sold_tx_hash"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const musicRewardsClaims = pgTable("music_rewards_claims", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  dropId: varchar("drop_id").notNull().references(() => musicDrops.id, { onDelete: "cascade" }),
+  claimantAddress: text("claimant_address").notNull(),
+  claimantId: varchar("claimant_id").references(() => users.id, { onDelete: "set null" }),
+  amountUsd: integer("amount_usd").notNull(),
+  txHash: text("tx_hash"),
+  claimedAt: timestamp("claimed_at").defaultNow(),
+});
+
+export const musicListingsRelations = relations(musicListings, ({ one }) => ({
+  drop: one(musicDrops, { fields: [musicListings.dropId], references: [musicDrops.id] }),
+  seller: one(users, { fields: [musicListings.sellerId], references: [users.id] }),
+}));
+
+export const musicRewardsClaimsRelations = relations(musicRewardsClaims, ({ one }) => ({
+  drop: one(musicDrops, { fields: [musicRewardsClaims.dropId], references: [musicDrops.id] }),
+  claimant: one(users, { fields: [musicRewardsClaims.claimantId], references: [users.id] }),
+}));
+
+export const insertMusicListingSchema = createInsertSchema(musicListings).omit({
+  id: true, isActive: true, soldTxHash: true, createdAt: true, updatedAt: true,
+});
+export const insertMusicRewardsClaimSchema = createInsertSchema(musicRewardsClaims).omit({
+  id: true, claimedAt: true,
+});
+
+export type InsertMusicListing = z.infer<typeof insertMusicListingSchema>;
+export type MusicListing = typeof musicListings.$inferSelect;
+export type InsertMusicRewardsClaim = z.infer<typeof insertMusicRewardsClaimSchema>;
+export type MusicRewardsClaim = typeof musicRewardsClaims.$inferSelect;

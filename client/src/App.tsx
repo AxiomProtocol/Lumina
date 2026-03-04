@@ -56,6 +56,12 @@ import Feedback from "@/pages/Feedback";
 import About from "@/pages/About";
 import GrowthHub from "@/pages/growth-hub";
 import CreationHub from "@/pages/CreationHub";
+import MusicPage from "@/pages/MusicPage";
+import MusicTrackPage from "@/pages/MusicTrackPage";
+import MusicPlaylistPage from "@/pages/MusicPlaylistPage";
+import MusicCatalog from "@/pages/MusicCatalog";
+import MusicDropPage from "@/pages/MusicDropPage";
+import MusicMarketplace from "@/pages/MusicMarketplace";
 import { CartProvider } from "@/lib/cartContext";
 import { AffiliateProvider } from "@/lib/affiliateContext";
 
@@ -129,6 +135,12 @@ function Router() {
       <Route path="/post/:id" component={PostDetail} />
       <Route path="/feedback" component={Feedback} />
       <Route path="/creation-hub" component={() => <ProtectedRoute component={CreationHub} />} />
+      <Route path="/music" component={MusicPage} />
+      <Route path="/music/track/:id" component={MusicTrackPage} />
+      <Route path="/music/playlist/:id" component={MusicPlaylistPage} />
+      <Route path="/music/catalog" component={() => <ProtectedRoute component={MusicCatalog} />} />
+      <Route path="/music/drop/:id" component={MusicDropPage} />
+      <Route path="/music/marketplace" component={MusicMarketplace} />
       <Route path="/business" component={() => <ProtectedRoute component={BusinessDashboard} />} />
       <Route path="/settings">
         {() => <ProtectedRoute component={Settings} />}
