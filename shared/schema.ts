@@ -129,6 +129,26 @@ export const usersRelations = relations(users, ({ many }) => ({
   groupMemberships: many(groupMemberships),
   notifications: many(notifications),
   rewardEvents: many(rewardEvents),
+  musicTracks: many(musicTracks),
+}));
+
+export const musicTracks = pgTable("music_tracks", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  description: text("description"),
+  originalObjectKey: text("original_object_key").notNull(),
+  mimeType: text("mime_type"),
+  bytes: integer("bytes"),
+  durationSeconds: integer("duration_seconds"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const musicTracksRelations = relations(musicTracks, ({ one }) => ({
+  user: one(users, {
+    fields: [musicTracks.userId],
+    references: [users.id],
+  }),
 }));
 
 export const posts = pgTable("posts", {
@@ -140,6 +160,7 @@ export const posts = pgTable("posts", {
   hlsUrl: text("hls_url"),
   thumbnailUrl: text("thumbnail_url"),
   videoDuration: integer("video_duration"),
+  linkedMusicTrackId: varchar("linked_music_track_id").references(() => musicTracks.id, { onDelete: "set null" }),
   additionalMedia: jsonb("additional_media").$type<PostMediaItem[]>(),
   visibility: postVisibilityEnum("visibility").notNull().default("public"),
   groupId: varchar("group_id").references(() => groups.id, { onDelete: "set null" }),
@@ -177,6 +198,10 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
   reposts: many(posts, { relationName: "reposts" }),
   comments: many(comments),
   likes: many(likes),
+  linkedMusicTrack: one(musicTracks, {
+    fields: [posts.linkedMusicTrackId],
+    references: [musicTracks.id],
+  }),
 }));
 
 export const comments = pgTable("comments", {
@@ -416,6 +441,8 @@ export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type InsertPost = z.infer<typeof insertPostSchema>;
 export type Post = typeof posts.$inferSelect;
+export type MusicTrack = typeof musicTracks.$inferSelect;
+export type InsertMusicTrack = typeof musicTracks.$inferInsert;
 export type InsertComment = z.infer<typeof insertCommentSchema>;
 export type Comment = typeof comments.$inferSelect;
 export type InsertLike = z.infer<typeof insertLikeSchema>;
@@ -435,6 +462,7 @@ export type RewardSnapshot = typeof rewardSnapshots.$inferSelect;
 
 export interface PostWithAuthor extends Post {
   author: User;
+  linkedMusicTrack?: MusicTrack | null;
 }
 
 export interface CommentWithAuthor extends Comment {
